@@ -70,7 +70,7 @@ export default function Editor() {
 
     // Handle new block drops
     if (over.id === 'workspace') {
-      const blockLimit = 1;
+      const blockLimit = 200;
       if (workspaceBlocks.length >= blockLimit) {
         console.error(
           `Blocks are limited to ${blockLimit}. You cannot add more`
