@@ -41,12 +41,22 @@ export const blockCategories: BlockCategory[] = [
         category: 'functional',
         name: 'For Loop',
         description: 'Loop through a range of numbers',
-        template: 'for i in range({start}, {end}):\n    {content}',
+        template: 'for i in range({start}, {end}):',
+        hasEndBlock: true,
         inputs: [
           { name: 'start', type: 'number', default: 0 },
-          { name: 'end', type: 'number', default: 10 },
-          { name: 'content', type: 'code', default: 'pass' }
+          { name: 'end', type: 'number', default: 10 }
         ]
+      },
+      {
+        id: 'end-for-loop',
+        type: 'functional',
+        category: 'functional',
+        name: 'End For Loop',
+        description: 'Ends a for loop block',
+        template: '',
+        isEndBlock: true,
+        parentBlockId: 'for-loop'
       },
       {
         id: 'if-condition',
@@ -54,11 +64,21 @@ export const blockCategories: BlockCategory[] = [
         category: 'functional',
         name: 'If Condition',
         description: 'Conditional statement',
-        template: 'if {condition}:\n    {content}',
+        template: 'if {condition}:',
+        hasEndBlock: true,
         inputs: [
-          { name: 'condition', type: 'string', default: 'True' },
-          { name: 'content', type: 'code', default: 'pass' }
+          { name: 'condition', type: 'string', default: 'True' }
         ]
+      },
+      {
+        id: 'end-if-condition',
+        type: 'functional',
+        category: 'functional',
+        name: 'End If',
+        description: 'Ends an if condition block',
+        template: '',
+        isEndBlock: true,
+        parentBlockId: 'if-condition'
       }
     ]
   },

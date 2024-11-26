@@ -5,6 +5,9 @@ export interface CodeBlock {
   name: string;
   description: string;
   template: string;
+  hasEndBlock?: boolean;
+  isEndBlock?: boolean;
+  parentBlockId?: string;
   inputs?: {
     name: string;
     type: string;

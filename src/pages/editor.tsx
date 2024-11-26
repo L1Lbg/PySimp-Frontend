@@ -5,9 +5,9 @@ import {
   DragEndEvent,
   DragOverlay,
   DragStartEvent,
-  closestCenter,
+  pointerWithin,
 } from '@dnd-kit/core';
-import { Save, Trash2, GitFork } from 'lucide-react';
+import { Save, Trash2, GitFork, Lock, Unlock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -25,6 +25,7 @@ import type { CodeBlock as CodeBlockType } from '@/types';
 import BlockCategory from '@/components/block-category';
 import CodeBlock from '@/components/code-block';
 import WorkspaceDropZone from '@/components/workspace-drop-zone';
+import { useToast } from '@/components/toast-provider';
 
 interface WorkspaceBlock extends CodeBlockType {
   instanceId: string;
@@ -32,59 +33,41 @@ interface WorkspaceBlock extends CodeBlockType {
 }
 
 export default function Editor() {
+  // State management
+  const { showError } = useToast();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [workspaceBlocks, setWorkspaceBlocks] = useState<WorkspaceBlock[]>([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [projectNameConfirm, setProjectNameConfirm] = useState('');
   const [projectTitle, setProjectTitle] = useState('Untitled Project');
+  const [isPublic, setIsPublic] = useState(true);
 
+  // Track active drag operation
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
   };
 
+  // Handle drag end and block placement
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     setActiveId(null);
 
-    if (!over) return;
-
-    // Handle reordering within workspace
-    if (over.id !== 'workspace') {
-      const activeBlock = workspaceBlocks.find(
-        (b) => b.instanceId === active.id
-      );
-      const overBlock = workspaceBlocks.find((b) => b.instanceId === over.id);
-
-      if (activeBlock && overBlock) {
-        const oldIndex = workspaceBlocks.indexOf(activeBlock);
-        const newIndex = workspaceBlocks.indexOf(overBlock);
-
-        const newBlocks = [...workspaceBlocks];
-        newBlocks.splice(oldIndex, 1);
-        newBlocks.splice(newIndex, 0, activeBlock);
-
-        setWorkspaceBlocks(newBlocks);
-        return;
-      }
-    }
-
-    // Handle new block drops
-    if (over.id === 'workspace') {
+    // Always treat as workspace drop if we're over any valid target
+    if (over) {
       const blockLimit = 200;
       if (workspaceBlocks.length >= blockLimit) {
-        console.error(
-          `Blocks are limited to ${blockLimit}. You cannot add more`
-        );
+        showError(`Block limit of ${blockLimit} reached. You cannot add more blocks.`);
         return;
       }
-      // find the block from categories
+
+      // Find the source block from our block categories
       const sourceBlock = blockCategories
         .flatMap((category) => category.blocks)
         .find((block) => block.id === active.id);
-      // if found, setup their initial values
-      // and add to workspace
+
       if (sourceBlock) {
         const instanceId = `${sourceBlock.id}-${Date.now()}`;
+        // Initialize block values with defaults
         const initialValues =
           sourceBlock.inputs?.reduce(
             (acc, input) => ({
@@ -94,19 +77,68 @@ export default function Editor() {
             {}
           ) ?? {};
 
+        const newBlocks: WorkspaceBlock[] = [];
+        
+        // Add the main block
         const newBlock: WorkspaceBlock = {
           ...sourceBlock,
           instanceId,
           values: initialValues,
         };
-        // set in workspace
-        console.log(workspaceBlocks);
-        console.log(newBlock);
-        setWorkspaceBlocks((blocks) => [...blocks, newBlock]);
+        newBlocks.push(newBlock);
+
+        // If it has an end block, add it immediately after
+        if (sourceBlock.hasEndBlock) {
+          const endBlock = blockCategories
+            .flatMap((category) => category.blocks)
+            .find((block) => block.isEndBlock && block.parentBlockId === sourceBlock.id);
+
+          if (endBlock) {
+            const endBlockInstance: WorkspaceBlock = {
+              ...endBlock,
+              instanceId: `${endBlock.id}-${Date.now()}`,
+              values: {},
+            };
+            newBlocks.push(endBlockInstance);
+          }
+        }
+
+        // Add new blocks to workspace
+        setWorkspaceBlocks((blocks) => [...blocks, ...newBlocks]);
+        return;
+      }
+
+      // Handle reordering if we're moving existing blocks
+      if (over.id !== 'workspace') {
+        const activeBlock = workspaceBlocks.find((b) => b.instanceId === active.id);
+        const overBlock = workspaceBlocks.find((b) => b.instanceId === over.id);
+
+        if (activeBlock && overBlock) {
+          const oldIndex = workspaceBlocks.indexOf(activeBlock);
+          const newIndex = workspaceBlocks.indexOf(overBlock);
+
+          const newBlocks = [...workspaceBlocks];
+          newBlocks.splice(oldIndex, 1);
+          newBlocks.splice(newIndex, 0, activeBlock);
+
+          // Move end block along with its parent
+          if (activeBlock.hasEndBlock) {
+            const endBlockIndex = newBlocks.findIndex(
+              (block) => block.isEndBlock && block.parentBlockId === activeBlock.id
+            );
+            if (endBlockIndex !== -1) {
+              const [endBlock] = newBlocks.splice(endBlockIndex, 1);
+              newBlocks.splice(newIndex + 1, 0, endBlock);
+            }
+          }
+
+          setWorkspaceBlocks(newBlocks);
+        }
       }
     }
   };
 
+  // Handle input changes in blocks
   const handleInputChange = (
     instanceId: string,
     inputName: string,
@@ -121,12 +153,34 @@ export default function Editor() {
     );
   };
 
+  // Handle block deletion
   const handleDeleteBlock = (instanceId: string) => {
-    setWorkspaceBlocks((blocks) =>
-      blocks.filter((block) => block.instanceId !== instanceId)
-    );
+    const blockToDelete = workspaceBlocks.find(block => block.instanceId === instanceId);
+    if (!blockToDelete) return;
+
+    if (blockToDelete.hasEndBlock) {
+      // Delete both the block and its end block
+      setWorkspaceBlocks(blocks => blocks.filter(block => 
+        block.instanceId !== instanceId && 
+        !(block.isEndBlock && block.parentBlockId === blockToDelete.id)
+      ));
+    } else if (blockToDelete.isEndBlock) {
+      // Delete both the end block and its parent
+      const parentBlock = workspaceBlocks.find(block => 
+        blockToDelete.parentBlockId === block.id
+      );
+      if (parentBlock) {
+        setWorkspaceBlocks(blocks => blocks.filter(block => 
+          block.instanceId !== instanceId && 
+          block.instanceId !== parentBlock.instanceId
+        ));
+      }
+    } else {
+      setWorkspaceBlocks(blocks => blocks.filter(block => block.instanceId !== instanceId));
+    }
   };
 
+  // Handle block reordering
   const handleReorderBlocks = (activeId: string, overId: string) => {
     setWorkspaceBlocks((blocks) => {
       const oldIndex = blocks.findIndex((b) => b.instanceId === activeId);
@@ -140,10 +194,12 @@ export default function Editor() {
     });
   };
 
+  // Project management functions
   const handleSave = () => {
     console.log('Saving project:', {
       title: projectTitle,
       blocks: workspaceBlocks,
+      isPublic,
     });
   };
 
@@ -157,12 +213,18 @@ export default function Editor() {
     setProjectNameConfirm('');
   };
 
+  const toggleVisibility = () => {
+    setIsPublic(!isPublic);
+  };
+
+  // Get the currently dragged block for overlay
   const activeBlock = activeId
     ? blockCategories.flatMap((c) => c.blocks).find((b) => b.id === activeId)
     : null;
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Project header */}
       <div className="flex items-center justify-between mb-8">
         <input
           type="text"
@@ -171,6 +233,24 @@ export default function Editor() {
           className="text-2xl font-bold bg-transparent border-none focus:outline-none text-purple-50 placeholder:text-purple-200/40"
         />
         <div className="flex items-center space-x-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={toggleVisibility}
+            className={isPublic ? 'text-green-400' : 'text-yellow-400'}
+          >
+            {isPublic ? (
+              <>
+                <Unlock className="h-4 w-4 mr-2" />
+                Public
+              </>
+            ) : (
+              <>
+                <Lock className="h-4 w-4 mr-2" />
+                Private
+              </>
+            )}
+          </Button>
           <Button variant="outline" size="sm" onClick={handleFork}>
             <GitFork className="h-4 w-4 mr-2" />
             Fork
@@ -190,12 +270,14 @@ export default function Editor() {
         </div>
       </div>
 
+      {/* Main editor area */}
       <DndContext
-        collisionDetection={closestCenter}
+        collisionDetection={pointerWithin}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Block palette */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -223,6 +305,7 @@ export default function Editor() {
             </Card>
           </motion.div>
 
+          {/* Workspace */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -237,11 +320,13 @@ export default function Editor() {
           </motion.div>
         </div>
 
+        {/* Drag overlay */}
         <DragOverlay>
           {activeBlock && <CodeBlock block={activeBlock} isTemplate />}
         </DragOverlay>
       </DndContext>
 
+      {/* Delete confirmation dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
