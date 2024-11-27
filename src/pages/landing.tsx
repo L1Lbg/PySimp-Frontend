@@ -45,7 +45,7 @@ export default function Landing() {
           <span className="text-purple-400"> No coding required.</span>
         </h1>
         <p className="text-xl text-purple-200/60 mb-8">
-          Unlock the power of Python-level automation with our intuitive drag-and-drop interface, saving you hours every week. Create powerful workflows visually, achieving results once limited to expert programmers. Experience the freedom to focus on what truly matters, with immediate results and no steep learning curves. Autonomy, freedom, and efficiency at your fingertips.
+        Unlock the power of Python-level automation with our intuitive drag-and-drop interface, saving you hours every week. Create powerful workflows visually, achieving results once limited to expert programmers and experience the freedom to focus on what truly matters. Autonomy, freedom, and efficiency at your fingertips. 
         </p>
 
         <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-16">
@@ -79,7 +79,7 @@ export default function Landing() {
         <div className="relative">
           <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10 h-20 bottom-0"></div>
           <img
-            src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&q=80"
+            src="/landingimage.jpg"
             alt="Code editor interface"
             className="rounded-lg shadow-2xl mb-16"
           />
@@ -160,7 +160,7 @@ export default function Landing() {
         <div className="container mx-auto px-4">
           <div className="bg-purple-500 rounded-2xl p-12 text-center">
             <h2 className="text-3xl font-bold mb-4">Join the autonomy movement!</h2>
-            <p className="text-xl mb-8">Join our waitlist and be the first to experience the future of visual programming</p>
+            <p className="text-xl mb-8"> Be among the first to experience our Free Trial and enjoy Exclusive, Personalized Automations tailored to solve your unique challenges and optimize your workflow.</p>
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               className="inline-flex items-center gap-2 bg-white text-purple-500 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
