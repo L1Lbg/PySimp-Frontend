@@ -62,7 +62,7 @@ export default function Landing() {
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-3 bg-purple-500 hover:bg-purple-600 rounded-lg font-semibold flex items-center gap-2 transition-colors disabled:opacity-50"
+            className="px-6 py-3 bg-purple-500 hover:bg-purple-600 rounded-lg font-semibold flex items-center gap-2 transition-colors disabled:opacity-50"
             >
               {loading ? 'Joining...' : 'Join Waitlist'}
               <ArrowRight className="h-4 w-4" />
