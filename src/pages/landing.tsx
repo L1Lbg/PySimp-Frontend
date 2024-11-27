@@ -38,6 +38,11 @@ export default function Landing() {
 
   return (
     <>
+          <img
+              src="/Logo.png"
+              alt="Logo"
+              className="rounded-lg shadow-2xl mx-auto w-[70vw] max-w-[400px] mx-auto"
+            />
       <div className="text-center max-w-4xl mx-auto px-4 pt-20">
         <h1 className="text-5xl font-bold mb-6">
           Automate your tasks and take control of your computer like a pro.
