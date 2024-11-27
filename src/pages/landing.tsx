@@ -40,12 +40,12 @@ export default function Landing() {
     <>
       <div className="text-center max-w-4xl mx-auto px-4 pt-20">
         <h1 className="text-5xl font-bold mb-6">
-          Transform Ideas into Python Scripts
-          <span className="text-purple-400"> Without Code</span>
+          Automate your tasks and take control of your computer like a pro.
+          <br />
+          <span className="text-purple-400"> No coding required.</span>
         </h1>
         <p className="text-xl text-purple-200/60 mb-8">
-          Build powerful automation scripts using our visual block editor. 
-          From mouse control to web requests, create Python scripts without writing a single line of code.
+          Unlock the power of Python-level automation with our intuitive drag-and-drop interface, saving you hours every week. Create powerful workflows visually, achieving results once limited to expert programmers. Experience the freedom to focus on what truly matters, with immediate results and no steep learning curves. Autonomy, freedom, and efficiency at your fingertips.
         </p>
 
         <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-16">
@@ -69,10 +69,10 @@ export default function Landing() {
             </button>
           </div>
           {submitted && (
-            <div className="mt-2 text-green-400 flex items-center justify-center gap-2">
-              <CheckCircle2 className="h-5 w-5" />
-              <p>Thanks for joining! We'll notify you soon.</p>
-            </div>
+            <div className="mt-2 text-green-400 flex justify-center gap-2">
+              <CheckCircle2 className="h-5 w-10 flex " />
+              <p>Thanks for joining! Please check your inbox to know about the benefits of joining the wait-list.</p>
+            </div> 
           )}
         </form>
 
@@ -113,7 +113,7 @@ export default function Landing() {
       <div className="py-24">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Why Choose Pysimp?</h2>
+            <h2 className="text-3xl font-bold mb-4">Why Choose Autonomia?</h2>
             <p className="text-purple-200/60">Powerful features that make automation accessible to everyone</p>
           </div>
 
@@ -134,7 +134,7 @@ export default function Landing() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4">Use Cases</h2>
-            <p className="text-purple-200/60">Discover how Pysimp can transform your workflow</p>
+            <p className="text-purple-200/60">Discover how Autonomia can transform your workflow</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -159,7 +159,7 @@ export default function Landing() {
       <div className="py-24">
         <div className="container mx-auto px-4">
           <div className="bg-purple-500 rounded-2xl p-12 text-center">
-            <h2 className="text-3xl font-bold mb-4">Ready to Simplify Your Automation?</h2>
+            <h2 className="text-3xl font-bold mb-4">Join the autonomy movement!</h2>
             <p className="text-xl mb-8">Join our waitlist and be the first to experience the future of visual programming</p>
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
