@@ -167,7 +167,7 @@ export default function Landing() {
             <h2 className="text-3xl font-bold mb-4">Join the digital autonomy movement!</h2>
             <p className="text-xl mb-8"> Be among the first to experience our Free Trial and enjoy Exclusive, Personalized Automations tailored to solve your unique challenges and optimize your workflow.</p>
             <button
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              onClick={() => {document.querySelector("#root > div.min-h-screen.bg-gradient-to-b.from-black.to-purple-950 > div > div.text-center.max-w-4xl.mx-auto.px-4.pt-20 > form > div > input")?.scrollIntoView({behavior:'smooth', block:'center'})}}
               className="inline-flex items-center gap-2 bg-white text-purple-500 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
             >
               Join Waitlist
