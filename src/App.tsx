@@ -10,7 +10,6 @@ import Editor from '@/pages/editor';
 
 function App() {
   const debug = import.meta.env.VITE_DEBUG.toLowerCase() == 'true'
-  console.log(debug)
   return (
     <Router>
       <div className="min-h-screen bg-gradient-to-b from-black to-purple-950">
