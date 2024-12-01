@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { blockCategories } from '@/data/blockCategories';
-import type { CodeBlock as CodeBlockType } from '@/types';
 
 interface BlockSearchProps {
   onSearch: (query: string) => void;
