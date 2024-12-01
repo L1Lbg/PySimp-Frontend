@@ -1,18 +1,15 @@
 export interface CodeBlock {
   id: string;
-  type: string;
   category: string;
   name: string;
   description: string;
-  template: string;
   hasEndBlock?: boolean;
   isEndBlock?: boolean;
   parentBlockId?: string;
-  inputs?: {
+  inputs?: Array<{
     name: string;
     type: string;
-    default?: any;
-  }[];
+  }>;
 }
 
 export interface BlockCategory {

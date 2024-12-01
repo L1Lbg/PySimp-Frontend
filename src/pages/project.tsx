@@ -27,7 +27,7 @@ export default function Project() {
   }, [id]);
 
   const handleFork = () => {
-    // Implementation for forking projects
+    navigate('/create/0');
   };
 
   const handleDownload = () => {
@@ -35,7 +35,7 @@ export default function Project() {
   };
 
   const handleViewCode = () => {
-    navigate(`/new?editor=0`);
+    navigate(`/create/${id}?editor=0`);
   };
 
   if (!project) return null;

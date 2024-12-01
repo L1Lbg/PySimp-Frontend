@@ -46,7 +46,7 @@ export default function Navbar() {
                 <Link to="/community" className="text-purple-200/60 hover:text-purple-50">
                   Community
                 </Link>
-                <Link to="/new" className="hidden sm:flex">
+                <Link to="/create/0" className="hidden sm:flex">
                   <Button size="sm" className="space-x-2">
                     <Plus className="h-4 w-4" />
                     <span>New Project</span>

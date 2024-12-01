@@ -21,7 +21,6 @@ export default function WorkspaceDropZone({
   blocks, 
   onInputChange, 
   onDeleteBlock, 
-  onReorder,
   canEdit = true 
 }: WorkspaceDropZoneProps) {
   const { setNodeRef, isOver } = useDroppable({

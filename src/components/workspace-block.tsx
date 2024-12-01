@@ -44,6 +44,9 @@ export default function WorkspaceBlock({
     opacity: isDragging ? 0.5 : 1,
   };
 
+
+
+
   return (
     <Card
       ref={setNodeRef}
@@ -82,11 +85,11 @@ export default function WorkspaceBlock({
             <div key={input.name} className="grid grid-cols-3 gap-2 items-center">
               <label className="text-sm text-purple-200/80">{input.name}:</label>
               <Input
-                type={input.type === 'number' ? 'number' : 'text'}
-                value={values[input.name] ?? input.default ?? ''}
+                type={input.type === 'int' ? 'number' : 'text'} // if its int, set type as number else set as text
+                value={values[input.name] ?? ''}
                 onChange={(e) => onInputChange(input.name, e.target.value)}
                 className="col-span-2 h-8 text-sm"
-                placeholder={`${input.default}`}
+                placeholder={`${input.name}`}
                 disabled={!canEdit}
               />
             </div>

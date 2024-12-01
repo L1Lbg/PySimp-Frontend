@@ -1,5 +1,6 @@
+// Import necessary dependencies and components
 import { useState, useEffect } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   DndContext,
@@ -22,13 +23,15 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { blockCategories } from '@/data/blockCategories';
-import type { CodeBlock as CodeBlockType } from '@/types';
+import { mockProjects } from '@/data/mockData';
+import type { CodeBlock as CodeBlockType, Project } from '@/types';
 import BlockCategory from '@/components/block-category';
 import CodeBlock from '@/components/code-block';
 import WorkspaceDropZone from '@/components/workspace-drop-zone';
 import BlockSearch from '@/components/block-search';
 import { useToast } from '@/components/toast-provider';
 
+// Define the structure for workspace blocks that includes instance-specific data
 interface WorkspaceBlock extends CodeBlockType {
   instanceId: string;
   values: Record<string, any>;
@@ -36,9 +39,12 @@ interface WorkspaceBlock extends CodeBlockType {
 
 export default function Editor() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const canEdit = searchParams.get('editor') !== '0';
   const { showError } = useToast();
+
+  // State management for the editor
   const [activeId, setActiveId] = useState<string | null>(null);
   const [workspaceBlocks, setWorkspaceBlocks] = useState<WorkspaceBlock[]>([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -46,25 +52,75 @@ export default function Editor() {
   const [projectTitle, setProjectTitle] = useState('Untitled Project');
   const [isPublic, setIsPublic] = useState(true);
   const [blockSearchQuery, setBlockSearchQuery] = useState('');
+  const [filteredCategories, setFilteredCategories] = useState(blockCategories);
 
+  // Load project data when editing an existing project
   useEffect(() => {
-    if (id) {
-      // Fetch project data when editing existing project
-      // This would normally be an API call
-      setProjectTitle(`Project ${id}`);
+    const loadProject = async () => {
+      if (id && id !== '0') {
+        try {
+          // Attempt to fetch project from API
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/${id}`);
+          const data = await response.json();
+          setProjectTitle(data.title);
+          setIsPublic(data.isPublic ?? true);
+          // Convert project blocks to workspace blocks
+          if (data.blocks) {
+            const workspaceBlocks = data.blocks.map((block: CodeBlockType) => ({
+              ...block,
+              instanceId: `${block.id}-${Date.now()}`,
+              values: block.inputs?.reduce((acc, input) => ({
+                ...acc,
+                [input.name]: '',
+              }), {}) ?? {},
+            }));
+            setWorkspaceBlocks(workspaceBlocks);
+          }
+        } catch (error) {
+          // Fall back to mock data if API fails
+          const mockProject = mockProjects.find(p => p.id === id);
+          if (mockProject) {
+            setProjectTitle(mockProject.title);
+            setIsPublic(true);
+          } else {
+            showError('Project not found');
+            navigate('/create/0');
+          }
+        }
+      }
+    };
+
+    loadProject();
+  }, [id, navigate, showError]);
+
+  // Filter block categories based on search query
+  useEffect(() => {
+    if (blockSearchQuery) {
+      const filtered = blockCategories.map(category => ({
+        ...category,
+        blocks: category.blocks.filter(block =>
+          block.name.toLowerCase().includes(blockSearchQuery.toLowerCase()) ||
+          block.description.toLowerCase().includes(blockSearchQuery.toLowerCase())
+        )
+      })).filter(category => category.blocks.length > 0);
+      setFilteredCategories(filtered);
+    } else {
+      setFilteredCategories(blockCategories);
     }
-  }, [id]);
+  }, [blockSearchQuery]);
 
   // Get the currently dragged block for overlay
   const activeBlock = activeId
     ? blockCategories.flatMap((c) => c.blocks).find((b) => b.id === activeId)
     : null;
 
+  // Handle the start of a drag operation
   const handleDragStart = (event: DragStartEvent) => {
     if (!canEdit) return;
     setActiveId(event.active.id as string);
   };
 
+  // Handle the end of a drag operation
   const handleDragEnd = (event: DragEndEvent) => {
     if (!canEdit) return;
     const { active, over } = event;
@@ -77,6 +133,7 @@ export default function Editor() {
         return;
       }
 
+      // get id from block categories
       const sourceBlock = blockCategories
         .flatMap((category) => category.blocks)
         .find((block) => block.id === active.id);
@@ -86,7 +143,7 @@ export default function Editor() {
         const initialValues = sourceBlock.inputs?.reduce(
           (acc, input) => ({
             ...acc,
-            [input.name]: input.default,
+            [input.name]: '',
           }),
           {}
         ) ?? {};
@@ -100,6 +157,7 @@ export default function Editor() {
         };
         newBlocks.push(newBlock);
 
+        // If the block requires an end block, add it automatically
         if (sourceBlock.hasEndBlock) {
           const endBlock = blockCategories
             .flatMap((category) => category.blocks)
@@ -120,6 +178,7 @@ export default function Editor() {
     }
   };
 
+  // Handle changes to block input values
   const handleInputChange = (instanceId: string, inputName: string, value: any) => {
     setWorkspaceBlocks((blocks) =>
       blocks.map((block) =>
@@ -130,16 +189,19 @@ export default function Editor() {
     );
   };
 
+  // Handle block deletion
   const handleDeleteBlock = (instanceId: string) => {
     const blockToDelete = workspaceBlocks.find(block => block.instanceId === instanceId);
     if (!blockToDelete) return;
 
     if (blockToDelete.hasEndBlock) {
+      // Delete both the block and its end block
       setWorkspaceBlocks(blocks => blocks.filter(block => 
         block.instanceId !== instanceId && 
         !(block.isEndBlock && block.parentBlockId === blockToDelete.id)
       ));
     } else if (blockToDelete.isEndBlock) {
+      // Delete both the end block and its parent
       const parentBlock = workspaceBlocks.find(block => 
         blockToDelete.parentBlockId === block.id
       );
@@ -150,10 +212,12 @@ export default function Editor() {
         ));
       }
     } else {
+      // Delete single block
       setWorkspaceBlocks(blocks => blocks.filter(block => block.instanceId !== instanceId));
     }
   };
 
+  // Handle block reordering
   const handleReorderBlocks = (activeId: string, overId: string) => {
     setWorkspaceBlocks((blocks) => {
       const oldIndex = blocks.findIndex((b) => b.instanceId === activeId);
@@ -167,16 +231,57 @@ export default function Editor() {
     });
   };
 
-  const handleSave = () => {
-    console.log('Saving project:', {
-      title: projectTitle,
-      blocks: workspaceBlocks,
-      isPublic,
-    });
+  // Handle project saving
+  const handleSave = async () => {
+    try {
+      const projectData = {
+        id: id === '0' ? undefined : id,
+        title: projectTitle,
+        blocks: workspaceBlocks,
+        isPublic,
+      };
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/projects${id === '0' ? '' : `/${id}`}`, {
+        method: id === '0' ? 'POST' : 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(projectData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save project');
+      }
+
+      const savedProject = await response.json();
+      if (id === '0') {
+        navigate(`/create/${savedProject.id}`);
+      }
+    } catch (error) {
+      console.error('Failed to save project:', error);
+      showError('Failed to save project. Please try again.');
+    }
   };
 
-  const handleDelete = () => {
-    console.log('Deleting project');
+  // Handle project deletion
+  const handleDelete = async () => {
+    if (id === '0') return;
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete project');
+      }
+
+      navigate('/create/0');
+    } catch (error) {
+      console.error('Failed to delete project:', error);
+      showError('Failed to delete project. Please try again.');
+    }
+
     setDeleteDialogOpen(false);
     setProjectNameConfirm('');
   };
@@ -184,7 +289,7 @@ export default function Editor() {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Project header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="">
         {canEdit ? (
           <input
             type="text"
@@ -195,8 +300,8 @@ export default function Editor() {
         ) : (
           <h1 className="text-2xl font-bold text-purple-50">{projectTitle}</h1>
         )}
-        
-        <div className="flex items-center space-x-4">
+        <br />
+        <div className="flex items-center space-x-4 mb-5 mt-5">
           {canEdit && (
             <>
               <Button
@@ -227,7 +332,11 @@ export default function Editor() {
               </Button>
             </>
           )}
-          <Button variant="outline" size="sm">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => navigate(`/create/0`)}
+          >
             <Copy className="h-4 w-4 mr-2" />
             Fork
           </Button>
@@ -246,21 +355,21 @@ export default function Editor() {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="lg:flex block gap-8">
           {/* Block palette */}
           {canEdit && (
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="space-y-4 lg:col-span-4"
+              className="lg:col-span-4 h-[calc(100vh-12rem)] lg:w-1/2 w-full flex flex-col mb-8"
             >
-              <Card className="overflow-hidden">
+              <Card className="flex-1 flex flex-col overflow-hidden">
                 <div className="p-4 border-b border-purple-200/20">
                   <BlockSearch onSearch={setBlockSearchQuery} />
                 </div>
-                <Tabs defaultValue="math">
+                <Tabs defaultValue={filteredCategories[0]?.id} className="flex-1 flex flex-col">
                   <TabsList className="w-full justify-start border-b border-purple-200/20 rounded-none bg-purple-950/20">
-                    {blockCategories.map((category) => (
+                    {filteredCategories.map((category) => (
                       <TabsTrigger
                         key={category.id}
                         value={category.id}
@@ -270,15 +379,21 @@ export default function Editor() {
                       </TabsTrigger>
                     ))}
                   </TabsList>
-                  {blockCategories.map((category) => (
-                    <TabsContent key={category.id} value={category.id}>
-                      <BlockCategory 
-                        category={category} 
-                        activeId={activeId}
-                        globalSearchQuery={blockSearchQuery}
-                      />
-                    </TabsContent>
-                  ))}
+                  <div className="flex-1 overflow-hidden">
+                    {filteredCategories.map((category) => (
+                      <TabsContent 
+                        key={category.id} 
+                        value={category.id}
+                        className="h-full m-0"
+                      >
+                        <BlockCategory 
+                          category={category} 
+                          activeId={activeId}
+                          globalSearchQuery=""
+                        />
+                      </TabsContent>
+                    ))}
+                  </div>
                 </Tabs>
               </Card>
             </motion.div>
@@ -288,10 +403,9 @@ export default function Editor() {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="space-y-4"
+            className="space-y-4 lg:w-1/2 w-full"
             style={{ 
               gridColumn: canEdit ? 'span 8 / span 8' : '1 / -1',
-              width: '100%'
             }}
           >
             <WorkspaceDropZone

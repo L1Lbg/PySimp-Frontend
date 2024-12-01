@@ -76,7 +76,7 @@ export default function Landing() {
           {submitted && (
             <div className="mt-2 text-green-400 flex justify-center gap-2">
               <CheckCircle2 className="h-5 w-10 flex " />
-              <p>Thanks for joining! Please check your inbox to know about the benefits of joining the wait-list.</p>
+              <p>Thanks for joining! Please check your inbox to receive your reward.</p>
             </div> 
           )}
         </form>
@@ -164,7 +164,7 @@ export default function Landing() {
       <div className="py-24">
         <div className="container mx-auto px-4">
           <div className="bg-purple-500 rounded-2xl p-12 text-center">
-            <h2 className="text-3xl font-bold mb-4">Join the autonomy movement!</h2>
+            <h2 className="text-3xl font-bold mb-4">Join the digital autonomy movement!</h2>
             <p className="text-xl mb-8"> Be among the first to experience our Free Trial and enjoy Exclusive, Personalized Automations tailored to solve your unique challenges and optimize your workflow.</p>
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
