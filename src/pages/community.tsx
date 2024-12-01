@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { mockProjects } from '@/data/mockData';
 import { Project } from '@/types';
@@ -7,6 +8,7 @@ import { mockDataOnError } from '@/lib/utils';
 import 'swiper/css';
 
 export default function Community() {
+  const navigate = useNavigate();
   const [featured, setFeatured] = useState<Project[]>([]);
   const [hot, setHot] = useState<Project[]>([]);
   const [mostLiked, setMostLiked] = useState<Project[]>([]);
@@ -34,6 +36,10 @@ export default function Community() {
     fetchProjects();
   }, []);
 
+  const handleProjectClick = (projectId: string) => {
+    navigate(`/project/${projectId}`);
+  };
+
   const ProjectSection = ({ title, projects }: { title: string; projects: Project[] }) => (
     <section className="mb-12">
       <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
@@ -49,7 +55,7 @@ export default function Community() {
         className="pb-4"
       >
         {projects.map((project) => (
-          <SwiperSlide key={project.id}>
+          <SwiperSlide key={project.id} className="cursor-pointer" onClick={() => handleProjectClick(project.id)}>
             <ProjectCard project={project} />
           </SwiperSlide>
         ))}

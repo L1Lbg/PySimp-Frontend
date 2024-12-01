@@ -16,9 +16,16 @@ interface WorkspaceBlockProps {
   values: Record<string, any>;
   onInputChange: (inputName: string, value: string) => void;
   onDelete: () => void;
+  canEdit?: boolean;
 }
 
-export default function WorkspaceBlock({ block, values, onInputChange, onDelete }: WorkspaceBlockProps) {
+export default function WorkspaceBlock({ 
+  block, 
+  values, 
+  onInputChange, 
+  onDelete,
+  canEdit = true 
+}: WorkspaceBlockProps) {
   const {
     attributes,
     listeners,
@@ -27,7 +34,8 @@ export default function WorkspaceBlock({ block, values, onInputChange, onDelete 
     transition,
     isDragging
   } = useSortable({
-    id: block.instanceId
+    id: block.instanceId,
+    disabled: !canEdit
   });
 
   const style = {
@@ -43,25 +51,29 @@ export default function WorkspaceBlock({ block, values, onInputChange, onDelete 
       className="bg-purple-950/30 border-purple-200/20 hover:border-purple-400/30 transition-colors"
     >
       <div className="flex items-center p-4 border-b border-purple-200/10">
-        <button
-          className="p-1 hover:bg-purple-200/10 rounded-md transition-colors cursor-grab active:cursor-grabbing"
-          {...attributes}
-          {...listeners}
-        >
-          <GripVertical className="h-4 w-4 text-purple-200/40" />
-        </button>
+        {canEdit && (
+          <button
+            className="p-1 hover:bg-purple-200/10 rounded-md transition-colors cursor-grab active:cursor-grabbing"
+            {...attributes}
+            {...listeners}
+          >
+            <GripVertical className="h-4 w-4 text-purple-200/40" />
+          </button>
+        )}
         <div className="flex-1 mx-3">
           <h3 className="font-semibold">{block.name}</h3>
           <p className="text-sm text-purple-200/60">{block.description}</p>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 text-purple-200/40 hover:text-purple-200"
-          onClick={onDelete}
-        >
-          <X className="h-4 w-4" />
-        </Button>
+        {canEdit && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-purple-200/40 hover:text-purple-200"
+            onClick={onDelete}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        )}
       </div>
       
       {block.inputs && (
@@ -75,6 +87,7 @@ export default function WorkspaceBlock({ block, values, onInputChange, onDelete 
                 onChange={(e) => onInputChange(input.name, e.target.value)}
                 className="col-span-2 h-8 text-sm"
                 placeholder={`${input.default}`}
+                disabled={!canEdit}
               />
             </div>
           ))}

@@ -14,20 +14,24 @@ interface WorkspaceDropZoneProps {
   onInputChange: (instanceId: string, inputName: string, value: any) => void;
   onDeleteBlock: (instanceId: string) => void;
   onReorder: (activeId: string, overId: string) => void;
+  canEdit?: boolean;
 }
 
-export default function WorkspaceDropZone({ blocks, onInputChange, onDeleteBlock, onReorder }: WorkspaceDropZoneProps) {
-  // Set up droppable area for blocks
+export default function WorkspaceDropZone({ 
+  blocks, 
+  onInputChange, 
+  onDeleteBlock, 
+  onReorder,
+  canEdit = true 
+}: WorkspaceDropZoneProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: 'workspace',
   });
 
-  // Calculate indentation level for each block
   const getBlockIndentation = (index: number) => {
     let indentLevel = 0;
     const blockStack: { id: string; level: number }[] = [];
 
-    // First pass: find the parent block's indentation level for end blocks
     const endBlockIndents = new Map<string, number>();
     blocks.forEach((block, i) => {
       if (block.hasEndBlock) {
@@ -42,11 +46,9 @@ export default function WorkspaceDropZone({ blocks, onInputChange, onDeleteBlock
       }
     });
 
-    // Reset for actual indentation calculation
     indentLevel = 0;
     blockStack.length = 0;
 
-    // Calculate indentation for the current block
     for (let i = 0; i < index; i++) {
       const block = blocks[i];
       
@@ -61,13 +63,11 @@ export default function WorkspaceDropZone({ blocks, onInputChange, onDeleteBlock
       }
     }
 
-    // If current block is an end block, use its stored indentation
     const currentBlock = blocks[index];
     if (currentBlock.isEndBlock) {
       return endBlockIndents.get(currentBlock.instanceId) ?? indentLevel;
     }
 
-    // Return indentation in pixels (24px per level)
     return indentLevel * 24;
   };
 
@@ -79,7 +79,6 @@ export default function WorkspaceDropZone({ blocks, onInputChange, onDeleteBlock
       }`}
       style={{ position: 'relative' }}
     >
-      <div className="text-sm text-purple-200/60 mb-4">Workspace</div>
       <SortableContext items={blocks.map(b => b.instanceId)} strategy={verticalListSortingStrategy}>
         <div className="space-y-3">
           {blocks.map((block, index) => {
@@ -95,18 +94,19 @@ export default function WorkspaceDropZone({ blocks, onInputChange, onDeleteBlock
                   values={block.values}
                   onInputChange={(inputName, value) => onInputChange(block.instanceId, inputName, value)}
                   onDelete={() => onDeleteBlock(block.instanceId)}
+                  canEdit={canEdit}
                 />
               </div>
             );
           })}
-          {blocks.length === 0 && (
+          {blocks.length === 0 && canEdit && (
             <div className="flex items-center justify-center h-32 border-2 border-dashed border-purple-200/20 rounded-lg">
               <p className="text-purple-200/40">Drag blocks here to start building</p>
             </div>
           )}
         </div>
       </SortableContext>
-      {isOver && (
+      {isOver && canEdit && (
         <div 
           className="absolute inset-0 pointer-events-none border-2 border-purple-400/50 rounded-lg"
           style={{ zIndex: 1000 }}

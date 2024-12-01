@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { BadgeCheck, Heart, GitFork, Download } from 'lucide-react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { BadgeCheck, Heart, Copy, Download, Code2 } from 'lucide-react';
 import { Project as ProjectType } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { mockProjects } from '@/data/mockData';
-import { mockDataOnError } from '@/lib/utils';
 
 export default function Project() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [project, setProject] = useState<ProjectType | null>(null);
+  const [showCode, setShowCode] = useState(false);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -33,6 +34,10 @@ export default function Project() {
     // Implementation for downloading projects
   };
 
+  const handleViewCode = () => {
+    navigate(`/new?editor=0`);
+  };
+
   if (!project) return null;
 
   return (
@@ -48,10 +53,19 @@ export default function Project() {
           
           <div className="flex items-center space-x-4">
             <Button
+              onClick={handleViewCode}
+              className="space-x-2"
+            >
+              <Code2 className="h-4 w-4" />
+              <span>View Code</span>
+            </Button>
+            
+            <Button
+              variant="outline"
               onClick={handleFork}
               className="space-x-2"
             >
-              <GitFork className="h-4 w-4" />
+              <Copy className="h-4 w-4" />
               <span>Fork</span>
             </Button>
             
@@ -68,11 +82,13 @@ export default function Project() {
 
         <p className="text-purple-200/60 mb-8">{project.description}</p>
 
-        <Card className="mb-8">
-          <pre className="p-6 text-purple-50 overflow-x-auto">
-            <code>{project.code.join('\n')}</code>
-          </pre>
-        </Card>
+        {project.code && (
+          <Card className="mb-8">
+            <pre className="p-6 text-purple-50 overflow-x-auto">
+              <code>{project.code.join('\n')}</code>
+            </pre>
+          </Card>
+        )}
 
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">

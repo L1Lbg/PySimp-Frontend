@@ -28,6 +28,8 @@ export interface Project {
   likes: number;
   isLiked: boolean;
   isVerified?: boolean;
+  code?: string[];
+  blocks?: CodeBlock[];
   author: {
     id: string;
     username: string;
