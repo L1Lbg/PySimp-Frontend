@@ -7,9 +7,17 @@ import Profile from '@/pages/profile';
 import Search from '@/pages/search';
 import Settings from '@/pages/settings';
 import Editor from '@/pages/editor';
+import { useEffect, useState } from 'react';
 
 function App() {
-  const debug = import.meta.env.VITE_DEBUG.toLowerCase() == 'true'
+  const [debug, setDebug] = useState(false)
+  useEffect(()=>{
+    try {
+      setDebug(import.meta.env.VITE_DEBUG.toLowerCase() == 'true')
+    } catch (error) {
+      setDebug(true)
+    }
+  },[])
   return (
     <Router>
       <div className="min-h-screen bg-gradient-to-b from-black to-purple-950">

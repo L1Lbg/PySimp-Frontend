@@ -22,10 +22,11 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { blockCategories } from '@/data/blockCategories';
 import { mockProjects } from '@/data/mockData';
 import type { CodeBlock as CodeBlockType, Project } from '@/types';
 import BlockCategory from '@/components/block-category';
+import BlockCategoryType from '@/components/block-category';
+import { blockCategoriesMock } from '@/data/blockCategories';
 import CodeBlock from '@/components/code-block';
 import WorkspaceDropZone from '@/components/workspace-drop-zone';
 import BlockSearch from '@/components/block-search';
@@ -52,7 +53,36 @@ export default function Editor() {
   const [projectTitle, setProjectTitle] = useState('Untitled Project');
   const [isPublic, setIsPublic] = useState(true);
   const [blockSearchQuery, setBlockSearchQuery] = useState('');
-  const [filteredCategories, setFilteredCategories] = useState(blockCategories);
+  const [blockCategories, setBlockCategories] = useState(blockCategoriesMock)
+  const [filteredCategories, setFilteredCategories] = useState(blockCategoriesMock);
+
+  useEffect(()=>{
+      try {
+        let token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMzMTY5NDcwLCJpYXQiOjE3MzMxNjU4NzAsImp0aSI6ImYzZWJhMzVjZWViYTQ0ZTM5MzFiYzQwMGY0NmUyOTFkIiwidXNlcl9pZCI6Imx1Y2EuYmFleWVuc0BpY2xvdWQuY29tIn0.d4I0gCrGBprVaYm-5k458kep85VdIGIW0KyPD504oHA';
+        // Attempt to fetch data from the API
+        fetch(`${import.meta.env.VITE_API_URL}/api/categories/`, {headers:{'Authorization':`Bearer ${token}`}})
+        .then(
+          res => {
+            if(!res.ok){
+              throw new Error('Failed to fetch categories');
+            }
+            return res.json()
+          }
+        )
+        .then(
+          data => {
+            setBlockCategories(data)
+          }
+        )
+      } catch (error) {
+        console.error('API fetch failed, falling back to mock data:', error);
+      }
+  },[])
+
+  useEffect(()=>{
+    console.log('changing block categories')
+    setFilteredCategories(blockCategories)
+  }, [blockCategories])
 
   // Load project data when editing an existing project
   useEffect(() => {
