@@ -9,7 +9,7 @@ import {
   DragStartEvent,
   pointerWithin,
 } from '@dnd-kit/core';
-import { Save, Trash2, Copy, Lock, Unlock } from 'lucide-react';
+import { Save, Trash2, Copy, Lock, Unlock, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -58,9 +58,8 @@ export default function Editor() {
 
   useEffect(()=>{
       try {
-        let token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMzMTY5NDcwLCJpYXQiOjE3MzMxNjU4NzAsImp0aSI6ImYzZWJhMzVjZWViYTQ0ZTM5MzFiYzQwMGY0NmUyOTFkIiwidXNlcl9pZCI6Imx1Y2EuYmFleWVuc0BpY2xvdWQuY29tIn0.d4I0gCrGBprVaYm-5k458kep85VdIGIW0KyPD504oHA';
         // Attempt to fetch data from the API
-        fetch(`${import.meta.env.VITE_API_URL}/api/categories/`, {headers:{'Authorization':`Bearer ${token}`}})
+        fetch(`${import.meta.env.VITE_API_URL}/api/categories/`, {headers:{'Authorization':`Bearer ${localStorage.getItem('access')}`}})
         .then(
           res => {
             if(!res.ok){
@@ -80,7 +79,6 @@ export default function Editor() {
   },[])
 
   useEffect(()=>{
-    console.log('changing block categories')
     setFilteredCategories(blockCategories)
   }, [blockCategories])
 
@@ -90,23 +88,24 @@ export default function Editor() {
       if (id && id !== '0') {
         try {
           // Attempt to fetch project from API
-          const response = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/${id}`);
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/api/project/${id}`, 
+            {headers: {'Authorization': `Bearer ${localStorage.getItem('access')}`}}
+          );
           const data = await response.json();
           setProjectTitle(data.title);
-          setIsPublic(data.isPublic ?? true);
-          // Convert project blocks to workspace blocks
-          if (data.blocks) {
-            const workspaceBlocks = data.blocks.map((block: CodeBlockType) => ({
+          setIsPublic(data.public == true);
+          //todo: Convert project blocks to workspace blocks
+          if (data.json) {
+            const workspaceBlocks = data.json.map((block: CodeBlockType) => ({
               ...block,
-              instanceId: `${block.id}-${Date.now()}`,
-              values: block.inputs?.reduce((acc, input) => ({
-                ...acc,
-                [input.name]: '',
-              }), {}) ?? {},
+              
+
             }));
+            console.log(workspaceBlocks);
             setWorkspaceBlocks(workspaceBlocks);
           }
         } catch (error) {
+          console.error(error);
           // Fall back to mock data if API fails
           const mockProject = mockProjects.find(p => p.id === id);
           if (mockProject) {
@@ -261,37 +260,156 @@ export default function Editor() {
     });
   };
 
+  const updateProject = async (project_id, projectData) => {
+
+    fetch(`${import.meta.env.VITE_API_URL}/api/project/${project_id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${window.localStorage.getItem('access')}`
+      },
+      body: JSON.stringify(projectData),
+      }
+    )
+    .then(
+        response => {
+        if (!response.ok) {
+          throw new Error('Failed to save project');
+        } else {
+          if (id === '0') {
+            navigate(`/create/${project_id}`);
+          }
+        }
+        
+      }
+    )
+    .catch (
+      error => {
+        console.error('Failed to save project:', error);
+        showError('Failed to save project. Please try again.');
+      }
+    )   
+  }
+
   // Handle project saving
   const handleSave = async () => {
-    try {
+
+      let json = [];
+      
+      for (let index = 0; index < workspaceBlocks.length; index++) {
+        const element = workspaceBlocks[index];
+
+        console.log(element)
+
+        json.push({
+          'id':element.id,
+          'params':Object.values(element.values),
+        })
+      }
+
       const projectData = {
-        id: id === '0' ? undefined : id,
         title: projectTitle,
-        blocks: workspaceBlocks,
+        json: json,
         isPublic,
       };
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/projects${id === '0' ? '' : `/${id}`}`, {
-        method: id === '0' ? 'POST' : 'PUT',
+      let project_id = id
+      
+      // if project is not created, create one and then update it
+      if (id === '0'){
+        fetch(
+          `${import.meta.env.VITE_API_URL}/api/project/create`,{
+            method:'POST',
+            headers: {
+              'Authorization': `Bearer ${window.localStorage.getItem('access')}`,
+              'Content-Type': 'application/json'
+            },
+            body:JSON.stringify({
+              'title':projectTitle,
+            })
+          }
+        )
+        .then(
+          res => {
+            if (!res.ok) {
+              throw new Error('Failed to save project');
+            } else {
+              return res.json();
+            }
+          }
+        )
+        .then(
+          data => {
+            project_id = data.id;
+            updateProject(project_id, projectData);
+          }
+        )
+      } else {
+        updateProject(project_id, projectData);
+      }
+
+
+      
+  
+    }  
+
+  const handleDownload = async () => {
+    try {
+      
+      const platform = window.navigator.userAgent;
+      console.log('Downloading project')
+      let os = "Unknown OS";
+
+      if (platform.includes("Win")) { 
+          os = "Windows";
+      } else if (platform.includes("Mac")) { 
+          os = "MacOS";
+      } else if (platform.includes("X11") || platform.includes("Linux")) { 
+          os = "Linux";
+      }
+
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/project/${15}/download?os=${os.toLowerCase()}`, {
+        method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(projectData),
+          'Authorization': `Bearer ${window.localStorage.getItem('access')}`
+        }
       });
 
       if (!response.ok) {
         throw new Error('Failed to save project');
-      }
+      } else {
+        const data = await response.json()
 
-      const savedProject = await response.json();
-      if (id === '0') {
-        navigate(`/create/${savedProject.id}`);
+        //*handle different OS bat and bash
+
+
+        // Create a Blob from the content
+        const blob = new Blob([data.script], { type: 'text/plain' });
+
+        // Create a temporary anchor element
+        const a = document.createElement('a');
+
+        // Create a URL for the Blob
+        const url = URL.createObjectURL(blob);
+
+        // Set the download attribute with the desired file name
+        a.href = url;
+        a.download = `${projectTitle}.bat`;
+
+        // Append the anchor to the document, trigger a click, and then remove the anchor
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        // Revoke the object URL after the download to free up memory
+        URL.revokeObjectURL(url);
       }
     } catch (error) {
       console.error('Failed to save project:', error);
       showError('Failed to save project. Please try again.');
     }
-  };
+  } 
 
   // Handle project deletion
   const handleDelete = async () => {
@@ -351,6 +469,14 @@ export default function Editor() {
                     Private
                   </>
                 )}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDownload}
+              >
+                  <Download className="h-4 w-4 mr-2" />
+                  Download
               </Button>
               <Button
                 variant="outline"
