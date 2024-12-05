@@ -53,6 +53,7 @@ export default function Editor() {
   const [blockSearchQuery, setBlockSearchQuery] = useState('');
   const [blockCategories, setBlockCategories] = useState(blockCategoriesMock)
   const [filteredCategories, setFilteredCategories] = useState(blockCategoriesMock);
+  const [isVerified, setIsVerified] = useState(false);
   const [saving, setSaving] = useState(false); // loading state
   const [liked, setLiked] = useState(false); // if user has the project in his favorites list
   const [liking, setLiking] = useState(false); 
@@ -166,6 +167,7 @@ export default function Editor() {
           setProjectTitle(data.title);
           setIsPublic(data.public == true);
           setLiked(data.user_favorited);
+          setIsVerified(data.approved);
 
 
           if (data.json) {
