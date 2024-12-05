@@ -9,7 +9,7 @@ import {
   DragStartEvent,
   pointerWithin,
 } from '@dnd-kit/core';
-import { Save, Trash2, Copy, Lock, Unlock, Download } from 'lucide-react';
+import { Save, Trash2, Copy, Lock, Unlock, Download, Heart, HeartOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -54,6 +54,9 @@ export default function Editor() {
   const [blockCategories, setBlockCategories] = useState(blockCategoriesMock)
   const [filteredCategories, setFilteredCategories] = useState(blockCategoriesMock);
   const [saving, setSaving] = useState(false); // loading state
+  const [liked, setLiked] = useState(false); // if user has the project in his favorites list
+  const [liking, setLiking] = useState(false); 
+  const [unsavedChanges, setUnsavedChanges] = useState(false);
 
   useEffect(()=>{
       try {
@@ -77,6 +80,37 @@ export default function Editor() {
       }
   },[])
 
+  const handleLike = (value:boolean) => {
+    setLiking(true)
+      fetch(`${import.meta.env.VITE_API_URL}/api/project/${id}/favorite`, {
+        method:'POST',
+        headers:{'Authorization':`Bearer ${localStorage.getItem('access')}`, 'Content-Type':'application/json'},
+        body:JSON.stringify({
+          value:value,
+        })  
+      }
+      )
+      .then(
+        response => {
+          setLiking(false)
+          if(!response.ok){
+            if(response.status == 401){
+              throw new Error('You are not authenticated, please login first.')
+            } else {
+              throw new Error('An unexpected error occurred')
+            }
+          } else {
+            setLiked(value)
+          }
+        }
+      )
+      .catch((error)=> {
+        console.error(`${error}`)
+        showError(`${error}`);
+      })
+  } 
+
+
   useEffect(()=>{
     setFilteredCategories(blockCategories)
   }, [blockCategories])
@@ -99,14 +133,19 @@ export default function Editor() {
           } else if (response.status === 429){
             throw 'You are making too many requests, please slow down.'
           }
+          
+          
           const data = await response.json();
+          // * enable or disable editing mode depending on user ownership
+          if(data.is_users == true){
+            searchParams.set('editor','1')
+          } else {
+            searchParams.set('editor','0')
+          }
           setProjectTitle(data.title);
           setIsPublic(data.public == true);
+          setLiked(data.user_favorited);
 
-
-          //todo: Convert project blocks to workspace blocks
-
-          
 
           if (data.json) {
             const workspaceBlocks = data.json.map((block: CodeBlockType, index:number) => {
@@ -186,6 +225,7 @@ export default function Editor() {
     if (!canEdit) return;
     const { active, over } = event;
     setActiveId(null);
+    setUnsavedChanges(true);
 
     if (over) {
       const blockLimit = 200;
@@ -241,6 +281,7 @@ export default function Editor() {
 
   // Handle changes to block input values
   const handleInputChange = (instanceId: string, inputName: string, value: any) => {
+    setUnsavedChanges(true);
     setWorkspaceBlocks((blocks) =>
       blocks.map((block) =>
         block.instanceId === instanceId
@@ -252,6 +293,7 @@ export default function Editor() {
 
   // Handle block deletion
   const handleDeleteBlock = (instanceId: string) => {
+    setUnsavedChanges(true);
     const blockToDelete = workspaceBlocks.find(block => block.instanceId === instanceId);
     if (!blockToDelete) return;
 
@@ -280,6 +322,7 @@ export default function Editor() {
 
   // Handle block reordering
   const handleReorderBlocks = (activeId: string, overId: string) => {
+    setUnsavedChanges(true);
     setWorkspaceBlocks((blocks) => {
       const oldIndex = blocks.findIndex((b) => b.instanceId === activeId);
       const newIndex = blocks.findIndex((b) => b.instanceId === overId);
@@ -318,6 +361,7 @@ export default function Editor() {
         if (!response.ok) {
           throw new Error('Failed to save project');
         } else {
+          setUnsavedChanges(false);
           if (id === '0') {
             navigate(`/create/${project_id}`);
           }
@@ -508,6 +552,7 @@ export default function Editor() {
                   </>
                 )}
               </Button>
+              
               <Button
                 variant="outline"
                 size="sm"
@@ -534,18 +579,58 @@ export default function Editor() {
             <Copy className="h-4 w-4 mr-2" />
             Fork
           </Button>
-          {canEdit && (
-            <Button size="sm" disabled={saving} onClick={() => {handleSave(); setSaving(true)}}>
-              <Save className="h-4 w-4 mr-2" />
-              {
-                saving ? (
-                  <>Saving...</>
+          {
+            !canEdit && (
+              <>
+                {
+                liked == true ? (
+                  <Button
+                    disabled={liking}
+                    variant="outline"
+                    size="sm"
+                    onClick={()=>handleLike(false)} // set like to false
+                  >
+                      <HeartOff className="h-4 w-4 mr-2" />
+                      Remove from liked
+                  </Button>
                 ) : (
-                  <>Save</>
+                  <Button
+                  disabled={liking}
+                    variant="outline"
+                    size="sm"
+                    onClick={()=>handleLike(true)} // set liked to true
+                  >
+                      <Heart className="h-4 w-4 mr-2" />
+                      Like
+                  </Button>
                 )
               }
-            </Button>
+              </>
+            )
+          }
+
+
+          {canEdit && (
+            <>
+              <Button size="sm" disabled={saving} onClick={() => {handleSave(); setSaving(true)}}>
+                <Save className="h-4 w-4 mr-2" />
+                {
+                  saving ? (
+                    <>Saving...</>
+                  ) : (
+                    <>Save</>
+                  )
+                }
+              </Button>
+            </>
           )}
+          {
+            unsavedChanges ? (
+              <span className='text-slate-500'>* Unsaved changes</span>
+            ) : (
+              <></>
+            )
+          }
         </div>
       </div>
 

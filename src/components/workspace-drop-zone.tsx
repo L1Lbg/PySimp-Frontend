@@ -103,6 +103,11 @@ export default function WorkspaceDropZone({
               <p className="text-purple-200/40">Drag blocks here to start building</p>
             </div>
           )}
+          {blocks.length === 0 && !canEdit && (
+            <div className="flex items-center justify-center h-32 border-2 border-dashed border-purple-200/20 rounded-lg">
+              <p className="text-purple-200/40">This project is empty</p>
+            </div>
+          )}
         </div>
       </SortableContext>
       {isOver && canEdit && (
