@@ -22,10 +22,8 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { mockProjects } from '@/data/mockData';
 import type { CodeBlock as CodeBlockType, Project } from '@/types';
 import BlockCategory from '@/components/block-category';
-import BlockCategoryType from '@/components/block-category';
 import { blockCategoriesMock } from '@/data/blockCategories';
 import CodeBlock from '@/components/code-block';
 import WorkspaceDropZone from '@/components/workspace-drop-zone';
@@ -50,11 +48,12 @@ export default function Editor() {
   const [workspaceBlocks, setWorkspaceBlocks] = useState<WorkspaceBlock[]>([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [projectNameConfirm, setProjectNameConfirm] = useState('');
-  const [projectTitle, setProjectTitle] = useState('Untitled Project');
+  const [projectTitle, setProjectTitle] = useState('Loading...');
   const [isPublic, setIsPublic] = useState(true);
   const [blockSearchQuery, setBlockSearchQuery] = useState('');
   const [blockCategories, setBlockCategories] = useState(blockCategoriesMock)
   const [filteredCategories, setFilteredCategories] = useState(blockCategoriesMock);
+  const [saving, setSaving] = useState(false); // loading state
 
   useEffect(()=>{
       try {
@@ -82,8 +81,12 @@ export default function Editor() {
     setFilteredCategories(blockCategories)
   }, [blockCategories])
 
-  // Load project data when editing an existing project
+  //* Load project data when editing an existing project, after the workspace blocks are loaded
   useEffect(() => {
+    //* if block categories is in its initial state, don't do anything
+    if(blockCategories[0].name === 'Loading'){
+      return;
+    }
     const loadProject = async () => {
       if (id && id !== '0') {
         try {
@@ -91,36 +94,65 @@ export default function Editor() {
           const response = await fetch(`${import.meta.env.VITE_API_URL}/api/project/${id}`, 
             {headers: {'Authorization': `Bearer ${localStorage.getItem('access')}`}}
           );
+          if(response.status === 404) {
+            throw 'Project not found'
+          } else if (response.status === 429){
+            throw 'You are making too many requests, please slow down.'
+          }
           const data = await response.json();
           setProjectTitle(data.title);
           setIsPublic(data.public == true);
-          //todo: Convert project blocks to workspace blocks
-          if (data.json) {
-            const workspaceBlocks = data.json.map((block: CodeBlockType) => ({
-              ...block,
-              
 
-            }));
-            console.log(workspaceBlocks);
+
+          //todo: Convert project blocks to workspace blocks
+
+          
+
+          if (data.json) {
+            const workspaceBlocks = data.json.map((block: CodeBlockType, index:number) => {
+              //*find the block from block categories data
+              let cat_block = blockCategories.flatMap(category => category.blocks).find(cat_block => cat_block.id === block.id);
+
+              
+              if(cat_block) {
+                //* make the block fit the workspace block requirements
+                const time = new Date()
+                let inputs = cat_block.inputs?.map((input) => ({
+                  'type':input.type,
+                  'name':String(input.name).charAt(0).toUpperCase() + String(input.name.replace('_',' ')).slice(1),
+                }))
+
+                const converted_block = {
+                  id:cat_block.id,
+                  name:cat_block.name,
+                  category:cat_block.category,
+                  description:cat_block.description,
+                  inputs:inputs,
+                  values:new Array(inputs.length),
+                  instanceId: `${index}-${cat_block.id}-${time.getTime()}`,
+                }
+                return converted_block
+              } else {
+                throw "Error while loading the project"
+              }
+
+              
+              
+            });
             setWorkspaceBlocks(workspaceBlocks);
           }
         } catch (error) {
-          console.error(error);
-          // Fall back to mock data if API fails
-          const mockProject = mockProjects.find(p => p.id === id);
-          if (mockProject) {
-            setProjectTitle(mockProject.title);
-            setIsPublic(true);
-          } else {
-            showError('Project not found');
-            navigate('/create/0');
-          }
+          console.error(error)
+          showError(`${error}`);
+          navigate('/create/0');
         }
+      } else {
+        setProjectTitle('Untitled project')
       }
     };
 
     loadProject();
-  }, [id, navigate, showError]);
+  }, [blockCategories]);
 
   // Filter block categories based on search query
   useEffect(() => {
@@ -260,7 +292,16 @@ export default function Editor() {
     });
   };
 
-  const updateProject = async (project_id, projectData) => {
+
+  //todo
+  type ProjectData = {
+    isPublic:boolean,
+    json:Array<[{}]>,
+    title:string,
+  }
+
+  const updateProject = async (project_id:string, projectData:ProjectData) => {
+    
 
     fetch(`${import.meta.env.VITE_API_URL}/api/project/${project_id}`, {
       method: 'PUT',
@@ -273,6 +314,7 @@ export default function Editor() {
     )
     .then(
         response => {
+        setSaving(false);
         if (!response.ok) {
           throw new Error('Failed to save project');
         } else {
@@ -285,21 +327,19 @@ export default function Editor() {
     )
     .catch (
       error => {
-        console.error('Failed to save project:', error);
-        showError('Failed to save project. Please try again.');
+        console.error(error);
+        showError(`${error}`);
       }
     )   
   }
 
   // Handle project saving
   const handleSave = async () => {
-
       let json = [];
       
       for (let index = 0; index < workspaceBlocks.length; index++) {
         const element = workspaceBlocks[index];
 
-        console.log(element)
 
         json.push({
           'id':element.id,
@@ -313,7 +353,7 @@ export default function Editor() {
         isPublic,
       };
 
-      let project_id = id
+      let project_id = id as string;
       
       // if project is not created, create one and then update it
       if (id === '0'){
@@ -340,17 +380,14 @@ export default function Editor() {
         )
         .then(
           data => {
-            project_id = data.id;
+            project_id = data.id as string;
             updateProject(project_id, projectData);
           }
         )
       } else {
         updateProject(project_id, projectData);
       }
-
-
       
-  
     }  
 
   const handleDownload = async () => {
@@ -369,17 +406,18 @@ export default function Editor() {
       }
 
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/project/${15}/download?os=${os.toLowerCase()}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/project/${id}/download?os=${os.toLowerCase()}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${window.localStorage.getItem('access')}`
         }
       });
 
+      const data = await response.json()
       if (!response.ok) {
-        throw new Error('Failed to save project');
+        
+        throw new Error(`Failed to download the project. Error: ${data.error}`);
       } else {
-        const data = await response.json()
 
         //*handle different OS bat and bash
 
@@ -407,7 +445,7 @@ export default function Editor() {
       }
     } catch (error) {
       console.error('Failed to save project:', error);
-      showError('Failed to save project. Please try again.');
+      showError(`${error}`);
     }
   } 
 
@@ -497,9 +535,15 @@ export default function Editor() {
             Fork
           </Button>
           {canEdit && (
-            <Button size="sm" onClick={handleSave}>
+            <Button size="sm" disabled={saving} onClick={() => {handleSave(); setSaving(true)}}>
               <Save className="h-4 w-4 mr-2" />
-              Save
+              {
+                saving ? (
+                  <>Saving...</>
+                ) : (
+                  <>Save</>
+                )
+              }
             </Button>
           )}
         </div>
