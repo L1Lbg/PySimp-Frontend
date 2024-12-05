@@ -57,6 +57,27 @@ export default function Editor() {
   const [liked, setLiked] = useState(false); // if user has the project in his favorites list
   const [liking, setLiking] = useState(false); 
   const [unsavedChanges, setUnsavedChanges] = useState(false);
+  const [forking, setForking] = useState(false);
+
+
+  const handleFork = () => {
+    setForking(true);
+    fetch(`${import.meta.env.VITE_API_URL}/api/project/${id}/fork`, {headers:{'Authorization':`Bearer ${localStorage.getItem('access')}`}, method: 'POST'})
+    .then(
+      res => {
+        setForking(false);
+        if(!res.ok){
+          throw new Error('Failed to copy this project');
+        }
+        return res.json()
+      }
+    )
+    .then(
+      data => {
+        window.location.href = `/create/${data.id}`
+      }
+    )
+  }
 
   useEffect(()=>{
       try {
@@ -344,8 +365,6 @@ export default function Editor() {
   }
 
   const updateProject = async (project_id:string, projectData:ProjectData) => {
-    
-
     fetch(`${import.meta.env.VITE_API_URL}/api/project/${project_id}`, {
       method: 'PUT',
       headers: {
@@ -525,14 +544,14 @@ export default function Editor() {
             type="text"
             value={projectTitle}
             onChange={(e) => setProjectTitle(e.target.value)}
-            className="text-2xl font-bold bg-transparent border-none focus:outline-none text-purple-50 placeholder:text-purple-200/40"
+            className="text-2xl font-bold bg-transparent border-none focus:outline-none text-purple-50 w-1/2 placeholder:text-purple-200/40"
           />
         ) : (
-          <h1 className="text-2xl font-bold text-purple-50">{projectTitle}</h1>
+          <h1 className="text-2xl w-1/2 font-bold text-purple-50">{projectTitle}</h1>
         )}
         <br />
         <div className="flex items-center space-x-4 mb-5 mt-5">
-          {canEdit && (
+          {canEdit && id != '0' && (
             <>
               <Button
                 variant="outline"
@@ -553,14 +572,7 @@ export default function Editor() {
                 )}
               </Button>
               
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleDownload}
-              >
-                  <Download className="h-4 w-4 mr-2" />
-                  Download
-              </Button>
+              
               <Button
                 variant="outline"
                 size="sm"
@@ -571,16 +583,31 @@ export default function Editor() {
               </Button>
             </>
           )}
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => navigate(`/create/0`)}
-          >
-            <Copy className="h-4 w-4 mr-2" />
-            Fork
-          </Button>
           {
-            !canEdit && (
+            id != '0' && (
+              <>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleDownload}
+                  >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download
+                  </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handleFork}
+                disabled={forking}
+              >
+                <Copy className="h-4 w-4 mr-2" />
+                Copy
+              </Button>
+              </>
+            )
+          }
+          {
+            !canEdit && id != '0' && (
               <>
                 {
                 liked == true ? (
