@@ -51,12 +51,20 @@ function App() {
       console.debug('No need to refresh token')
     }
 
-
+    //* toggle debug mode
     try {
-      setDebug(import.meta.env.VITE_DEBUG.toLowerCase() == 'true')
+      const ls_debug = localStorage.getItem('debug')
+      if(ls_debug == undefined){
+        setDebug(import.meta.env.VITE_DEBUG.toLowerCase() == 'true')
+      } else {
+        setDebug(ls_debug=='true');
+      }
     } catch (error) {
       setDebug(true)
     }
+
+
+    
   },[])
   return (
     <Router>
