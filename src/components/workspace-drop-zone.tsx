@@ -91,7 +91,7 @@ export default function WorkspaceDropZone({
                 <WorkspaceBlock
                   block={block}
                   values={block.values}
-                  onInputChange={(inputName, value) => onInputChange(block.instanceId, inputName, value)}
+                  onInputChange={onInputChange}
                   onDelete={() => onDeleteBlock(block.instanceId)}
                   canEdit={canEdit}
                 />

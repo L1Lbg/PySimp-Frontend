@@ -266,14 +266,8 @@ export default function Editor() {
 
       if (sourceBlock) {
         const instanceId = `${sourceBlock.id}-${Date.now()}`;
-        const initialValues = sourceBlock.inputs?.reduce(
-          (acc, input) => ({
-            ...acc,
-            [input.name]: '',
-          }),
-          {}
-        ) ?? {};
-
+        const initialValues = new Array(sourceBlock.inputs.length).fill('');
+        
         const newBlocks: WorkspaceBlock[] = [];
         
         const newBlock: WorkspaceBlock = {
@@ -282,7 +276,8 @@ export default function Editor() {
           values: initialValues,
         };
         newBlocks.push(newBlock);
-
+        
+        console.log(newBlocks);
         // If the block requires an end block, add it automatically
         if (sourceBlock.hasEndBlock) {
           const endBlock = blockCategories
@@ -305,12 +300,13 @@ export default function Editor() {
   };
 
   // Handle changes to block input values
-  const handleInputChange = (instanceId: string, inputName: string, value: any) => {
+  const handleInputChange = (instanceId:string, value: string, index:number) => {
+    console.log(instanceId, value);
     setUnsavedChanges(true);
     setWorkspaceBlocks((blocks) =>
       blocks.map((block) =>
         block.instanceId === instanceId
-          ? { ...block, values: { ...block.values, [inputName]: value } }
+          ? { ...block, values: { ...block.values, [index]: value } }
           : block
       )
     );

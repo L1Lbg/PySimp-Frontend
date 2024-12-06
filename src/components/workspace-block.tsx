@@ -87,7 +87,7 @@ export default function WorkspaceBlock({
               <Input
                 type={input.type === 'int' ? 'number' : 'text'} // if its int, set type as number else set as text
                 defaultValue={values[index] ?? ''}
-                onChange={(e) => onInputChange(input.name, e.target.value)}
+                onChange={(e) => onInputChange(block.instanceId, e.target.value, index)}
                 className="col-span-2 h-8 text-sm"
                 placeholder={`${input.name}`}
                 disabled={!canEdit}
