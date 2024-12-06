@@ -8,7 +8,6 @@ import 'swiper/css';
 
 export default function Community() {
   const navigate = useNavigate();
-  const [featured, setFeatured] = useState<Project[]>([]);
   const [hot, setHot] = useState<Project[]>([]);
   const [mostLiked, setMostLiked] = useState<Project[]>([]);
 
@@ -17,27 +16,15 @@ export default function Community() {
       try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/community`);
         const data = await response.json();
-        setFeatured(data.featured);
-        setHot(data.hot);
-        setMostLiked(data.mostLiked);
+        setHot(data['newest']);
+        setMostLiked(data['most liked']);
       } catch (error) {
-        const mockData = {
-          featured: mockProjects,
-          hot: mockProjects,
-          mostLiked: mockProjects
-        };
-        setFeatured(mockData.featured);
-        setHot(mockData.hot);
-        setMostLiked(mockData.mostLiked);
+        
       }
     };
 
     fetchProjects();
   }, []);
-
-  const handleProjectClick = (projectId: string) => {
-    navigate(`/project/${projectId}`);
-  };
 
   const ProjectSection = ({ title, projects }: { title: string; projects: Project[] }) => (
     <section className="mb-12">
@@ -54,7 +41,7 @@ export default function Community() {
         className="pb-4"
       >
         {projects.map((project) => (
-          <SwiperSlide key={project.id} className="cursor-pointer" onClick={() => handleProjectClick(project.id)}>
+          <SwiperSlide key={project.id} className="cursor-pointer">
             <ProjectCard project={project} />
           </SwiperSlide>
         ))}
@@ -64,7 +51,6 @@ export default function Community() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <ProjectSection title="Featured Projects" projects={featured} />
       <ProjectSection title="Hot Right Now" projects={hot} />
       <ProjectSection title="Most Liked" projects={mostLiked} />
     </div>
