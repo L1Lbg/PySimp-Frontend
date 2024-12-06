@@ -27,6 +27,7 @@ export default function Navbar() {
 
   const handleLogOut = () => {
     localStorage.clear();
+    navigate('/auth')
     setIsLoggedIn(false)
   }
 
