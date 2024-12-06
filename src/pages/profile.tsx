@@ -50,9 +50,20 @@ export default function Profile() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {profile.projects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
-          ))}
+          {
+            profile.projects.length > 0 ? (
+              <>
+                {
+                  profile.projects.map((project) => (
+                    <ProjectCard key={project.id} project={project} />
+                  ))
+                }
+              
+              </>
+            ) : (
+              <>You have no projects yet.</>
+            )
+          }
         </div>
       </div>
     </div>

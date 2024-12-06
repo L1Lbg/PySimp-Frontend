@@ -418,7 +418,7 @@ export default function Editor() {
         const projectData = {
           title: projectTitle,
           json: json,
-          isPublic,
+          'public':isPublic,
         };
   
         let project_id = id as string;
@@ -525,15 +525,18 @@ export default function Editor() {
     if (id === '0') return;
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/project/${id}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access')}`
+        }
       });
 
       if (!response.ok) {
         throw new Error('Failed to delete project');
       }
 
-      navigate('/create/0');
+      navigate('/profile/me');
     } catch (error) {
       console.error('Failed to delete project:', error);
       showError('Failed to delete project. Please try again.');

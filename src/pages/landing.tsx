@@ -1,11 +1,19 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { ArrowRight, CheckCircle2, Sparkles } from 'lucide-react';
 import { features, benefits, useCases } from '@/data/landingPageData';
+import { useSearchParams } from 'react-router-dom';
 
 export default function Landing() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    if(searchParams.get('debug') == 'true'){
+      localStorage.setItem('debug', 'true');
+    }
+  },[])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

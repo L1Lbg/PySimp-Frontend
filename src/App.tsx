@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useSearchParams } from 'react-router-dom';
 import Navbar from '@/components/navbar';
 import Landing from '@/pages/landing';
 import Community from '@/pages/community';
@@ -55,7 +55,7 @@ function App() {
     try {
       const ls_debug = localStorage.getItem('debug')
       if(ls_debug == undefined){
-        setDebug(import.meta.env.VITE_DEBUG.toLowerCase() == 'true')
+          setDebug(import.meta.env.VITE_DEBUG.toLowerCase() == 'true')
       } else {
         setDebug(ls_debug=='true');
       }

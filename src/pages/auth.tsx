@@ -69,6 +69,8 @@ export default function Auth() {
         if (!response.ok) {
           if (data.username) setErrors(prev => ({ ...prev, username: data.username[0] }));
           if (data.email) setErrors(prev => ({ ...prev, email: data.email[0] }));
+          if (data.password) setErrors(prev => ({ ...prev, password: data.password[0] }));
+          if (data.non_field_errors) setErrors(prev => ({ ...prev, password: data.non_field_errors[0] }));
           throw new Error('Signup failed');
         }
 
@@ -147,11 +149,17 @@ export default function Auth() {
               <Input
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Enter your password"
-                className="pl-10 pr-10"
+                className={`pl-10 ${errors.password ? 'border-red-500' : ''}`}
                 autoComplete={mode === 'signup' ? 'new-password': 'current-password'}
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               />
+              {errors.password && (
+                <div className="flex items-center mt-1 text-red-500 text-sm">
+                  <AlertCircle className="h-4 w-4 mr-1" />
+                  {errors.password}
+                </div>
+              )}
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}

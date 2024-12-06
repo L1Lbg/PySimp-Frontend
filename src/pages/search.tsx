@@ -3,8 +3,6 @@ import { useSearchParams } from 'react-router-dom';
 import { Search as SearchIcon } from 'lucide-react';
 import { Project } from '@/types';
 import ProjectCard from '@/components/project-card';
-import { mockProjects } from '@/data/mockData';
-import { mockDataOnError } from '@/lib/utils';
 
 export default function Search() {
   const [searchParams] = useSearchParams();
@@ -15,16 +13,16 @@ export default function Search() {
   useEffect(() => {
     const searchProjects = async () => {
       if (!query) return;
+      if(query.length < 1) return;
       
       setLoading(true);
       try {
         const response = await fetch(
           `${import.meta.env.VITE_API_URL}/api/search?q=${encodeURIComponent(query)}`
         );
-        const data = await response.json();
+        const data = await response.json(); 
         setResults(data);
       } catch (error) {
-        setResults(mockProjects);
       } finally {
         setLoading(false);
       }

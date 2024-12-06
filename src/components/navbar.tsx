@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Code2, Search, Settings, User, ChevronDown, Plus, LogIn } from 'lucide-react';
+import { Code2, Search, Settings, User, ChevronDown, Plus, LogIn, Heart } from 'lucide-react';
 import { Button } from './ui/button';
 
 export default function Navbar() {
@@ -87,6 +87,13 @@ export default function Navbar() {
                       >
                         <User className="h-4 w-4 mr-2" />
                         Profile
+                      </Link>
+                      <Link
+                        to="/favorites"
+                        className="flex items-center px-4 py-2 text-sm text-purple-200/60 hover:bg-purple-200/5"
+                      >
+                        <Heart className="h-4 w-4 mr-2" />
+                        Favorites
                       </Link>
                       <Link
                         to="/settings"
