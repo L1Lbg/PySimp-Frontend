@@ -177,6 +177,8 @@ export default function Editor() {
               //*find the block from block categories data
               let cat_block = blockCategories.flatMap(category => category.blocks).find(cat_block => cat_block.id === block.id);
 
+              console.log(block)
+
               
               if(cat_block) {
                 //* make the block fit the workspace block requirements
@@ -186,25 +188,23 @@ export default function Editor() {
                   'name':String(input.name).charAt(0).toUpperCase() + String(input.name.replace('_',' ')).slice(1),
                 }))
 
+                console.log(block.params)
+
                 const converted_block = {
                   id:cat_block.id,
                   name:cat_block.name,
                   category:cat_block.category,
                   description:cat_block.description,
                   inputs:inputs,
-                  values:new Array(inputs.length),
+                  values:block.params,
                   instanceId: `${index}-${cat_block.id}-${time.getTime()}`,
                 }
                 return converted_block
-              } else {
-                throw "Error while loading the project"
-              }
-
-              
+              }               
               
             });
             setWorkspaceBlocks(workspaceBlocks);
-          }
+          } 
         } catch (error) {
           console.error(error)
           showError(`${error}`);
@@ -368,7 +368,7 @@ export default function Editor() {
     title:string,
   }
 
-  const updateProject = async (project_id:string, projectData:ProjectData) => {
+  const updateProject = async (project_id:string, projectData:ProjectData, download:boolean) => {
     fetch(`${import.meta.env.VITE_API_URL}/api/project/${project_id}`, {
       method: 'PUT',
       headers: {
@@ -388,6 +388,9 @@ export default function Editor() {
           if (id === '0') {
             navigate(`/create/${project_id}`);
           }
+          if(download === true){
+            handleDownload()
+          }
         }
         
       }
@@ -401,65 +404,68 @@ export default function Editor() {
   }
 
   // Handle project saving
-  const handleSave = async () => {
-      let json = [];
-      
-      for (let index = 0; index < workspaceBlocks.length; index++) {
-        const element = workspaceBlocks[index];
+  const handleSave = async (download?:boolean) => {
 
-
-        json.push({
-          'id':element.id,
-          'params':Object.values(element.values),
-        })
-      }
-
-      const projectData = {
-        title: projectTitle,
-        json: json,
-        isPublic,
-      };
-
-      let project_id = id as string;
-      
-      // if project is not created, create one and then update it
-      if (id === '0'){
-        fetch(
-          `${import.meta.env.VITE_API_URL}/api/project/create`,{
-            method:'POST',
-            headers: {
-              'Authorization': `Bearer ${window.localStorage.getItem('access')}`,
-              'Content-Type': 'application/json'
-            },
-            body:JSON.stringify({
-              'title':projectTitle,
-            })
-          }
-        )
-        .then(
-          res => {
-            if (!res.ok) {
-              throw new Error('Failed to save project');
-            } else {
-              return res.json();
+        setSaving(true);
+        let json = [];
+        
+        for (let index = 0; index < workspaceBlocks.length; index++) {
+          const element = workspaceBlocks[index];
+  
+  
+          json.push({
+            'id':element.id,
+            'params':Object.values(element.values),
+          })
+        }
+  
+        const projectData = {
+          title: projectTitle,
+          json: json,
+          isPublic,
+        };
+  
+        let project_id = id as string;
+        
+        // if project is not created, create one and then update it
+        if (id === '0'){
+          fetch(
+            `${import.meta.env.VITE_API_URL}/api/project/create`,{
+              method:'POST',
+              headers: {
+                'Authorization': `Bearer ${window.localStorage.getItem('access')}`,
+                'Content-Type': 'application/json'
+              },
+              body:JSON.stringify({
+                'title':projectTitle,
+              })
             }
-          }
-        )
-        .then(
-          data => {
-            project_id = data.id as string;
-            updateProject(project_id, projectData);
-          }
-        )
-      } else {
-        updateProject(project_id, projectData);
-      }
+          )
+          .then(
+            res => {
+              if (!res.ok) {
+                throw new Error('Failed to save project');
+              } else {
+                return res.json();
+              }
+            }
+          )
+          .then(
+            data => {
+
+              project_id = data.id as string;
+              updateProject(project_id, projectData, download)
+              
+            }
+          )
+        } else {
+          updateProject(project_id, projectData, download);
+        }     
       
     }  
 
   const handleDownload = async () => {
     try {
-
       
       
       const platform = window.navigator.userAgent;
@@ -599,7 +605,14 @@ export default function Editor() {
                       if(!isVerified) {
                         setShowDownloadWarning(true);
                       } else {
-                        handleDownload()
+                        if(unsavedChanges == true){
+                          handleSave()
+                          .then(()=>{handleDownload()})
+                        } else {
+                          handleDownload()
+                        }
+
+                        
                       }
                     }}
                   >
@@ -651,7 +664,7 @@ export default function Editor() {
 
           {canEdit && (
             <>
-              <Button size="sm" disabled={saving} onClick={() => {handleSave(); setSaving(true)}}>
+              <Button size="sm" disabled={saving} onClick={() => {handleSave(false)}}>
                 <Save className="h-4 w-4 mr-2" />
                 {
                   saving ? (
@@ -779,7 +792,13 @@ export default function Editor() {
       <DownloadWarning
         isOpen={showDownloadWarning}
         onClose={() => setShowDownloadWarning(false)}
-        onConfirm={handleDownload}
+        onConfirm={()=>{
+          if(unsavedChanges == true){
+            handleSave(true) // if unsaved changes, execute handle save with download = true
+          } else {
+            handleDownload();
+          }
+        }}
       />
     </div>
   );
