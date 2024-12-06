@@ -4,7 +4,6 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { mockProjects } from '@/data/mockData';
 import { Project } from '@/types';
 import ProjectCard from '@/components/project-card';
-import { mockDataOnError } from '@/lib/utils';
 import 'swiper/css';
 
 export default function Community() {

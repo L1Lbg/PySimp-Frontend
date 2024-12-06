@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Code2, Search, Settings, User, ChevronDown, Plus, LogIn } from 'lucide-react';
 import { Button } from './ui/button';
@@ -6,7 +6,17 @@ import { Button } from './ui/button';
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // This would normally come from auth context
+
   const navigate = useNavigate();
+
+  useEffect(()=>{
+    if(localStorage.getItem('username') != undefined){
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, [localStorage.getItem('username')])
+
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -14,6 +24,11 @@ export default function Navbar() {
     const query = formData.get('search');
     navigate(`/search?q=${query}`);
   };
+
+  const handleLogOut = () => {
+    localStorage.clear();
+    setIsLoggedIn(false)
+  }
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-purple-200/10 bg-black/50 backdrop-blur-lg">
@@ -81,7 +96,7 @@ export default function Navbar() {
                         Settings
                       </Link>
                       <button
-                        onClick={() => setIsLoggedIn(false)}
+                        onClick={handleLogOut}
                         className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-purple-200/5"
                       >
                         Sign Out
@@ -91,7 +106,7 @@ export default function Navbar() {
                 </div>
               </>
             ) : (
-              <Button onClick={() => setIsLoggedIn(true)} size="sm" className="space-x-2">
+              <Button onClick={() => navigate('/auth')} size="sm" className="space-x-2">
                 <LogIn className="h-4 w-4" />
                 <span>Sign In</span>
               </Button>

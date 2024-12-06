@@ -22,15 +22,10 @@ export interface Project {
   id: string;
   title: string;
   description: string;
-  likes: number;
-  isLiked: boolean;
-  isVerified?: boolean;
-  code?: string[];
-  blocks?: CodeBlock[];
-  author: {
-    id: string;
-    username: string;
-  };
+  favorite_count: number;
+  approved?: boolean;
+  username:string;
+  isLiked?: boolean;
 }
 
 export interface Profile {

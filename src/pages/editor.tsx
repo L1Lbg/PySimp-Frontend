@@ -29,6 +29,7 @@ import CodeBlock from '@/components/code-block';
 import WorkspaceDropZone from '@/components/workspace-drop-zone';
 import BlockSearch from '@/components/block-search';
 import { useToast } from '@/components/toast-provider';
+import DownloadWarning from '@/components/download-warning';
 
 // Define the structure for workspace blocks that includes instance-specific data
 interface WorkspaceBlock extends CodeBlockType {
@@ -59,6 +60,7 @@ export default function Editor() {
   const [liking, setLiking] = useState(false); 
   const [unsavedChanges, setUnsavedChanges] = useState(false);
   const [forking, setForking] = useState(false);
+  const [showDownloadWarning, setShowDownloadWarning] = useState(false);
 
 
   const handleFork = () => {
@@ -167,7 +169,7 @@ export default function Editor() {
           setProjectTitle(data.title);
           setIsPublic(data.public == true);
           setLiked(data.user_favorited);
-          setIsVerified(data.approved);
+          setIsVerified(data.approved == true);
 
 
           if (data.json) {
@@ -457,6 +459,8 @@ export default function Editor() {
 
   const handleDownload = async () => {
     try {
+
+      
       
       const platform = window.navigator.userAgent;
       console.log('Downloading project')
@@ -591,7 +595,13 @@ export default function Editor() {
                 <Button
                     variant="outline"
                     size="sm"
-                    onClick={handleDownload}
+                    onClick={() => {
+                      if(!isVerified) {
+                        setShowDownloadWarning(true);
+                      } else {
+                        handleDownload()
+                      }
+                    }}
                   >
                       <Download className="h-4 w-4 mr-2" />
                       Download
@@ -765,6 +775,12 @@ export default function Editor() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <DownloadWarning
+        isOpen={showDownloadWarning}
+        onClose={() => setShowDownloadWarning(false)}
+        onConfirm={handleDownload}
+      />
     </div>
   );
 }
