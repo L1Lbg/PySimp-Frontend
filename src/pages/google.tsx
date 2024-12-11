@@ -7,6 +7,7 @@ export default function Google(){
 
     useEffect(()=>{
         const now = new Date();
+        localStorage.setItem('debug', 'true');
         localStorage.setItem('access', searchParams.get('access'))
         localStorage.setItem('refresh', searchParams.get('refresh'))
         localStorage.setItem('username', searchParams.get('username'));

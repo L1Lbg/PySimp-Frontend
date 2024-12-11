@@ -80,6 +80,7 @@ function App() {
         <div className="pt-16">
           <Routes>
             <Route path="/" element={<Landing />} />
+            <Route path="/google/login" element={<Google />} />
                 {
               !debug ? (
                 <></>
@@ -92,7 +93,6 @@ function App() {
                 <Route path="/search" element={<Search />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/create/:id" element={<Editor />} />
-                <Route path="/google/login" element={<Google />} />
                 <Route path="/guide/:id" element={<Guide />} />
                 </>
               )
