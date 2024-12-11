@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import Auth from './pages/auth';
 import Favorites from './pages/favorites';
 import Google from './pages/google';
+import Guide from './pages/guides';
 
 function App() {
   const [debug, setDebug] = useState(false)
@@ -92,6 +93,7 @@ function App() {
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/create/:id" element={<Editor />} />
                 <Route path="/google/login" element={<Google />} />
+                <Route path="/guide/:id" element={<Guide />} />
                 </>
               )
             }

@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { mockProjects } from '@/data/mockData';
 import { Project } from '@/types';
 import ProjectCard from '@/components/project-card';
 import 'swiper/css';
+
 
 export default function Community() {
   const navigate = useNavigate();

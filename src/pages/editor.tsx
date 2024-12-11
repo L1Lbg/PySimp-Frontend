@@ -30,6 +30,8 @@ import WorkspaceDropZone from '@/components/workspace-drop-zone';
 import BlockSearch from '@/components/block-search';
 import { useToast } from '@/components/toast-provider';
 import DownloadWarning from '@/components/download-warning';
+import { EditorButtons } from '@/components/editor/editor-buttons';
+import { FeedbackDialog } from '@/components/editor/feedback-dialog';
 
 // Define the structure for workspace blocks that includes instance-specific data
 interface WorkspaceBlock extends CodeBlockType {
@@ -61,6 +63,7 @@ export default function Editor() {
   const [unsavedChanges, setUnsavedChanges] = useState(false);
   const [forking, setForking] = useState(false);
   const [showDownloadWarning, setShowDownloadWarning] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
 
   const handleFork = () => {
@@ -549,7 +552,7 @@ export default function Editor() {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Project header */}
-      <div className="">
+      {/* <div className="">
         {canEdit ? (
           <input
             type="text"
@@ -683,7 +686,27 @@ export default function Editor() {
             )
           }
         </div>
-      </div>
+      </div> */}
+
+      <EditorButtons
+                canEdit={canEdit}
+                id={id}
+                isPublic={isPublic}
+                setIsPublic={setIsPublic}
+                setDeleteDialogOpen={setDeleteDialogOpen}
+                isVerified={isVerified}
+                setShowDownloadWarning={setShowDownloadWarning}
+                unsavedChanges={unsavedChanges}
+                handleSave={handleSave}
+                handleDownload={handleDownload}
+                handleFork={handleFork}
+                forking={forking}
+                setFeedbackOpen={setFeedbackOpen}
+                liked={liked}
+                liking={liking}
+                handleLike={handleLike}
+                saving={saving}
+        />
 
       {/* Main editor area */}
       <DndContext
@@ -799,6 +822,11 @@ export default function Editor() {
           }
         }}
       />
+
+      <FeedbackDialog
+          open={feedbackOpen}
+          onOpenChange={setFeedbackOpen}
+        />
     </div>
   );
 }
