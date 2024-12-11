@@ -85,6 +85,7 @@ export default function WorkspaceBlock({
             <div key={input.name} className="grid grid-cols-3 gap-2 items-center">
               <label className="text-sm text-purple-200/80">{input.name}:</label>
               <Input
+                inputMode={input.type === 'int' ? 'numeric' : 'none'}
                 type={input.type === 'int' ? 'number' : 'text'} // if its int, set type as number else set as text
                 defaultValue={values[index] ?? ''}
                 onChange={(e) => onInputChange(block.instanceId, e.target.value, index)}
