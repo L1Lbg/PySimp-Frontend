@@ -9,7 +9,9 @@ export interface CodeBlock {
   inputs?: Array<{
     name: string;
     type: string;
+    extra?:string;
   }>;
+  var_assigner:string;
 }
 
 export interface BlockCategory {

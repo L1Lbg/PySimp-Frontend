@@ -188,7 +188,8 @@ export default function Editor() {
                 const time = new Date()
                 let inputs = cat_block.inputs?.map((input) => ({
                   'type':input.type,
-                  'name':String(input.name).charAt(0).toUpperCase() + String(input.name.replace('_',' ')).slice(1),
+                  'name':input.name,
+                  'extra':input?.extra
                 }))
 
 
@@ -200,6 +201,7 @@ export default function Editor() {
                   inputs:inputs,
                   values:block.params,
                   instanceId: `${index}-${cat_block.id}-${time.getTime()}`,
+                  var_assigner:cat_block.var_assigner,
                 }
                 return converted_block
               }               
@@ -303,7 +305,8 @@ export default function Editor() {
 
   // Handle changes to block input values
   const handleInputChange = (instanceId:string, value: string, index:number) => {
-    console.log(instanceId, value);
+    console.log(index)
+    console.log(value)
     setUnsavedChanges(true);
     setWorkspaceBlocks((blocks) =>
       blocks.map((block) =>
@@ -359,7 +362,6 @@ export default function Editor() {
   };
 
 
-  //todo
   type ProjectData = {
     isPublic:boolean,
     json:Array<[{}]>,
@@ -468,13 +470,18 @@ export default function Editor() {
       const platform = window.navigator.userAgent;
       console.log('Downloading project')
       let os = "Unknown OS";
+      let ext;
 
       if (platform.includes("Win")) { 
           os = "Windows";
+          ext = 'bat'
       } else if (platform.includes("Mac")) { 
           os = "MacOS";
+          ext = 'sh'
+
       } else if (platform.includes("X11") || platform.includes("Linux")) { 
           os = "Linux";
+          ext = 'sh'
       }
 
 
@@ -505,7 +512,7 @@ export default function Editor() {
 
         // Set the download attribute with the desired file name
         a.href = url;
-        a.download = `${projectTitle}.bat`;
+        a.download = `${projectTitle}.${ext}`;
 
         // Append the anchor to the document, trigger a click, and then remove the anchor
         document.body.appendChild(a);

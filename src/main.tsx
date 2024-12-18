@@ -5,9 +5,9 @@ import { ToastProvider } from './components/toast-provider';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+  // <StrictMode>
     <ToastProvider>
       <App />
     </ToastProvider>
-  </StrictMode>
+  // </StrictMode>
 );
