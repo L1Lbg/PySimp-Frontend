@@ -395,7 +395,7 @@ export default function Editor() {
     )
     .catch (
       error => {
-        showError(`Error: ${error}`);
+        showError(`${error}`);
       }
     )   
   }

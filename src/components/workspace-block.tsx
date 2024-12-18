@@ -116,8 +116,21 @@ export default function WorkspaceBlock({
               }
 
               {
-                input.type == 'var' && ( // var inputs should show no variable suggestions
+                input.type == 'raw_str' && ( // var inputs should show no variable suggestions
                   <input onChange={(e) => onInputChange(block.instanceId, e.target.value, index)} defaultValue={values[index] ?? ''} type='text' className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
+                )
+              }
+              {
+                input.type == 'var' && ( // var inputs should show no variable suggestions
+                  <select onChange={(e) => onInputChange(block.instanceId, e.target.value, index)} defaultValue={values[index] ?? ''} className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'>
+                    {
+                      variableSuggestions.map(suggestion => (
+                        <option value={`{${suggestion}}`}>
+                          {suggestion}
+                        </option>
+                      ))
+                    }
+                  </select>
                 )
               }
 
