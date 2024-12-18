@@ -3,6 +3,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { Card } from './ui/card';
 import { Input } from './ui/input';
 import type { CodeBlock as CodeBlockType } from '@/types';
+import { useEffect, useState } from 'react';
 
 interface CodeBlockProps {
   block: CodeBlockType;
@@ -41,23 +42,6 @@ export default function CodeBlock({ block, isTemplate = false, onInputChange, va
     >
       <h3 className="font-semibold mb-2">{block.name}</h3>
       <p className="text-sm text-purple-200/60 mb-3">{block.description}</p>
-      
-      {!isTemplate && block.inputs && (
-        <div className="space-y-2 mt-4 border-t border-purple-200/10 pt-4">
-          {block.inputs.map((input) => (
-            <div key={input.name} className="grid grid-cols-3 gap-2 items-center">
-              <label className="text-sm text-purple-200/80">{input.name}:</label>
-              <Input
-                type={input.type === 'number' ? 'number' : 'text'}
-                value={values[input.name] ?? input.default ?? ''}
-                onChange={(e) => onInputChange?.(input.name, e.target.value)}
-                className="col-span-2 h-8 text-sm"
-                placeholder={`${input.default}`}
-              />
-            </div>
-          ))}
-        </div>
-      )}
     </Card>
   );
 }
