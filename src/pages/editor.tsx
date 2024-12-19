@@ -52,7 +52,7 @@ export default function Editor() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [projectNameConfirm, setProjectNameConfirm] = useState('');
   const [projectTitle, setProjectTitle] = useState('Loading...');
-  const [isPublic, setIsPublic] = useState(true);
+  const [isPublic, setIsPublic] = useState(false);
   const [blockSearchQuery, setBlockSearchQuery] = useState('');
   const [blockCategories, setBlockCategories] = useState(blockCategoriesMock)
   const [filteredCategories, setFilteredCategories] = useState(blockCategoriesMock);
@@ -64,6 +64,7 @@ export default function Editor() {
   const [forking, setForking] = useState(false);
   const [showDownloadWarning, setShowDownloadWarning] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [variableSuggestions, setVariableSuggestions] = useState([]);
 
 
   const handleFork = () => {
@@ -180,7 +181,6 @@ export default function Editor() {
               //*find the block from block categories data
               let cat_block = blockCategories.flatMap(category => category.blocks).find(cat_block => cat_block.id === block.id);
 
-              console.log(block)
 
               
               if(cat_block) {
@@ -188,10 +188,10 @@ export default function Editor() {
                 const time = new Date()
                 let inputs = cat_block.inputs?.map((input) => ({
                   'type':input.type,
-                  'name':String(input.name).charAt(0).toUpperCase() + String(input.name.replace('_',' ')).slice(1),
+                  'name':input.name,
+                  'extra':input?.extra
                 }))
 
-                console.log(block.params)
 
                 const converted_block = {
                   id:cat_block.id,
@@ -201,6 +201,7 @@ export default function Editor() {
                   inputs:inputs,
                   values:block.params,
                   instanceId: `${index}-${cat_block.id}-${time.getTime()}`,
+                  var_assigner:cat_block.var_assigner,
                 }
                 return converted_block
               }               
@@ -304,7 +305,6 @@ export default function Editor() {
 
   // Handle changes to block input values
   const handleInputChange = (instanceId:string, value: string, index:number) => {
-    console.log(instanceId, value);
     setUnsavedChanges(true);
     setWorkspaceBlocks((blocks) =>
       blocks.map((block) =>
@@ -360,7 +360,6 @@ export default function Editor() {
   };
 
 
-  //todo
   type ProjectData = {
     isPublic:boolean,
     json:Array<[{}]>,
@@ -381,7 +380,7 @@ export default function Editor() {
         response => {
         setSaving(false);
         if (!response.ok) {
-          throw new Error('Failed to save project');
+          return response.json().then(json => { throw new Error(json.error) })
         } else {
           setUnsavedChanges(false);
           if (id === '0') {
@@ -396,7 +395,6 @@ export default function Editor() {
     )
     .catch (
       error => {
-        console.error(error);
         showError(`${error}`);
       }
     )   
@@ -470,13 +468,18 @@ export default function Editor() {
       const platform = window.navigator.userAgent;
       console.log('Downloading project')
       let os = "Unknown OS";
+      let ext;
 
       if (platform.includes("Win")) { 
           os = "Windows";
+          ext = 'bat'
       } else if (platform.includes("Mac")) { 
           os = "MacOS";
+          ext = 'sh'
+
       } else if (platform.includes("X11") || platform.includes("Linux")) { 
           os = "Linux";
+          ext = 'sh'
       }
 
 
@@ -507,7 +510,7 @@ export default function Editor() {
 
         // Set the download attribute with the desired file name
         a.href = url;
-        a.download = `${projectTitle}.bat`;
+        a.download = `${projectTitle}.${ext}`;
 
         // Append the anchor to the document, trigger a click, and then remove the anchor
         document.body.appendChild(a);
@@ -552,141 +555,6 @@ export default function Editor() {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Project header */}
-      {/* <div className="">
-        {canEdit ? (
-          <input
-            type="text"
-            value={projectTitle}
-            onChange={(e) => setProjectTitle(e.target.value)}
-            className="text-2xl font-bold bg-transparent border-none focus:outline-none text-purple-50 w-1/2 placeholder:text-purple-200/40"
-          />
-        ) : (
-          <h1 className="text-2xl w-1/2 font-bold text-purple-50">{projectTitle}</h1>
-        )}
-        <br />
-        <div className="flex items-center space-x-4 mb-5 mt-5">
-          {canEdit && id != '0' && (
-            <>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsPublic(!isPublic)}
-                className={isPublic ? 'text-green-400' : 'text-yellow-400'}
-              >
-                {isPublic ? (
-                  <>
-                    <Unlock className="h-4 w-4 mr-2" />
-                    Public
-                  </>
-                ) : (
-                  <>
-                    <Lock className="h-4 w-4 mr-2" />
-                    Private
-                  </>
-                )}
-              </Button>
-              
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setDeleteDialogOpen(true)}
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete
-              </Button>
-            </>
-          )}
-          {
-            id != '0' && (
-              <>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      if(!isVerified) {
-                        setShowDownloadWarning(true);
-                      } else {
-                        if(unsavedChanges == true){
-                          handleSave()
-                          .then(()=>{handleDownload()})
-                        } else {
-                          handleDownload()
-                        }
-
-                        
-                      }
-                    }}
-                  >
-                      <Download className="h-4 w-4 mr-2" />
-                      Download
-                  </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={handleFork}
-                disabled={forking}
-              >
-                <Copy className="h-4 w-4 mr-2" />
-                Copy
-              </Button>
-              </>
-            )
-          }
-          {
-            !canEdit && id != '0' && (
-              <>
-                {
-                liked == true ? (
-                  <Button
-                    disabled={liking}
-                    variant="outline"
-                    size="sm"
-                    onClick={()=>handleLike(false)} // set like to false
-                  >
-                      <HeartOff className="h-4 w-4 mr-2" />
-                      Remove from liked
-                  </Button>
-                ) : (
-                  <Button
-                  disabled={liking}
-                    variant="outline"
-                    size="sm"
-                    onClick={()=>handleLike(true)} // set liked to true
-                  >
-                      <Heart className="h-4 w-4 mr-2" />
-                      Like
-                  </Button>
-                )
-              }
-              </>
-            )
-          }
-
-
-          {canEdit && (
-            <>
-              <Button size="sm" disabled={saving} onClick={() => {handleSave(false)}}>
-                <Save className="h-4 w-4 mr-2" />
-                {
-                  saving ? (
-                    <>Saving...</>
-                  ) : (
-                    <>Save</>
-                  )
-                }
-              </Button>
-            </>
-          )}
-          {
-            unsavedChanges ? (
-              <span className='text-slate-500'>* Unsaved changes</span>
-            ) : (
-              <></>
-            )
-          }
-        </div>
-      </div> */}
 
       <EditorButtons
                 canEdit={canEdit}
@@ -720,14 +588,14 @@ export default function Editor() {
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="lg:col-span-4 h-[calc(100vh-12rem)] lg:w-1/2 w-full flex flex-col mb-8"
+              className="lg:col-span-4  lg:w-1/2 w-full flex flex-col mb-8"
             >
               <Card className="flex-1 flex flex-col overflow-hidden">
                 <div className="p-4 border-b border-purple-200/20">
                   <BlockSearch onSearch={setBlockSearchQuery} />
                 </div>
                 <Tabs defaultValue={filteredCategories[0]?.id} className="flex-1 flex flex-col">
-                  <TabsList className="w-full justify-start border-b border-purple-200/20 rounded-none bg-purple-950/20">
+                  <TabsList className="overflow-x w-full justify-start border-b border-purple-200/20 rounded-none bg-purple-950/20">
                     {filteredCategories.map((category) => (
                       <TabsTrigger
                         key={category.id}

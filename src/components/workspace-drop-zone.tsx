@@ -27,48 +27,6 @@ export default function WorkspaceDropZone({
     id: 'workspace',
   });
 
-  const getBlockIndentation = (index: number) => {
-    let indentLevel = 0;
-    const blockStack: { id: string; level: number }[] = [];
-
-    const endBlockIndents = new Map<string, number>();
-    blocks.forEach((block, i) => {
-      if (block.hasEndBlock) {
-        blockStack.push({ id: block.id, level: indentLevel });
-        indentLevel++;
-      } else if (block.isEndBlock) {
-        const parentBlock = blockStack.pop();
-        if (parentBlock) {
-          endBlockIndents.set(block.instanceId, parentBlock.level);
-          indentLevel = parentBlock.level;
-        }
-      }
-    });
-
-    indentLevel = 0;
-    blockStack.length = 0;
-
-    for (let i = 0; i < index; i++) {
-      const block = blocks[i];
-      
-      if (block.hasEndBlock) {
-        blockStack.push({ id: block.id, level: indentLevel });
-        indentLevel++;
-      } else if (block.isEndBlock) {
-        const parentBlock = blockStack.pop();
-        if (parentBlock) {
-          indentLevel = parentBlock.level;
-        }
-      }
-    }
-
-    const currentBlock = blocks[index];
-    if (currentBlock.isEndBlock) {
-      return endBlockIndents.get(currentBlock.instanceId) ?? indentLevel;
-    }
-
-    return indentLevel * 24;
-  };
 
   return (
     <Card 
@@ -81,15 +39,14 @@ export default function WorkspaceDropZone({
       <SortableContext items={blocks.map(b => b.instanceId)} strategy={verticalListSortingStrategy}>
         <div className="space-y-3">
           {blocks.map((block, index) => {
-            const indentation = getBlockIndentation(index);
             return (
               <div 
                 key={block.instanceId} 
-                style={{ marginLeft: `${indentation}px` }}
                 className="transition-all duration-200"
               >
                 <WorkspaceBlock
                   block={block}
+                  blocks={blocks} // give more context to block about its surroundings
                   values={block.values}
                   onInputChange={onInputChange}
                   onDelete={() => onDeleteBlock(block.instanceId)}

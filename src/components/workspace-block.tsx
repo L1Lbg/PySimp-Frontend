@@ -5,6 +5,7 @@ import { Button } from './ui/button';
 import { GripVertical, X } from 'lucide-react';
 import { Input } from './ui/input';
 import type { CodeBlock as CodeBlockType } from '@/types';
+import { useEffect, useState } from 'react';
 
 interface WorkspaceBlock extends CodeBlockType {
   instanceId: string;
@@ -13,6 +14,7 @@ interface WorkspaceBlock extends CodeBlockType {
 
 interface WorkspaceBlockProps {
   block: WorkspaceBlock;
+  blocks:Array<[]>;
   values: Record<string, any>;
   onInputChange: (inputName: string, value: string) => void;
   onDelete: () => void;
@@ -21,6 +23,7 @@ interface WorkspaceBlockProps {
 
 export default function WorkspaceBlock({ 
   block, 
+  blocks,
   values, 
   onInputChange, 
   onDelete,
@@ -45,6 +48,57 @@ export default function WorkspaceBlock({
   };
 
 
+  const [variableSuggestions, setVariableSuggestions] = useState([[]]) // this should be updated from script, to have a context of what blocks come before
+
+
+  
+
+  //* change variable suggestions when blocks are changed
+  useEffect(() => {
+    let newVariableSuggestions = new Array(block['inputs'].length);
+
+    for (let index = 0; index < newVariableSuggestions.length; index++) {
+      newVariableSuggestions[index] = getVariableSuggestions(index)
+    }
+    setVariableSuggestions(newVariableSuggestions); 
+    
+  },[blocks])
+
+
+  const getVariableSuggestions = (index:number) => {
+    let results = ['']
+
+    if(block.inputs[index]['extra']){
+      let queries = block.inputs[index]['extra'].split('.')
+
+
+      for (let index = 0; index < queries.length; index++) {
+        // get index of current block, to ignore further var declarations
+        let block_index = blocks.findIndex((n_block) => n_block.instanceId === block.instanceId);
+        // if blocks name is equal to the var input query
+        let add = blocks.slice(0, block_index+1).map(
+          (block) => {
+            if(block['name'].toLowerCase().includes(queries[index].toLowerCase())){
+              // get index of input which is the var assigner
+              let input_index = block['inputs'].findIndex((input) => input.name == block['var_assigner'])
+              
+              let var_name:string = block['values'][input_index] 
+              if(var_name != undefined && var_name != ''){
+                return var_name
+              }
+            }
+          }
+        )
+        
+        results = results.concat(add)
+        
+        
+      }
+    }
+    results = results.filter(result => result != undefined);
+    console.log(results);
+    return results
+  }
 
 
   return (
@@ -82,17 +136,72 @@ export default function WorkspaceBlock({
       {block.inputs && (
         <div className="p-4 space-y-2">
           {block.inputs.map((input, index) => (
-            <div key={input.name} className="grid grid-cols-3 gap-2 items-center">
-              <label className="text-sm text-purple-200/80">{input.name}:</label>
-              <Input
-                inputMode={input.type === 'int' ? 'numeric' : 'none'}
-                type={input.type === 'int' ? 'number' : 'text'} // if its int, set type as number else set as text
-                defaultValue={values[index] ?? ''}
-                onChange={(e) => onInputChange(block.instanceId, e.target.value, index)}
-                className="col-span-2 h-8 text-sm"
-                placeholder={`${input.name}`}
-                disabled={!canEdit}
-              />
+            <div key={input.name} className="grid grid-cols-2 gap-2 items-center">
+              <label className="text-sm text-purple-200/80">{input.name.replace('_',' ')}:</label>
+              {
+                input.type == 'str' && (
+                  <input onChange={(e) => onInputChange(block.instanceId, e.target.value, index)} value={values[index] ?? ''} type='text' list='variable_suggestions' className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
+                )
+              }
+
+              {
+              input.type == 'int' && (
+                  <input onChange={(e) => onInputChange(block.instanceId, e.target.value, index)} value={values[index] ?? ''} type='text' list='variable_suggestions' className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
+                )
+              }
+
+              {
+                input.type == 'float' && (
+                  <input onChange={(e) => onInputChange(block.instanceId, e.target.value, index)} value={values[index] ?? ''} type='text' list='variable_suggestions' className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
+                )
+              }
+
+              {
+                input.type == 'raw_str' && ( // var inputs should show no variable suggestions
+                  <input onChange={(e) => onInputChange(block.instanceId, e.target.value, index)} value={values[index] ?? ''} type='text' className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
+                )
+              }
+              {
+                input.type == 'var' && ( // var inputs should show no variable suggestions
+                  //todo: detect when var assigner has changed, to set value to its name/empty string
+                  <select onChange={(e) => {onInputChange(block.instanceId, e.target.value, index)}}  value={values[index] ?? ''} className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'>
+                    {
+                      variableSuggestions[index]?.map(suggestion => (
+                        <option value={`{${suggestion}}`} className='text-black'>
+                          {suggestion}
+                        </option>
+                      ))
+                    }
+                  </select>
+                )
+              }
+
+              {
+                input.type.includes('option') && (
+
+                  <select onChange={(e) => onInputChange(block.instanceId, e.target.value, index)}  value={values[index] ?? ''} className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'>
+                    {
+                      input.type.split(':')[1].split(',').map((option) => (
+                        <option key={option} value={option.split('.')[0]} className='text-black rounded'>
+                          {option.split('.')[1]}
+                        </option>
+                      ))
+                    }
+                  </select>
+                )
+              }
+
+              <datalist id='variable_suggestions'>
+                {
+                  variableSuggestions.map(suggestion => (
+                    <option value={`{${suggestion}}`}>
+                      {suggestion}
+                    </option>
+                  ))
+                }
+
+              </datalist>
+
             </div>
           ))}
         </div>
