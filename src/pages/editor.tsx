@@ -305,8 +305,6 @@ export default function Editor() {
 
   // Handle changes to block input values
   const handleInputChange = (instanceId:string, value: string, index:number) => {
-    console.log(index)
-    console.log(value)
     setUnsavedChanges(true);
     setWorkspaceBlocks((blocks) =>
       blocks.map((block) =>

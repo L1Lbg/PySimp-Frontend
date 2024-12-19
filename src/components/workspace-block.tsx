@@ -66,7 +66,7 @@ export default function WorkspaceBlock({
 
 
   const getVariableSuggestions = (index:number) => {
-    let results = []
+    let results = ['']
 
     if(block.inputs[index]['extra']){
       let queries = block.inputs[index]['extra'].split('.')
@@ -75,7 +75,7 @@ export default function WorkspaceBlock({
       for (let index = 0; index < queries.length; index++) {
         // get index of current block, to ignore further var declarations
         let block_index = blocks.findIndex((n_block) => n_block.instanceId === block.instanceId);
-        // if blocks name is equal to the var type input query
+        // if blocks name is equal to the var input query
         let add = blocks.slice(0, block_index+1).map(
           (block) => {
             if(block['name'].toLowerCase().includes(queries[index].toLowerCase())){
@@ -96,6 +96,7 @@ export default function WorkspaceBlock({
       }
     }
     results = results.filter(result => result != undefined);
+    console.log(results);
     return results
   }
 
@@ -162,7 +163,8 @@ export default function WorkspaceBlock({
               }
               {
                 input.type == 'var' && ( // var inputs should show no variable suggestions
-                  <select onChange={(e) => {onInputChange(block.instanceId, e.target.value, index);}}  value={values[index] ?? ''} className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'>
+                  //todo: detect when var assigner has changed, to set value to its name/empty string
+                  <select onChange={(e) => {onInputChange(block.instanceId, e.target.value, index)}}  value={values[index] ?? ''} className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'>
                     {
                       variableSuggestions[index]?.map(suggestion => (
                         <option value={`{${suggestion}}`} className='text-black'>
