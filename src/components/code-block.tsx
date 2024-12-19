@@ -41,7 +41,7 @@ export default function CodeBlock({ block, isTemplate = false, onInputChange, va
       {...(isTemplate ? { ...attributes, ...listeners } : {})}
     >
       <h3 className="font-semibold mb-2">{block.name}</h3>
-      <p className="text-sm text-purple-200/60 mb-3">{block.description}</p>
+      <p className="text-sm text-purple-200/60 mb-3" dangerouslySetInnerHTML={{__html:block.description}}></p>
     </Card>
   );
 }
