@@ -3,7 +3,6 @@ import { CSS } from '@dnd-kit/utilities';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { GripVertical, X } from 'lucide-react';
-import { Input } from './ui/input';
 import type { CodeBlock as CodeBlockType } from '@/types';
 import { useEffect, useState } from 'react';
 
@@ -119,7 +118,7 @@ export default function WorkspaceBlock({
         )}
         <div className="flex-1 mx-3">
           <h3 className="font-semibold">{block.name}</h3>
-          <p className="text-sm text-purple-200/60">{block.description}</p>
+          <p className="text-sm text-purple-200/60" dangerouslySetInnerHTML={{ __html: block.description }}></p>
         </div>
         {canEdit && (
           <Button
