@@ -145,13 +145,13 @@ export default function WorkspaceBlock({
 
               {
               input.type == 'int' && (
-                  <input onChange={(e) => onInputChange(block.instanceId, e.target.value, index)} value={values[index] ?? ''} type='text' list='variable_suggestions' className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
+                  <input onChange={(e) => onInputChange(block.instanceId, e.target.value, index)} value={values[index] ?? ''} step="1" type='number' pattern="[0-9]*" list='variable_suggestions' className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
                 )
               }
 
               {
                 input.type == 'float' && (
-                  <input onChange={(e) => onInputChange(block.instanceId, e.target.value, index)} value={values[index] ?? ''} type='text' list='variable_suggestions' className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
+                  <input onChange={(e) => onInputChange(block.instanceId, e.target.value, index)} value={values[index] ?? ''} step="any" type='number' pattern="[0-9]*" list='variable_suggestions' className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
                 )
               }
 
