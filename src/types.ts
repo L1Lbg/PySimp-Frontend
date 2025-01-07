@@ -3,6 +3,7 @@ export interface CodeBlock {
   category: string;
   name: string;
   description: string;
+  assignable: string;
   hasEndBlock?: boolean;
   isEndBlock?: boolean;
   parentBlockId?: string;

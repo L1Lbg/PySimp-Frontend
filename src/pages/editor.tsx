@@ -186,10 +186,11 @@ export default function Editor() {
               if(cat_block) {
                 //* make the block fit the workspace block requirements
                 const time = new Date()
+                console.log(cat_block)
                 let inputs = cat_block.inputs?.map((input) => ({
                   'type':input.type,
                   'name':input.name,
-                  'extra':input?.extra
+                  'extra':input?.extra,
                 }))
 
 
@@ -198,6 +199,7 @@ export default function Editor() {
                   name:cat_block.name,
                   category:cat_block.category,
                   description:cat_block.description,
+                  assignable:cat_block.assignable,
                   inputs:inputs,
                   values:block.params,
                   instanceId: `${index}-${cat_block.id}-${time.getTime()}`,
@@ -281,7 +283,6 @@ export default function Editor() {
         };
         newBlocks.push(newBlock);
         
-        console.log(newBlocks);
         // If the block requires an end block, add it automatically
         if (sourceBlock.hasEndBlock) {
           const endBlock = blockCategories
@@ -305,6 +306,30 @@ export default function Editor() {
 
   // Handle changes to block input values
   const handleInputChange = (instanceId:string, value: string, index:number) => {
+    //* get type of input and sanitize values from here
+    let type = workspaceBlocks.find(block => block.instanceId === instanceId)['inputs'][index]['type']
+    let input_types_to_sanitize = ['int','float']
+    if(input_types_to_sanitize.includes(type)){
+      if(
+        (value[0] !== '{')
+        &&
+        (value.charAt(value.length-1) !== '}')
+        &&
+        value !== ''
+      ) {
+        if(type == 'int'){
+          if(isNaN(parseInt(value))){
+            return;
+          }
+        }
+        if(type == 'float'){
+          if(isNaN(parseFloat(value))){
+            return;
+          }
+        }
+      }
+    }
+    console.log(type)
     setUnsavedChanges(true);
     setWorkspaceBlocks((blocks) =>
       blocks.map((block) =>
