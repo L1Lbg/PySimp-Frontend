@@ -39,11 +39,17 @@ export function EditorButtons({
   liking,
   handleLike,
   saving,
+  projectTitle,
+  setProjectTitle,
 }: EditorButtonsProps) {
   return (
     <div className="flex flex-wrap items-center gap-4 mb-5 mt-5">
       {canEdit && id != '0' && (
         <>
+          <input 
+            type="text" value={projectTitle}
+            onChange={(e) => setProjectTitle(e.target.value)}
+          />
           <Button
             variant="outline"
             size="sm"

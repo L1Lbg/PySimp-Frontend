@@ -50,6 +50,7 @@ function App() {
       )
     } else {
       console.debug('No need to refresh token')
+      //todo: add a timeout to refresh token
     }
 
     //* toggle debug mode

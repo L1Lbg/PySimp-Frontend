@@ -64,8 +64,6 @@ export default function Editor() {
   const [forking, setForking] = useState(false);
   const [showDownloadWarning, setShowDownloadWarning] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
-  const [variableSuggestions, setVariableSuggestions] = useState([]);
-
 
   const handleFork = () => {
     setForking(true);
@@ -171,6 +169,7 @@ export default function Editor() {
             searchParams.set('editor','0')
           }
           setProjectTitle(data.title);
+          console.log(data.title)
           setIsPublic(data.public == true);
           setLiked(data.user_favorited);
           setIsVerified(data.approved == true);
@@ -186,7 +185,6 @@ export default function Editor() {
               if(cat_block) {
                 //* make the block fit the workspace block requirements
                 const time = new Date()
-                console.log(cat_block)
                 let inputs = cat_block.inputs?.map((input) => ({
                   'type':input.type,
                   'name':input.name,
@@ -329,7 +327,6 @@ export default function Editor() {
         }
       }
     }
-    console.log(type)
     setUnsavedChanges(true);
     setWorkspaceBlocks((blocks) =>
       blocks.map((block) =>
@@ -599,6 +596,8 @@ export default function Editor() {
                 liking={liking}
                 handleLike={handleLike}
                 saving={saving}
+                projectTitle={projectTitle}
+                setProjectTitle={setProjectTitle}
         />
 
       {/* Main editor area */}

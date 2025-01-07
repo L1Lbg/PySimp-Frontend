@@ -87,7 +87,6 @@ export default function WorkspaceBlock({
       //* go through each block and check if blocks name is equal to the var input query
       let add = blocks.slice(0, block_index+1).map(
         (block) => {
-          console.log(block['name'])
           if(block['name'].toLowerCase().includes(query[0].toLowerCase())){
             //* get index of input which is the var assigner
             let input_index = block['inputs'].findIndex((input) => (input.type == "raw_str") && (input.name.toLowerCase().includes(query[1])))
