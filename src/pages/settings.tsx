@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Save, KeyRound, User, DollarSign, Subscript, AlertTriangle, CalendarCheckIcon, CircleEllipsis, LinkIcon } from 'lucide-react';
+import { Save, KeyRound, User, DollarSign, Subscript, AlertTriangle, CalendarCheckIcon, CircleEllipsis, LinkIcon, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -111,6 +111,30 @@ export default function Settings() {
       }
     )
   };
+
+  const handleUnsubscribe = (e) => {
+    fetch(
+      `${import.meta.env.VITE_API_URL}/payments/unsubscribe/`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization':`Bearer ${localStorage.getItem('access')}`,
+        }
+      }
+    )
+    .then(
+      res => res.json()
+    )
+    .then(
+      data => {
+        if(data.success){
+          window.location.reload()
+        } else if (data.error){
+          showError(data.error)
+        }
+      }
+    )
+  }
 
   const handleUsernameChange = (e: React.FormEvent) => {
     e.preventDefault();
@@ -271,10 +295,17 @@ export default function Settings() {
             </h2>
             {
               profile.subscription != null ? (
-                <p>
-                  You are subscribed to the <b>{profile.subscription.name}</b>.
-                  Subscription started on {new Date(profile.subscription.start).toDateString()} and ends on {new Date(profile.subscription.end).toDateString()}. 
-                </p>
+                <>
+                  <p>
+                    You are subscribed to the <b>{profile.subscription.name}</b>.
+                    Subscription started on {new Date(profile.subscription.start).toDateString()} and ends on {new Date(profile.subscription.end).toDateString()}. 
+                  </p>
+                  <br />
+                  <Button variant='destructive' type="button" className="w-full space-x-2" onClick={handleUnsubscribe}>
+                    <X className="h-4 w-4" />
+                    <span>Cancel subscription</span>
+                  </Button>
+                </>
               ) : (
                 <p>
                   You currently do not have a subscription.
