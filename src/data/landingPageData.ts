@@ -1,4 +1,4 @@
-import { MousePointer2, Braces, Sparkles, Share2, Zap, Shield, Code2, Workflow } from 'lucide-react';
+import { MousePointer2, Clock, Zap, Shield, Code2, Workflow } from 'lucide-react';
 
 export const features = [
   {
@@ -7,19 +7,19 @@ export const features = [
     description: 'Drag and drop blocks to build your automation scripts with ease'
   },
   {
-    icon: Braces,
-    title: 'Clean Code',
-    description: 'Generate readable and efficient Python code automatically'
+    icon: Clock,
+    title: 'Time Saver',
+    description: 'Automate repetitive tasks and save hours every week'
   },
   {
-    icon: Sparkles,
-    title: 'AI Assistance',
-    description: 'Get smart suggestions and help while building your scripts'
+    icon: Workflow,
+    title: 'Workflow Automation',
+    description: 'Create powerful automation flows without any coding knowledge'
   },
   {
-    icon: Share2,
-    title: 'Share & Collaborate',
-    description: 'Share your automations with the community or keep them private'
+    icon: Shield,
+    title: 'Secure & Private',
+    description: 'Your automations run locally with full transparency'
   }
 ];
 
@@ -40,9 +40,9 @@ export const benefits = [
     description: 'Perfect for beginners and non-programmers'
   },
   {
-    icon: Workflow,
-    title: 'Flexible',
-    description: 'Adapt scripts to your specific needs easily'
+    icon: Clock,
+    title: 'Save Time',
+    description: 'Automate tasks and reclaim your valuable time'
   }
 ];
 
@@ -53,8 +53,8 @@ export const useCases = [
     image: 'https://images.unsplash.com/photo-1618477388954-7852f32655ec?auto=format&fit=crop&q=80'
   },
   {
-    title: 'Data Processing',
-    description: 'Transform and analyze data without writing code',
+    title: 'Mouse & Keyboard Automation',
+    description: 'Automate repetitive mouse movements and keyboard inputs',
     image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80'
   },
   {

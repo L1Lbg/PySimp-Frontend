@@ -11,6 +11,7 @@ import Auth from './pages/auth';
 import Favorites from './pages/favorites';
 import Google from './pages/google';
 import Guide from './pages/guides';
+import Subscription from './pages/subscription';
 
 function App() {
   const [debug, setDebug] = useState(false)
@@ -95,6 +96,7 @@ function App() {
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/create/:id" element={<Editor />} />
                 <Route path="/guide/:id" element={<Guide />} />
+                <Route path="/subscribe" element={<Subscription />} />
                 </>
               )
             }
