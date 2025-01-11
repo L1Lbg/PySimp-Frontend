@@ -169,7 +169,6 @@ export default function Editor() {
             searchParams.set('editor','0')
           }
           setProjectTitle(data.title);
-          console.log(data.title)
           setIsPublic(data.public == true);
           setLiked(data.user_favorited);
           setIsVerified(data.approved == true);
@@ -268,6 +267,9 @@ export default function Editor() {
         .flatMap((category) => category.blocks)
         .find((block) => block.id === active.id);
 
+      console.log(sourceBlock)
+
+      //* if block comes from library
       if (sourceBlock) {
         const instanceId = `${sourceBlock.id}-${Date.now()}`;
         const initialValues = new Array(sourceBlock.inputs.length).fill('');
@@ -295,8 +297,8 @@ export default function Editor() {
             };
             newBlocks.push(endBlockInstance);
           }
-        }
-
+        } 
+        
         setWorkspaceBlocks((blocks) => [...blocks, ...newBlocks]);
       }
     }
@@ -369,6 +371,8 @@ export default function Editor() {
   // Handle block reordering
   const handleReorderBlocks = (activeId: string, overId: string) => {
     setUnsavedChanges(true);
+    console.log(workspaceBlocks);
+    console.log('reordering blocks')
     setWorkspaceBlocks((blocks) => {
       const oldIndex = blocks.findIndex((b) => b.instanceId === activeId);
       const newIndex = blocks.findIndex((b) => b.instanceId === overId);

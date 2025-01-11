@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Save, KeyRound, User, Key } from 'lucide-react';
+import { Save, KeyRound, User, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -21,7 +21,8 @@ export default function Settings() {
   const [profile, setProfile] = useState({
     email: 'Loading...',
     username: 'Loading...',
-    registration_method:'None'
+    registration_method:'None',
+    referral_code:'XXXXXX',
   });
 
     // load initial profile
@@ -178,6 +179,7 @@ export default function Settings() {
               </div>
             </div>
           </Card>
+
           <Button disabled={changingUsername} type="submit" className="w-full space-x-2">
             <Save className="h-4 w-4" />
             
@@ -190,6 +192,9 @@ export default function Settings() {
             }
           </Button>
         </form>
+
+        <br />
+
 
         {
           profile.registration_method == 'Mail' && (
@@ -256,6 +261,60 @@ export default function Settings() {
             </form>
           )
         }
+        <br/>
+        <div className='text-center'>
+          <b>Your affiliate code:</b>
+          {
+            profile.referral_code == null ? (
+              <input className='w-full text-center' 
+              value='You need to setup your payments account to get a referral code'
+              disabled/>
+            ) : (
+              <input className='w-full text-center' value={profile.referral_code} disabled/>
+            )
+          }
+        </div>
+        <br />
+        <Button type="button" className="w-full space-x-2"
+                onClick={
+                  (e) => {
+                    fetch(
+                      `${import.meta.env.VITE_API_URL}/payments/onboarding`,
+                      {
+                        method: 'GET',
+                        redirect: 'follow',
+                        headers: {
+                          'Authorization':`Bearer ${localStorage.getItem('access')}`,
+                        }
+                      }
+                    )
+                    .then(
+                      res => res.json()
+                    )
+                    .then(
+                      data => window.location.href = data.url
+                    )
+                }
+              }
+              >
+                <DollarSign className="h-4 w-4" />
+                <span>Setup/Edit your monetized account</span>
+        </Button>
+        <br />
+        <br />
+        <div className='ml-20'>
+          <u>
+            The information will only be handled by <a className='text-purple-700' href='https://stripe.com'>Stripe</a> and Autonomia.
+            <br />
+            The following information will be asked for:
+          </u>
+          <ul className='ml-5' style={{listStyleType:'disc'}}>
+            <li>Full name</li>
+            <li>Address</li>
+            <li>Bank account details</li>
+            <li>Identity verification</li>
+          </ul>
+        </div>
       </div>
     </div>
   );
