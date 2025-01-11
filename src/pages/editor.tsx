@@ -9,7 +9,6 @@ import {
   DragStartEvent,
   pointerWithin,
 } from '@dnd-kit/core';
-import { Save, Trash2, Copy, Lock, Unlock, Download, Heart, HeartOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -22,7 +21,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import type { CodeBlock as CodeBlockType, Project } from '@/types';
+import type { CodeBlock as CodeBlockType } from '@/types';
 import BlockCategory from '@/components/block-category';
 import { blockCategoriesMock } from '@/data/blockCategories';
 import CodeBlock from '@/components/code-block';
@@ -51,7 +50,7 @@ export default function Editor() {
   const [workspaceBlocks, setWorkspaceBlocks] = useState<WorkspaceBlock[]>([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [projectNameConfirm, setProjectNameConfirm] = useState('');
-  const [projectTitle, setProjectTitle] = useState('Loading...');
+  const [projectTitle, setProjectTitle] = useState('Untitled project');
   const [isPublic, setIsPublic] = useState(false);
   const [blockSearchQuery, setBlockSearchQuery] = useState('');
   const [blockCategories, setBlockCategories] = useState(blockCategoriesMock)
@@ -700,7 +699,7 @@ export default function Editor() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete Project</DialogTitle>
-            <DialogDescription>
+            <DialogDescription style={{'userSelect':'none'}} >
               This action cannot be undone. Please type "{projectTitle}" to
               confirm.
             </DialogDescription>

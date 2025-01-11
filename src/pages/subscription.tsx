@@ -43,7 +43,24 @@ export default function Subscription() {
   return (
     <div className="container mx-auto px-4 py-16">
       <h1 className="text-3xl font-bold text-center mb-12">Choose Your Plan</h1>
-      <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+      <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        {/* Free Tier */}
+        <Card className="p-6 hover:border-purple-400/30 transition-colors">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-4">One Week Free Trial</h2>
+            <div className="flex justify-center gap-4 mb-6">
+              <p className="text-3xl font-bold">€0</p>
+              <p className="text-3xl font-bold">$0</p>
+            </div>
+            <Button 
+              className="w-full" 
+              onClick={() => handleSubscribe(5)}
+            >
+              Subscribe
+            </Button>
+          </div>
+        </Card>
+
         {/* Autonomer Tier */}
         <Card className="p-6 hover:border-purple-400/30 transition-colors">
           <div className="text-center">
