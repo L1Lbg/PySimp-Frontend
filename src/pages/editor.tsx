@@ -84,14 +84,25 @@ export default function Editor() {
     )
   }
 
+
+  //* get blocks
   useEffect(()=>{
-      try {
+        if(localStorage.getItem('subscription') == null){
+          navigate('/subscribe')
+          showError('You need to be subscribed to access this page.')
+          return;
+        }
         // Attempt to fetch data from the API
         fetch(`${import.meta.env.VITE_API_URL}/api/categories/`, {headers:{'Authorization':`Bearer ${localStorage.getItem('access')}`}})
         .then(
           res => {
             if(!res.ok){
-              throw new Error('Failed to fetch categories');
+              if(res.status == 403){
+                navigate('/subscribe')
+                localStorage.removeItem('subscription')
+                throw new Error('You need to be subscribed to access this page.')
+              }
+              throw new Error('Failed to fetch code blocks');
             }
             return res.json()
           }
@@ -101,9 +112,11 @@ export default function Editor() {
             setBlockCategories(data)
           }
         )
-      } catch (error) {
-        console.error('API fetch failed, falling back to mock data:', error);
-      }
+        .catch(
+          error => {
+            showError(`${error}`);
+          }
+        )
   },[])
 
   const handleLike = (value:boolean) => {
@@ -518,8 +531,11 @@ export default function Editor() {
 
       const data = await response.json()
       if (!response.ok) {
-        
-        throw new Error(`Failed to download the project. Error: ${data.error}`);
+        if(data.error){
+          throw new Error(`Failed to download the project. Error: ${data.error}`);
+        } else {
+          throw new Error(`Failed to download the project. Error: ${data.detail}`);
+        }
       } else {
 
         //*handle different OS bat and bash

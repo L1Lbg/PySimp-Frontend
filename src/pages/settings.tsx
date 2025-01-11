@@ -4,12 +4,21 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/toast-provider';
-import { Link } from 'react-router-dom';
 
 export default function Settings() {
   const { showError } = useToast();
   const [changingPassword, setChangingPassword] = useState(false);
   const [changingUsername, setChangingUsername] = useState(false);
+  const queryParameters = new URLSearchParams(window.location.search)
+  const success = queryParameters.get("success")
+
+
+
+  useEffect(()=>{
+    if(success){
+      localStorage.setItem('subscription', true)
+    }
+  },[success])
 
   const [passwordData, setPasswordData] = useState({
     currentPassword:'',
@@ -128,6 +137,7 @@ export default function Settings() {
     .then(
       data => {
         if(data.success){
+          localStorage.removeItem('subscription')
           window.location.reload()
         } else if (data.error){
           showError(data.error)
@@ -288,6 +298,9 @@ export default function Settings() {
           )
         }
 
+        <br />
+        <br />
+
         <Card className="p-6">
             <h2 className="text-lg font-semibold mb-4 flex items-center">
               <CalendarCheckIcon className="h-5 w-5 mr-2" />
@@ -315,7 +328,7 @@ export default function Settings() {
               )
             }
         </Card>
-
+        <br />
         <br/>
         <Card className='text-center p-6'>
           <h2 className='text-lg font-semibold mb-4 flex items-center'>
