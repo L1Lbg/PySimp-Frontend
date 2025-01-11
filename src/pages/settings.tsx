@@ -376,16 +376,21 @@ export default function Settings() {
         <Card className='p-6'>
           <h2 className='text-lg text-red-500 font-semibold mb-4 flex items-center'>
             <AlertTriangle className="h-5 w-5 mr-2"/>
-            Important information for monetized accounts
+            Important information for monetized accounts, read before setup.
           </h2>
-          <u>
-            The information will only be handled by <a className='text-purple-700' href='https://stripe.com'>Stripe</a> and Autonomia.
+          <p>
+            By creating a monetized account, you agree to the <a className='text-purple-500' href='/legal/referral-program' target='_blank'>Referral Program</a> policies.
             <br />
-            The following information will be asked for:
-          </u>
+            <br />
+            The information will only be handled by <a className='text-purple-500' href='https://stripe.com' target='_blank'>Stripe</a>. 
+            Please read their legal terms before setting up your account.
+            <br />
+            <br />
+            The requested personal information is the following:
+          </p>
           <ul className='ml-5' style={{listStyleType:'disc'}}>
-            <li>Full name</li>
-            <li>Address</li>
+            <li>Full legal name</li>
+            <li>Home address</li>
             <li>Bank account details</li>
             <li>Identity verification</li>
           </ul>

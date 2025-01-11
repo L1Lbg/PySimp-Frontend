@@ -13,6 +13,12 @@ import Google from './pages/google';
 import Guide from './pages/guides';
 import Subscription from './pages/subscription';
 import Activate from './pages/activate';
+import CookiePolicy from './pages/CookiePolicy';
+import Disclaimers from './pages/Disclaimers';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import ReferralProgram from './pages/ReferralProgram';
+import RefundPolicy from './pages/RefundPolicy';
+import TermsOfService from './pages/TermsOfService';
 
 function App() {
   const [debug, setDebug] = useState(false)
@@ -85,6 +91,16 @@ function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/google/login" element={<Google />} />
             <Route path="/activate/:uid/:token" element={<Activate />} />
+
+            <Route path="/legal/tos" element={<TermsOfService />} />
+            <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/legal/disclaimers" element={<Disclaimers />} />
+
+            <Route path="/legal/referral-program" element={<ReferralProgram />} />
+            <Route path="/legal/refund-policy" element={<RefundPolicy />} />
+            
+            <Route path="/legal/cookie-policy" element={<CookiePolicy />} />
+
                 {
               debug && (
                 <>

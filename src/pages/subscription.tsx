@@ -11,6 +11,28 @@ export default function Subscription() {
   const success = queryParameters.get("success")
   const {showError} = useToast();
 
+
+  const subscriptions = [
+    {
+      'id':5,
+      'name':'One Week Free Trial',
+      'eur_price':0,
+      'usd_price':0,
+    },
+    {
+      'id':3,
+      'name':'Autonomer Tier',
+      'eur_price':30,
+      'usd_price':32,
+    },
+    {
+      'id':4,
+      'name':'Premium Tier',
+      'eur_price':55,
+      'usd_price':60,
+    },
+  ]
+
   const handleSubscribe = (subId: number) => {
     // Subscription handling logic here
     fetch(
@@ -43,57 +65,32 @@ export default function Subscription() {
   return (
     <div className="container mx-auto px-4 py-16">
       <h1 className="text-3xl font-bold text-center mb-12">Choose Your Plan</h1>
-      <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-        {/* Free Tier */}
-        <Card className="p-6 hover:border-purple-400/30 transition-colors">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">One Week Free Trial</h2>
-            <div className="flex justify-center gap-4 mb-6">
-              <p className="text-3xl font-bold">€0</p>
-              <p className="text-3xl font-bold">$0</p>
-            </div>
-            <Button 
-              className="w-full" 
-              onClick={() => handleSubscribe(5)}
-            >
-              Subscribe
-            </Button>
-          </div>
-        </Card>
+      <div className={`grid md:grid-cols-${subscriptions.length} gap-8 max-w-7xl mx-auto`}>
 
-        {/* Autonomer Tier */}
-        <Card className="p-6 hover:border-purple-400/30 transition-colors">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Autonomer Tier</h2>
-            <div className="flex justify-center gap-4 mb-6">
-              <p className="text-3xl font-bold">€30 <span className="text-sm">/ month</span></p>
-              <p className="text-3xl font-bold">$32 <span className="text-sm">/ month</span></p>
-            </div>
-            <Button 
-              className="w-full" 
-              onClick={() => handleSubscribe(3)}
-            >
-              Subscribe
-            </Button>
-          </div>
-        </Card>
+        {
+          subscriptions.map(sub => (
+            <Card className="p-6 hover:border-purple-400/30 transition-colors">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold mb-4">{sub.name}</h2>
+                <div className="flex justify-center gap-4 mb-6">
+                  <p className="text-3xl font-bold">€{sub.eur_price}</p>
+                  <p className="text-3xl font-bold">${sub.usd_price}</p>
+                </div>
 
-        {/* Premium Tier */}
-        <Card className="p-6 hover:border-purple-400/30 transition-colors">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Premium Tier</h2>
-            <div className="flex justify-center gap-4 mb-6">
-              <p className="text-3xl font-bold">€60 <span className="text-sm">/ month</span></p>
-              <p className="text-3xl font-bold">$62 <span className="text-sm">/ month</span></p>
-            </div>
-            <Button 
-              className="w-full" 
-              onClick={() => handleSubscribe(4)}
-            >
-              Subscribe
-            </Button>
-          </div>
-        </Card>
+                <p className='text-gray-500'>
+                  By clicking this button you agree on the <a className='text-purple-500' href='/legal/refund-policy' target='_blank'>Refund Policy</a>
+                </p>
+                <br />
+                <Button 
+                  className="w-full" 
+                  onClick={() => handleSubscribe(sub.id)}
+                >
+                  Subscribe
+                </Button>
+              </div>
+            </Card>
+          ))
+        }
       </div>
     </div>
   );

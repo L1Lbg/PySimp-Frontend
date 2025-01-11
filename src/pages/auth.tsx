@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Mail, Lock, User, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, AlertCircle, File } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -26,7 +26,8 @@ export default function Auth() {
     email: '',
     username: '',
     password: '',
-    re_password: ''
+    re_password: '',
+    tos:false,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -58,11 +59,16 @@ export default function Auth() {
         localStorage.setItem('expiry', `${now.getTime()+60*60*1000}`); //* time in milliseconds
         navigate('/');
       } else {
+        if(formData.tos == false){
+          showError('You must agree to the Terms of Service, Privacy Policy and Disclaimers')
+          return;
+        }
         const response = await fetch(`${import.meta.env.VITE_API_URL}/authentication/manage/users/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData),
         });
+
 
         const data = await response.json();
 
@@ -175,7 +181,8 @@ export default function Auth() {
           </div>
 
           {mode === 'signup' && (
-            <div className="space-y-2">
+            <>
+              <div className="space-y-2">
               <label className="text-sm font-medium">Confirm Password</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-2.5 h-5 w-5 text-purple-200/40" />
@@ -189,6 +196,18 @@ export default function Auth() {
                 />
               </div>
             </div>
+
+              <div className="space-y-2">
+              <input
+                type='checkbox'
+                className='mr-3'
+                onChange={(e) => setFormData({ ...formData, tos: e.target.checked })}
+              />
+              <label className="text-sm font-medium">
+                You agree to the  <a href='/legal/tos' className='text-purple-500' target='_blank'>Terms Of Service</a>, <a href='/legal/privacy-policy' className='text-purple-500' target='_blank'>Privacy Policy</a> and <a className='text-purple-500' href='/legal/disclaimers' target='_blank'>Disclaimers</a>.
+              </label>
+              </div>
+            </>
           )}
 
           <Button type="submit" className="w-full" disabled={loading}>
