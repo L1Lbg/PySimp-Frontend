@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Save, KeyRound, User, DollarSign } from 'lucide-react';
+import { Save, KeyRound, User, DollarSign, Subscript, AlertTriangle, CalendarCheckIcon, CircleEllipsis, LinkIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/toast-provider';
+import { Link } from 'react-router-dom';
 
 export default function Settings() {
   const { showError } = useToast();
@@ -23,6 +24,7 @@ export default function Settings() {
     username: 'Loading...',
     registration_method:'None',
     referral_code:'XXXXXX',
+    subscription:null,
   });
 
     // load initial profile
@@ -261,19 +263,44 @@ export default function Settings() {
             </form>
           )
         }
+
+        <Card className="p-6">
+            <h2 className="text-lg font-semibold mb-4 flex items-center">
+              <CalendarCheckIcon className="h-5 w-5 mr-2" />
+              Subscription
+            </h2>
+            {
+              profile.subscription != null ? (
+                <p>
+                  You are subscribed to the <b>{profile.subscription.name}</b>.
+                  Subscription started on {new Date(profile.subscription.start).toDateString()} and ends on {new Date(profile.subscription.end).toDateString()}. 
+                </p>
+              ) : (
+                <p>
+                  You currently do not have a subscription.
+                  <br />
+                  Click <a href='/subscribe' className='text-purple-700'>here</a> to subscribe.
+                </p>
+              )
+            }
+        </Card>
+
         <br/>
-        <div className='text-center'>
-          <b>Your affiliate code:</b>
+        <Card className='text-center p-6'>
+          <h2 className='text-lg font-semibold mb-4 flex items-center'>
+            <LinkIcon className="h-5 w-5 mr-2"/>
+            Your affiliate link
+          </h2>
           {
             profile.referral_code == null ? (
               <input className='w-full text-center' 
-              value='You need to setup your payments account to get a referral code'
+              value='You need to setup your monetized account to get a referral code'
               disabled/>
             ) : (
-              <input className='w-full text-center' value={profile.referral_code} disabled/>
+              <input className='w-full text-center' value={`${import.meta.env.VITE_FRONTEND_URL}/subscribe?referrer=${profile.referral_code}`} disabled/>
             )
           }
-        </div>
+        </Card>
         <br />
         <Button type="button" className="w-full space-x-2"
                 onClick={
@@ -302,7 +329,11 @@ export default function Settings() {
         </Button>
         <br />
         <br />
-        <div className='ml-20'>
+        <Card className='p-6'>
+          <h2 className='text-lg text-red-500 font-semibold mb-4 flex items-center'>
+            <AlertTriangle className="h-5 w-5 mr-2"/>
+            Important information for monetized accounts
+          </h2>
           <u>
             The information will only be handled by <a className='text-purple-700' href='https://stripe.com'>Stripe</a> and Autonomia.
             <br />
@@ -314,7 +345,7 @@ export default function Settings() {
             <li>Bank account details</li>
             <li>Identity verification</li>
           </ul>
-        </div>
+        </Card>
       </div>
     </div>
   );
