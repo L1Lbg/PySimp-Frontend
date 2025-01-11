@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Save, KeyRound, User, DollarSign, Subscript, AlertTriangle, CalendarCheckIcon, CircleEllipsis, LinkIcon, X } from 'lucide-react';
+import { Save, KeyRound, User, DollarSign, Subscript, AlertTriangle, CalendarCheckIcon, CircleEllipsis, LinkIcon, X, UserX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -184,6 +184,28 @@ export default function Settings() {
       }
     )
   };
+
+  const handleAccountDeletion = async () => {
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/authentication/user/delete`,
+      {
+        'method':'DELETE',
+        'headers':{
+          'Authorization': `Bearer ${localStorage.getItem('access')}`
+        }
+      }
+    )
+
+    if(!response.ok){
+      const data = await response.json();
+      showError(data.error)
+    } else {
+      window.location.href = '/auth'
+    }
+
+
+
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -394,6 +416,38 @@ export default function Settings() {
             <li>Bank account details</li>
             <li>Identity verification</li>
           </ul>
+        </Card>
+
+        <br />
+        <br />
+        <br />
+
+
+        <Card className='p-6'>
+          <h2 className='text-lg text-red-500 font-semibold mb-4 flex items-center'>
+            <UserX className="h-5 w-5 mr-2"/>
+            Account deletion
+          </h2>
+          <p>
+            Autonomia will:
+            <ul style={{listStyle:'disc'}} className='ml-7'>
+              <li>
+                Delete your account from the databases.
+              </li>
+              <li>
+                Remove your customer account on Stripe, effectively deleting all information about your payment information.
+              </li>
+              <li>
+                Remove your monetized account (if existing).
+              </li>
+            </ul>
+            <br />
+            <span className='text-red-500'>This action is not reversible</span>
+          </p>
+          <br />
+          <Button variant='destructive' onClick={handleAccountDeletion}>
+            Delete account
+          </Button>
         </Card>
       </div>
     </div>
