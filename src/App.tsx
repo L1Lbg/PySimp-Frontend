@@ -12,6 +12,7 @@ import Favorites from './pages/favorites';
 import Google from './pages/google';
 import Guide from './pages/guides';
 import Subscription from './pages/subscription';
+import Activate from './pages/activate';
 
 function App() {
   const [debug, setDebug] = useState(false)
@@ -83,10 +84,9 @@ function App() {
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/google/login" element={<Google />} />
+            <Route path="/activate/:uid/:token" element={<Activate />} />
                 {
-              !debug ? (
-                <></>
-              ) : (
+              debug && (
                 <>
                 <Route path="/community" element={<Community />} />
                 <Route path="/auth" element={<Auth />} />
