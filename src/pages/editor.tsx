@@ -86,11 +86,11 @@ export default function Editor() {
 
   //* get blocks
   useEffect(()=>{
-        if(localStorage.getItem('subscription') == null){
-          navigate('/subscribe')
-          showError('You need to be subscribed to access this page.')
-          return;
-        }
+        // if(localStorage.getItem('subscription') == null){
+        //   navigate('/subscribe')
+        //   showError('You need to be subscribed to access this page.')
+        //   return;
+        // }
         // Attempt to fetch data from the API
         fetch(`${import.meta.env.VITE_API_URL}/api/categories/`, {headers:{'Authorization':`Bearer ${localStorage.getItem('access')}`}})
         .then(

@@ -99,9 +99,21 @@ export default function WorkspaceBlock({
       )
       results = results.concat(add)
     }
-    //todo: add all "Set a variable" blocks
+    //* add all "Set a variable" blocks
+    let add = blocks.slice(0, block_index+1).map(
+      (block) => {
+        if(block['name'].toLowerCase() == 'set a variable'){
+          //* get index of input which is the var assigner
+          let input_index = block['inputs'].findIndex((input) => (input.type == "raw_str"))
+          let var_name:string = block['values'][input_index] 
+          if(var_name != undefined && var_name != ''){
+            return var_name
+          }
+        }
+      }
+    )
 
-    //todo -----
+    results = results.concat(add)
 
     results = results.filter(result => result != undefined);
     return results
