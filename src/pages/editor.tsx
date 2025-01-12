@@ -265,54 +265,55 @@ export default function Editor() {
     if (!canEdit) return;
     const { active, over } = event;
     setActiveId(null);
-    setUnsavedChanges(true);
 
-    if (over) {
-      const blockLimit = 200;
-      if (workspaceBlocks.length >= blockLimit) {
-        showError(`Block limit of ${blockLimit} reached. You cannot add more blocks.`);
-        return;
-      }
+    if (!over) return;
 
-      // get id from block categories
-      const sourceBlock = blockCategories
-        .flatMap((category) => category.blocks)
-        .find((block) => block.id === active.id);
+    // If the dragged item is from the workspace (reordering)
+    if (active.data.current?.type !== 'block') {
+      handleReorderBlocks(active.id as string, over.id as string);
+      return;
+    }
 
-      console.log(sourceBlock)
+    // Rest of the existing block creation logic...
+    const blockLimit = 200;
+    if (workspaceBlocks.length >= blockLimit) {
+      showError(`Block limit of ${blockLimit} reached. You cannot add more blocks.`);
+      return;
+    }
 
-      //* if block comes from library
-      if (sourceBlock) {
-        const instanceId = `${sourceBlock.id}-${Date.now()}`;
-        const initialValues = new Array(sourceBlock.inputs.length).fill('');
-        
-        const newBlocks: WorkspaceBlock[] = [];
-        
-        const newBlock: WorkspaceBlock = {
-          ...sourceBlock,
-          instanceId,
-          values: initialValues,
-        };
-        newBlocks.push(newBlock);
-        
-        // If the block requires an end block, add it automatically
-        if (sourceBlock.hasEndBlock) {
-          const endBlock = blockCategories
-            .flatMap((category) => category.blocks)
-            .find((block) => block.isEndBlock && block.parentBlockId === sourceBlock.id);
+    const sourceBlock = blockCategories
+      .flatMap((category) => category.blocks)
+      .find((block) => block.id === active.id);
 
-          if (endBlock) {
-            const endBlockInstance: WorkspaceBlock = {
-              ...endBlock,
-              instanceId: `${endBlock.id}-${Date.now()}`,
-              values: {},
-            };
-            newBlocks.push(endBlockInstance);
-          }
-        } 
-        
-        setWorkspaceBlocks((blocks) => [...blocks, ...newBlocks]);
-      }
+    if (sourceBlock) {
+      const instanceId = `${sourceBlock.id}-${Date.now()}`;
+      const initialValues = new Array(sourceBlock.inputs?.length || 0).fill('');
+      
+      const newBlocks: WorkspaceBlock[] = [];
+      
+      const newBlock: WorkspaceBlock = {
+        ...sourceBlock,
+        instanceId,
+        values: initialValues,
+      };
+      newBlocks.push(newBlock);
+      
+      if (sourceBlock.hasEndBlock) {
+        const endBlock = blockCategories
+          .flatMap((category) => category.blocks)
+          .find((block) => block.isEndBlock && block.parentBlockId === sourceBlock.id);
+
+        if (endBlock) {
+          const endBlockInstance: WorkspaceBlock = {
+            ...endBlock,
+            instanceId: `${endBlock.id}-${Date.now()}`,
+            values: {},
+          };
+          newBlocks.push(endBlockInstance);
+        }
+      } 
+      
+      setWorkspaceBlocks((blocks) => [...blocks, ...newBlocks]);
     }
   };
 
@@ -382,17 +383,17 @@ export default function Editor() {
 
   // Handle block reordering
   const handleReorderBlocks = (activeId: string, overId: string) => {
-    setUnsavedChanges(true);
-    console.log(workspaceBlocks);
-    console.log('reordering blocks')
     setWorkspaceBlocks((blocks) => {
       const oldIndex = blocks.findIndex((b) => b.instanceId === activeId);
       const newIndex = blocks.findIndex((b) => b.instanceId === overId);
+
+      if (oldIndex === -1 || newIndex === -1) return blocks;
 
       const newBlocks = [...blocks];
       const [movedBlock] = newBlocks.splice(oldIndex, 1);
       newBlocks.splice(newIndex, 0, movedBlock);
 
+      setUnsavedChanges(true);
       return newBlocks;
     });
   };
@@ -464,7 +465,7 @@ export default function Editor() {
         
         // if project is not created, create one and then update it
         if (id === '0'){
-          fetch(
+          const response = await fetch(
             `${import.meta.env.VITE_API_URL}/api/project/create`,{
               method:'POST',
               headers: {
@@ -476,23 +477,15 @@ export default function Editor() {
               })
             }
           )
-          .then(
-            res => {
-              if (!res.ok) {
-                throw new Error('Failed to save project');
-              } else {
-                return res.json();
-              }
-            }
-          )
-          .then(
-            data => {
 
-              project_id = data.id as string;
-              updateProject(project_id, projectData, download)
-              
-            }
-          )
+          const data = await response.json()
+          if(response.ok){
+            project_id = data.id as string;
+            updateProject(project_id, projectData, download)
+          } else {
+            showError(data.error)
+          }
+          setSaving(false);
         } else {
           updateProject(project_id, projectData, download);
         }     

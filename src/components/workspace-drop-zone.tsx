@@ -20,13 +20,13 @@ interface WorkspaceDropZoneProps {
 export default function WorkspaceDropZone({ 
   blocks, 
   onInputChange, 
-  onDeleteBlock, 
+  onDeleteBlock,
+  onReorder,
   canEdit = true 
 }: WorkspaceDropZoneProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: 'workspace',
   });
-
 
   return (
     <Card 
@@ -34,27 +34,27 @@ export default function WorkspaceDropZone({
       className={`p-4 min-h-[600px] transition-colors ${
         isOver ? 'border-purple-400/50 bg-purple-950/20' : ''
       }`}
-      style={{ position: 'relative' }}
     >
-      <SortableContext items={blocks.map(b => b.instanceId)} strategy={verticalListSortingStrategy}>
+      <SortableContext 
+        items={blocks.map(b => b.instanceId)} 
+        strategy={verticalListSortingStrategy}
+      >
         <div className="space-y-3">
-          {blocks.map((block, index) => {
-            return (
-              <div 
-                key={block.instanceId} 
-                className="transition-all duration-200"
-              >
-                <WorkspaceBlock
-                  block={block}
-                  blocks={blocks} // give more context to block about its surroundings
-                  values={block.values}
-                  onInputChange={onInputChange}
-                  onDelete={() => onDeleteBlock(block.instanceId)}
-                  canEdit={canEdit}
-                />
-              </div>
-            );
-          })}
+          {blocks.map((block) => (
+            <div 
+              key={block.instanceId} 
+              className="transition-all duration-200"
+            >
+              <WorkspaceBlock
+                block={block}
+                blocks={blocks}
+                values={block.values}
+                onInputChange={onInputChange}
+                onDelete={() => onDeleteBlock(block.instanceId)}
+                canEdit={canEdit}
+              />
+            </div>
+          ))}
           {blocks.length === 0 && canEdit && (
             <div className="flex items-center justify-center h-32 border-2 border-dashed border-purple-200/20 rounded-lg">
               <p className="text-purple-200/40">Drag blocks here to start building</p>

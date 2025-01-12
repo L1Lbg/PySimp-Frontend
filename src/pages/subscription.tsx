@@ -1,40 +1,55 @@
 import { useToast } from '@/components/toast-provider';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { useEffect, useState } from 'react';
+import { Check, Sparkles } from 'lucide-react';
+import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 export default function Subscription() {
-
-  const queryParameters = new URLSearchParams(window.location.search)
-  const referrer = queryParameters.get("referrer")
-  const success = queryParameters.get("success")
-  const {showError} = useToast();
-
+  const [searchParams] = useSearchParams();
+  const referrer = searchParams.get("referrer");
+  const success = searchParams.get("success");
+  const { showError } = useToast();
 
   const subscriptions = [
     {
-      'id':5,
-      'name':'One Week Free Trial',
-      'eur_price':0,
-      'usd_price':0,
+      id: 5,
+      name: 'One Week Free Trial',
+      eur_price: 0,
+      usd_price: 0,
+      features: [
+        '20 scripts limit',
+        'Community access',
+        'Basic support'
+      ]
     },
     {
-      'id':3,
-      'name':'Autonomer Tier',
-      'eur_price':30,
-      'usd_price':32,
+      id: 3,
+      name: 'Autonomer Tier',
+      eur_price: 30,
+      usd_price: 32,
+      features: [
+        'Everything in Free Trial',
+        'Priority support',
+        '200 scripts limit',
+      ]
     },
     {
-      'id':4,
-      'name':'Premium Tier',
-      'eur_price':55,
-      'usd_price':60,
+      id: 4,
+      name: 'Premium Tier',
+      eur_price: 55,
+      usd_price: 60,
+      features: [
+        'Everything in Autonomer Tier',
+        'Premium support',
+        'Custom automation support',
+        '1000 scripts limit',
+        // 'Script monetization program (soon)'
+      ]
     },
-  ]
+  ];
 
   const handleSubscribe = (subId: number) => {
-    // Subscription handling logic here
     fetch(
       `${import.meta.env.VITE_API_URL}/payments/checkout/${subId}?referrer=${referrer}`,
       {
@@ -45,52 +60,76 @@ export default function Subscription() {
       }
     )
     .then(response => response.json())
-    .then(
-      data => {
-        if(data.url){
-          window.location.href = data.url
-        } else if(data.error){
-          showError(data.error)
-        }
+    .then(data => {
+      if(data.url) {
+        window.location.href = data.url;
+      } else if(data.error) {
+        showError(data.error);
       }
-    )
+    });
   };
-  // handle success event
-  useEffect(()=>{
-    if(success){
-      showError('Your subscription process was interrupted.')
+
+  useEffect(() => {
+    if(success) {
+      showError('Your subscription process was interrupted.');
     }
-  },[success])
+  }, [success]);
 
   return (
     <div className="container mx-auto px-4 py-16">
-      <h1 className="text-3xl font-bold text-center mb-12">Choose Your Plan</h1>
-      <div className={`grid md:grid-cols-${subscriptions.length} gap-8 max-w-7xl mx-auto`}>
+      <div className="text-center max-w-3xl mx-auto mb-16">
+        <Sparkles className="h-12 w-12 mx-auto mb-4 text-purple-400" />
+        <h1 className="text-4xl font-bold mb-4">Choose Your Plan</h1>
+        <p className="text-lg text-purple-200/60">
+          Select the perfect plan for your automation needs. All plans include our core features.
+        </p>
+      </div>
 
-        {
-          subscriptions.map(sub => (
-            <Card className="p-6 hover:border-purple-400/30 transition-colors" key={sub.id}>
-              <div className="text-center">
-                <h2 className="text-2xl font-bold mb-4">{sub.name}</h2>
-                <div className="flex justify-center gap-4 mb-6">
-                  <p className="text-3xl font-bold">€{sub.eur_price}</p>
-                  <p className="text-3xl font-bold">${sub.usd_price}</p>
+      <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        {subscriptions.map(sub => (
+          <Card 
+            key={sub.id} 
+            className="p-8 hover:border-purple-400/30 transition-all hover:transform hover:-translate-y-1"
+          >
+            <div className="text-center">
+              <h2 className="text-2xl font-bold mb-4">{sub.name}</h2>
+              <div className="flex justify-center items-end gap-4 mb-6">
+                <div>
+                  <p className="text-4xl font-bold">€{sub.eur_price}</p>
+                  <p className="text-sm text-purple-200/60">EUR/month</p>
                 </div>
-
-                <p className='text-gray-500'>
-                  By clicking this button you agree on the <a className='text-purple-500' href='/legal/refund-policy' target='_blank'>Refund Policy</a>
-                </p>
-                <br />
-                <Button 
-                  className="w-full" 
-                  onClick={() => handleSubscribe(sub.id)}
-                >
-                  Subscribe
-                </Button>
+                <div>
+                  <p className="text-4xl font-bold">${sub.usd_price}</p>
+                  <p className="text-sm text-purple-200/60">USD/month</p>
+                </div>
               </div>
-            </Card>
-          ))
-        }
+
+              <div className="space-y-4 mb-8 text-left">
+                {sub.features.map((feature, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <Check className="h-5 w-5 text-green-400 flex-shrink-0" />
+                    <span>{feature}</span>
+                  </div>
+                ))}
+              </div>
+
+              <p className="text-sm text-purple-200/60 mb-6">
+                By subscribing you agree to our{' '}
+                <a className="text-purple-400 hover:underline" href="/legal/refund-policy" target="_blank">
+                  Refund Policy
+                </a>
+              </p>
+
+              <Button 
+                className="w-full"
+                size="lg"
+                onClick={() => handleSubscribe(sub.id)}
+              >
+                {sub.eur_price === 0 ? 'Start Free Trial' : 'Subscribe Now'}
+              </Button>
+            </div>
+          </Card>
+        ))}
       </div>
     </div>
   );

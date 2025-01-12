@@ -19,6 +19,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import ReferralProgram from './pages/ReferralProgram';
 import RefundPolicy from './pages/RefundPolicy';
 import TermsOfService from './pages/TermsOfService';
+import Footer from './components/footer';
 
 function App() {
   const [debug, setDebug] = useState(false)
@@ -126,6 +127,7 @@ function App() {
             
           </Routes>
         </div>
+        <Footer/>
       </div>
     </Router>
   );
