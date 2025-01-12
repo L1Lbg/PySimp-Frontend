@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Lock, Unlock, Trash2, Download, Copy, MessageSquarePlus, Heart, HeartOff, Save } from 'lucide-react';
+import { Lock, Unlock, Trash2, Download, Copy, MessageSquarePlus, Heart, HeartOff, Save, ScanEye, Eye } from 'lucide-react';
 
 interface EditorButtonsProps {
   canEdit: boolean;
@@ -41,6 +41,9 @@ export function EditorButtons({
   saving,
   projectTitle,
   setProjectTitle,
+  approvalRequested,
+  setApprovalRequested,
+  approved
 }: EditorButtonsProps) {
   return (
     <div className="flex flex-wrap items-center gap-4 mb-5 mt-5">
@@ -67,6 +70,34 @@ export function EditorButtons({
                 Private
               </>
             )}
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setApprovalRequested(!approvalRequested)}
+            className={
+              approved ? 'text-green-400' : approvalRequested ? 'text-green-400' : 'text-yellow-400'
+            }
+          >
+            {
+              approved ? (
+                <>
+                  <ScanEye className="h-4 w-4 mr-2" />
+                  Approved!
+                </>
+              ) : approvalRequested ? (
+                <>
+                  <ScanEye className="h-4 w-4 mr-2" />
+                  Approval Requested
+                </>
+              ) : (
+                <>
+                  <Eye className="h-4 w-4 mr-2" />
+                  Request approval
+                </>
+              )
+            }
           </Button>
           
           <Button

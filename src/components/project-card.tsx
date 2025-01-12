@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, Lock, Unlock } from 'lucide-react';
+import { Heart, Lock, Unlock, Verified } from 'lucide-react';
 import { Project } from '@/types';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from './ui/card';
 import { Button } from './ui/button';
@@ -31,9 +31,19 @@ export default function ProjectCard({ project, onLike }: ProjectCardProps) {
       <CardFooter className="justify-between">
         <Link
           to={`/profile/${project.username}`}
-          className="text-sm text-purple-200/60 hover:text-purple-200"
+          className="text-sm text-purple-200/60 hover:text-purple-200 flex items-center"
+          title={project.username === 'autonomia' ? 'This script was officially made by The Autonomia Team' : ''}
         >
-          @{project.username}
+          {
+            project.username.toLocaleLowerCase() === 'autonomia' ? (
+              <Verified className='h-4 w-4 mr-1 text-green-500'/>
+            ) : (
+              <>
+                @
+              </>
+            )
+          }
+          {project.username}
         </Link>
         <Button
           variant="ghost"

@@ -63,6 +63,8 @@ export default function Editor() {
   const [forking, setForking] = useState(false);
   const [showDownloadWarning, setShowDownloadWarning] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [approvalRequested, setApprovalRequested] = useState(false);
+  const [approved, setApproved] = useState(false);
 
   const handleFork = () => {
     setForking(true);
@@ -184,7 +186,8 @@ export default function Editor() {
           setIsPublic(data.public == true);
           setLiked(data.user_favorited);
           setIsVerified(data.approved == true);
-
+          setApprovalRequested(data.approval_requested == true);
+          setApproved(data.approved == true);
 
           if (data.json) {
             const workspaceBlocks = data.json.map((block: CodeBlockType, index:number) => {
@@ -403,6 +406,7 @@ export default function Editor() {
     isPublic:boolean,
     json:Array<[{}]>,
     title:string,
+    approvalRequested:boolean,
   }
 
   const updateProject = async (project_id:string, projectData:ProjectData, download:boolean) => {
@@ -459,6 +463,7 @@ export default function Editor() {
           title: projectTitle,
           json: json,
           'public':isPublic,
+          'approval_requested':approvalRequested,
         };
   
         let project_id = id as string;
@@ -610,6 +615,9 @@ export default function Editor() {
                 saving={saving}
                 projectTitle={projectTitle}
                 setProjectTitle={setProjectTitle}
+                approvalRequested={approvalRequested}
+                setApprovalRequested={setApprovalRequested}
+                approved={approved}
         />
 
       {/* Main editor area */}
