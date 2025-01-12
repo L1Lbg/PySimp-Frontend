@@ -86,7 +86,7 @@ function App() {
   },[])
   return (
     <Router>
-      <div className="min-h-screen bg-gradient-to-b from-black to-purple-950">
+      <div className="min-h-screen bg-gradient-to-b from-black to-purple-950 flex" style={{flexDirection:'column'}}>
         {
           !debug ? (
             <></>
