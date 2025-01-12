@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Save, KeyRound, User, DollarSign, Subscript, AlertTriangle, CalendarCheckIcon, CircleEllipsis, LinkIcon, X, UserX } from 'lucide-react';
+import { Save, KeyRound, User, DollarSign, Subscript, AlertTriangle, CalendarCheckIcon, CircleEllipsis, LinkIcon, X, UserX, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -34,6 +34,14 @@ export default function Settings() {
     registration_method:'None',
     referral_code:'XXXXXX',
     subscription:null,
+    referral_stats:{
+      "claimed": 0,
+      "unclaimed": 0,
+      "disputed": 0,
+      "claimed_money": 0,
+      "unclaimed_money": 0,
+      "disputed_money": 0
+    },
   });
 
     // load initial profile
@@ -200,6 +208,7 @@ export default function Settings() {
       const data = await response.json();
       showError(data.error)
     } else {
+      localStorage.clear()
       window.location.href = '/auth'
     }
 
@@ -357,15 +366,42 @@ export default function Settings() {
             <LinkIcon className="h-5 w-5 mr-2"/>
             Your affiliate link
           </h2>
-          {
-            profile.referral_code == null ? (
-              <input className='w-full text-center' 
-              value='You need to setup your monetized account to get a referral code'
-              disabled/>
-            ) : (
-              <input className='w-full text-center' value={`${import.meta.env.VITE_FRONTEND_URL}/subscribe?referrer=${profile.referral_code}`} disabled/>
-            )
-          }
+          <input className='w-full text-center' value={`${import.meta.env.VITE_FRONTEND_URL}/subscribe?referrer=${profile.referral_code}`} disabled/>
+        </Card>
+
+        <br />
+
+        <Card>
+          <table style={{ borderCollapse: "collapse", width: "100%" }}>
+            <thead>
+              <tr>
+                <th style={{  padding: "8px" }}>Type</th>
+                <th style={{  padding: "8px" }}>Subs Count</th>
+                <th style={{  padding: "8px" }}>Total Money</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style={{  padding: "8px" }}>Paid</td>
+                <td style={{  padding: "8px" }}>{profile.referral_stats.claimed}</td>
+                <td style={{  padding: "8px" }}>€{profile.referral_stats.claimed_money.toFixed(2)}</td>
+              </tr>
+              <tr>
+                <td style={{  padding: "8px" }}>Unpaid</td>
+                <td style={{  padding: "8px" }}>{profile.referral_stats.unclaimed}</td>
+                <td style={{  padding: "8px" }}>€{profile.referral_stats.unclaimed_money.toFixed(2)}</td>
+              </tr>
+              <tr className='hover:cursor-help text-red-500'>
+                <td style={{  padding: "8px" }} 
+                title='Disputed subscriptions will not be paid. Please refer to the Referral Program Policies below for more information.' 
+                className='flex items-center'><HelpCircle className='h-4 w-4 mr-2'/>
+                  Disputed
+                </td>
+                <td style={{  padding: "8px" }}>{profile.referral_stats.disputed}</td>
+                <td style={{  padding: "8px" }}>€{profile.referral_stats.disputed_money.toFixed(2)}</td>
+              </tr>
+            </tbody>
+          </table>
         </Card>
         <br />
         <Button type="button" className="w-full space-x-2"
@@ -391,7 +427,7 @@ export default function Settings() {
               }
               >
                 <DollarSign className="h-4 w-4" />
-                <span>Setup/Edit your monetized account</span>
+                <span>{profile.referral_code == null ? 'Setup' : 'Edit'} your monetized account</span>
         </Button>
         <br />
         <br />
@@ -413,8 +449,10 @@ export default function Settings() {
           <ul className='ml-5' style={{listStyleType:'disc'}}>
             <li>Full legal name</li>
             <li>Home address</li>
-            <li>Bank account details</li>
+            <li>Phone number</li>
+            <li>Birth date</li>
             <li>Identity verification</li>
+            <li>Bank account details</li>
           </ul>
         </Card>
 

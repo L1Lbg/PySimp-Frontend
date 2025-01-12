@@ -12,9 +12,20 @@ const ReferralProgram = () => {
       <section className="mb-6">
         <h2 className="text-2xl font-semibold">Rewards</h2>
         <p>
-          For each successful referral, users will receive 35% of the subscription price on the first month, and a 70% of the subscription price of the third month, if the referred user is still subscribed by that point.
+          For each successful referral, users will receive 35% of the subscription price on the first month.
           <br />
-          This only applies if the payments made by the referred user are successful and not disputed. 
+          This only applies if the payments made by the referred user are successful and not disputed (see below for more information about disputed subscriptions). 
+          <br/>
+          Autonomia does not guarantee immediate payouts, which will usually be done every 5th day of the month, for subscriptions that are 14 days old or more.
+          <br />
+          This is done to ensure payments are not fraudulent and are successful. 
+        </p>
+      </section>
+
+      <section className="mb-6">
+        <h2 className="text-2xl font-semibold">Disputed Subscriptions</h2>
+        <p>
+          Disputed Subscriptions are subscriptions where the user you referred, refuses to pay because they reported them as fraudulent to their bank.
         </p>
       </section>
 

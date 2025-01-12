@@ -56,6 +56,13 @@ function App() {
           }
         }
       )
+      .catch(
+        error => {
+          console.error(error)
+          localStorage.clear()
+          window.location.reload()
+        }
+      )
     } else {
       console.debug('No need to refresh token')
       //todo: add a timeout to refresh token

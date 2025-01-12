@@ -69,7 +69,7 @@ export default function Subscription() {
 
         {
           subscriptions.map(sub => (
-            <Card className="p-6 hover:border-purple-400/30 transition-colors">
+            <Card className="p-6 hover:border-purple-400/30 transition-colors" key={sub.id}>
               <div className="text-center">
                 <h2 className="text-2xl font-bold mb-4">{sub.name}</h2>
                 <div className="flex justify-center gap-4 mb-6">
