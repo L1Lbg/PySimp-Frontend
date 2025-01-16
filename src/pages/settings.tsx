@@ -208,12 +208,12 @@ export default function Settings() {
       const data = await response.json();
       showError(data.error)
     } else {
-      localStorage.clear()
+      localStorage.removeItem('access')
+      localStorage.removeItem('expiry')
+      localStorage.removeItem('refresh')
+      localStorage.removeItem('username')
       window.location.href = '/auth'
     }
-
-
-
   }
 
   return (

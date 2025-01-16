@@ -25,7 +25,10 @@ export default function Navbar() {
   };
 
   const handleLogOut = () => {
-    localStorage.clear();
+    localStorage.removeItem('access')
+    localStorage.removeItem('expiry')
+    localStorage.removeItem('refresh')
+    localStorage.removeItem('username')
     navigate('/auth')
     setIsLoggedIn(false)
   }

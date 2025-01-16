@@ -74,7 +74,10 @@ function App() {
       .then(
         res => {
           if(!res.ok){
-            localStorage.clear()
+            localStorage.removeItem('access')
+            localStorage.removeItem('expiry')
+            localStorage.removeItem('refresh')
+            localStorage.removeItem('username')
           } else {
             console.debug('Successfully refreshed')
             return res.json()
@@ -94,7 +97,10 @@ function App() {
       .catch(
         error => {
           console.error(error)
-          localStorage.clear()
+          localStorage.removeItem('access')
+          localStorage.removeItem('expiry')
+          localStorage.removeItem('refresh')
+          localStorage.removeItem('username')
           window.location.reload()
         }
       )
