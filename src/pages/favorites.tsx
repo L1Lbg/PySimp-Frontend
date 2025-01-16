@@ -18,7 +18,7 @@ export default function Favorites() {
 
   const fetchFavorites = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/favorites`, {
+      const response = await fetch(`${localStorage.getItem('api_url')}/api/projects/favorites`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('access')}`
         }
@@ -39,7 +39,7 @@ export default function Favorites() {
 
   const handleRemoveFromFavorites = async (projectId: string) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/project/${projectId}/favorite`, {
+      const response = await fetch(`${localStorage.getItem('api_url')}/api/project/${projectId}/favorite`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('access')}`,

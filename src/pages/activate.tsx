@@ -7,7 +7,7 @@ export default function Activate(){
     const { uid, token } = useParams();
     useEffect(() => {
         fetch(
-            `${import.meta.env.VITE_API_URL}/authentication/manage/users/activation/`,
+            `${localStorage.getItem('api_url')}/authentication/manage/users/activation/`,
             {
                 method: "POST",
                 headers: {

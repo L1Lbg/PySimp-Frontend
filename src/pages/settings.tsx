@@ -46,7 +46,7 @@ export default function Settings() {
 
     // load initial profile
   useEffect(()=>{
-    fetch(`${import.meta.env.VITE_API_URL}/authentication/manage/users/me`,
+    fetch(`${localStorage.getItem('api_url')}/authentication/manage/users/me`,
       {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('access')}`,
@@ -93,7 +93,7 @@ export default function Settings() {
 
 
     setChangingPassword(true);
-    fetch(`${import.meta.env.VITE_API_URL}/authentication/password/reset`,
+    fetch(`${localStorage.getItem('api_url')}/authentication/password/reset`,
       {
         method: 'POST',
         body: JSON.stringify(passwordData),
@@ -131,7 +131,7 @@ export default function Settings() {
 
   const handleUnsubscribe = (e) => {
     fetch(
-      `${import.meta.env.VITE_API_URL}/payments/unsubscribe/`,
+      `${localStorage.getItem('api_url')}/payments/unsubscribe/`,
       {
         method: 'POST',
         headers: {
@@ -157,7 +157,7 @@ export default function Settings() {
   const handleUsernameChange = (e: React.FormEvent) => {
     e.preventDefault();
     setChangingUsername(true);
-    fetch(`${import.meta.env.VITE_API_URL}/authentication/username/change`,
+    fetch(`${localStorage.getItem('api_url')}/authentication/username/change`,
       {
         method: 'POST',
         body: JSON.stringify({'username':profile.username}),
@@ -195,7 +195,7 @@ export default function Settings() {
 
   const handleAccountDeletion = async () => {
     const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/authentication/user/delete`,
+      `${localStorage.getItem('api_url')}/authentication/user/delete`,
       {
         'method':'DELETE',
         'headers':{
@@ -408,7 +408,7 @@ export default function Settings() {
                 onClick={
                   (e) => {
                     fetch(
-                      `${import.meta.env.VITE_API_URL}/payments/onboarding`,
+                      `${localStorage.getItem('api_url')}/payments/onboarding`,
                       {
                         method: 'GET',
                         redirect: 'follow',

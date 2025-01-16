@@ -20,7 +20,7 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
     
     setSendingFeedback(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/feedback`, {
+      const response = await fetch(`${localStorage.getItem('api_url')}/api/feedback`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('access')}`,

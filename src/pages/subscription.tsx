@@ -51,7 +51,7 @@ export default function Subscription() {
 
   const handleSubscribe = (subId: number) => {
     fetch(
-      `${import.meta.env.VITE_API_URL}/payments/checkout/${subId}?referrer=${referrer}`,
+      `${localStorage.getItem('api_url')}/payments/checkout/${subId}?referrer=${referrer}`,
       {
         method: 'GET',
         headers: {

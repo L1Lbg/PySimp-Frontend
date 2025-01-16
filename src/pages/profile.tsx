@@ -20,7 +20,7 @@ export default function Profile() {
     const fetchProfile = async () => {
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/profile/${username}`,
+          `${localStorage.getItem('api_url')}/api/profile/${username}`,
           {
             method: 'GET',
             headers: {

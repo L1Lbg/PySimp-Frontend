@@ -24,10 +24,33 @@ import Footer from './components/footer';
 function App() {
   const [debug, setDebug] = useState(false)
   useEffect(()=>{
+    //* initialize server url
+    localStorage.setItem('api_url', import.meta.env.VITE_API_URL)
+
+    //* check if main server is online 
+    fetch(
+      `${import.meta.env.VITE_API_URL}/health`
+    )
+    .then(
+      res => {
+        if(res.ok){
+          console.info('Main server functional.')
+          localStorage.setItem('api_url', import.meta.env.VITE_API_URL)
+        }
+      }
+    )
+    .catch(
+      err => {
+        console.info('Main server is not functional. Switching to secondary.')
+        localStorage.setItem('api_url', import.meta.env.VITE_SECONDARY_API_URL)
+      }
+    )
+
+
     //* refresh tokens if needed
     const date = new Date();
     if(localStorage.getItem('expiry') && parseInt(localStorage.getItem('expiry')) < date.getTime() + 10*60*1000){ // in milliseconds
-      fetch(`${import.meta.env.VITE_API_URL}/authentication/token/refresh/`,
+      fetch(`${localStorage.getItem('api_url')}/authentication/token/refresh/`,
 
         {
           method: 'POST',
@@ -80,9 +103,6 @@ function App() {
     } catch (error) {
       setDebug(true)
     }
-
-
-    
   },[])
   return (
     <Router>

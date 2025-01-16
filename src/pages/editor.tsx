@@ -68,7 +68,7 @@ export default function Editor() {
 
   const handleFork = () => {
     setForking(true);
-    fetch(`${import.meta.env.VITE_API_URL}/api/project/${id}/fork`, {headers:{'Authorization':`Bearer ${localStorage.getItem('access')}`}, method: 'POST'})
+    fetch(`${localStorage.getItem('api_url')}/api/project/${id}/fork`, {headers:{'Authorization':`Bearer ${localStorage.getItem('access')}`}, method: 'POST'})
     .then(
       res => {
         setForking(false);
@@ -94,7 +94,7 @@ export default function Editor() {
         //   return;
         // }
         // Attempt to fetch data from the API
-        fetch(`${import.meta.env.VITE_API_URL}/api/categories/`, {headers:{'Authorization':`Bearer ${localStorage.getItem('access')}`}})
+        fetch(`${localStorage.getItem('api_url')}/api/categories/`, {headers:{'Authorization':`Bearer ${localStorage.getItem('access')}`}})
         .then(
           res => {
             if(!res.ok){
@@ -122,7 +122,7 @@ export default function Editor() {
 
   const handleLike = (value:boolean) => {
     setLiking(true)
-      fetch(`${import.meta.env.VITE_API_URL}/api/project/${id}/favorite`, {
+      fetch(`${localStorage.getItem('api_url')}/api/project/${id}/favorite`, {
         method:'POST',
         headers:{'Authorization':`Bearer ${localStorage.getItem('access')}`, 'Content-Type':'application/json'},
         body:JSON.stringify({
@@ -165,7 +165,7 @@ export default function Editor() {
       if (id && id !== '0') {
         try {
           // Attempt to fetch project from API
-          const response = await fetch(`${import.meta.env.VITE_API_URL}/api/project/${id}`, 
+          const response = await fetch(`${localStorage.getItem('api_url')}/api/project/${id}`, 
             {headers: {'Authorization': `Bearer ${localStorage.getItem('access')}`}}
           );
           if(response.status === 404) {
@@ -410,7 +410,7 @@ export default function Editor() {
   }
 
   const updateProject = async (project_id:string, projectData:ProjectData, download:boolean) => {
-    fetch(`${import.meta.env.VITE_API_URL}/api/project/${project_id}`, {
+    fetch(`${localStorage.getItem('api_url')}/api/project/${project_id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -471,7 +471,7 @@ export default function Editor() {
         // if project is not created, create one and then update it
         if (id === '0'){
           const response = await fetch(
-            `${import.meta.env.VITE_API_URL}/api/project/create`,{
+            `${localStorage.getItem('api_url')}/api/project/create`,{
               method:'POST',
               headers: {
                 'Authorization': `Bearer ${window.localStorage.getItem('access')}`,
@@ -519,7 +519,7 @@ export default function Editor() {
       }
 
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/project/${id}/download?os=${os.toLowerCase()}`, {
+      const response = await fetch(`${localStorage.getItem('api_url')}/api/project/${id}/download?os=${os.toLowerCase()}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${window.localStorage.getItem('access')}`
@@ -570,7 +570,7 @@ export default function Editor() {
     if (id === '0') return;
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/project/${id}`, {
+      const response = await fetch(`${localStorage.getItem('api_url')}/api/project/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('access')}`

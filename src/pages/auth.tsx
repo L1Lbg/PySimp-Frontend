@@ -37,7 +37,7 @@ export default function Auth() {
 
     try {
       if (mode === 'login') {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/authentication/token/`, {
+        const response = await fetch(`${localStorage.getItem('api_url')}/authentication/token/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -63,7 +63,7 @@ export default function Auth() {
           showError('You must agree to the Terms of Service, Privacy Policy and Disclaimers')
           return;
         }
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/authentication/manage/users/`, {
+        const response = await fetch(`${localStorage.getItem('api_url')}/authentication/manage/users/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData),
@@ -90,7 +90,7 @@ export default function Auth() {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL}/authentication/oauth2/get-redirect`;
+    window.location.href = `${localStorage.getItem('api_url')}/authentication/oauth2/get-redirect`;
   };
 
   return (

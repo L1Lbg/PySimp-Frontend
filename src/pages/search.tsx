@@ -18,7 +18,7 @@ export default function Search() {
       setLoading(true);
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/search?q=${encodeURIComponent(query)}`
+          `${localStorage.getItem('api_url')}/api/search?q=${encodeURIComponent(query)}`
         );
         const data = await response.json(); 
         setResults(data);
