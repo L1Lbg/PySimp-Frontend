@@ -20,16 +20,21 @@ import ReferralProgram from './pages/ReferralProgram';
 import RefundPolicy from './pages/RefundPolicy';
 import TermsOfService from './pages/TermsOfService';
 import Footer from './components/footer';
+import { useToast } from './components/toast-provider';
 
 function App() {
   const [debug, setDebug] = useState(false)
+  const {showError} = useToast()
   useEffect(()=>{
     //* initialize server url
-    localStorage.setItem('api_url', import.meta.env.VITE_API_URL)
+    if(localStorage.getItem('api_url') == null){
+      localStorage.setItem('api_url', import.meta.env.VITE_API_URL)
+    }
 
     //* check if main server is online 
     fetch(
-      `${import.meta.env.VITE_API_URL}/health`
+      `${import.meta.env.VITE_API_URL}/health`,
+      { signal: AbortSignal.timeout(2000) }
     )
     .then(
       res => {
@@ -41,8 +46,14 @@ function App() {
     )
     .catch(
       err => {
-        console.info('Main server is not functional. Switching to secondary.')
-        localStorage.setItem('api_url', import.meta.env.VITE_SECONDARY_API_URL)
+        if(localStorage.getItem('api_url') != import.meta.env.VITE_SECONDARY_API_URL){
+          showError('Reloading...')
+          console.info('Main server is not functional. Switching to secondary.')
+          localStorage.setItem('api_url', import.meta.env.VITE_SECONDARY_API_URL)
+          window.location.reload()
+        } else {
+          console.info('Main server is not functional. Already switched to secondary.')
+        }
       }
     )
 
