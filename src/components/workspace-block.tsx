@@ -59,12 +59,13 @@ export default function WorkspaceBlock({
     for (let index = 0; index < newVariableSuggestions.length; index++) {
       newVariableSuggestions[index] = getVariableSuggestions(index)
     }
-    setVariableSuggestions(newVariableSuggestions); 
-  },[blocks])
+    setVariableSuggestions(newVariableSuggestions);
+  },[blocks, values, block])
 
 
   const getVariableSuggestions = (index:number) => {
     let results = ['']
+
     //* get index of current block, to ignore further var declarations
     let block_index = blocks.findIndex((n_block) => n_block.instanceId === block.instanceId);
     if(block_index == 0){
@@ -76,6 +77,8 @@ export default function WorkspaceBlock({
     // - last block has an 'assignable' attribute
     // - input type is not var
 
+    let add = []
+
     if((block.inputs[index]['type'] != 'var') && (blocks[block_index-1]['assignable'] != '')){
       results.push('last_line')
     }
@@ -85,7 +88,7 @@ export default function WorkspaceBlock({
 
 
       //* go through each block and check if blocks name is equal to the var input query
-      let add = blocks.slice(0, block_index+1).map(
+      add = blocks.slice(0, block_index+1).map(
         (block) => {
           if(block['name'].toLowerCase().includes(query[0].toLowerCase())){
             //* get index of input which is the var assigner
@@ -97,21 +100,22 @@ export default function WorkspaceBlock({
           }
         }
       )
-      results = results.concat(add)
-    }
-    //* add all "Set a variable" blocks
-    let add = blocks.slice(0, block_index+1).map(
-      (block) => {
-        if(block['name'].toLowerCase() == 'set a variable'){
-          //* get index of input which is the var assigner
-          let input_index = block['inputs'].findIndex((input) => (input.type == "raw_str"))
-          let var_name:string = block['values'][input_index] 
-          if(var_name != undefined && var_name != ''){
-            return var_name
+    } else {
+      //* add all "Set a variable" blocks
+      add = blocks.slice(0, block_index+1).map(
+        (block) => {
+          if(block['name'].toLowerCase() == 'set a variable'){
+            //* get index of input which is the var assigner
+            let input_index = block['inputs'].findIndex((input) => (input.type == "raw_str"))
+            let var_name:string = block['values'][input_index] 
+            if(var_name != undefined && var_name != ''){
+              return var_name
+            }
           }
         }
-      }
-    )
+      )
+    }
+    
 
     results = results.concat(add)
 
@@ -176,13 +180,12 @@ export default function WorkspaceBlock({
               }
 
               {
-                input.type == 'raw_str' && ( // var inputs should show no variable suggestions
+                input.type == 'raw_str' && ( // raw_str inputs should show no variable suggestions
                   <input onChange={(e) => onInputChange(block.instanceId, e.target.value, index)} value={values[index] ?? ''} type='text' className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
                 )
               }
               {
-                input.type == 'var' && ( // var inputs should show no variable suggestions
-                  //todo: detect when var assigner has changed, to set value to its name/empty string
+                input.type == 'var' && ( 
                   <select onChange={(e) => {onInputChange(block.instanceId, e.target.value, index)}}  value={values[index] ?? ''} className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'>
                     {
                       variableSuggestions[index]?.map(suggestion => (
@@ -198,7 +201,9 @@ export default function WorkspaceBlock({
               {
                 input.type.includes('option') && (
 
-                  <select onChange={(e) => onInputChange(block.instanceId, e.target.value, index)}  defaultValue={values[index] ?? ''} className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'>
+                  <select onChange={(e) => onInputChange(block.instanceId, e.target.value, index)}  value={values[index] ?? ''} className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'>
+                    <option value={''} className='text-black rounded'>
+                    </option>
                     {
                       input.type.split(':')[1].split(',').map((option) => (
                         <option key={option} value={option.split('.')[0]} className='text-black rounded'>
