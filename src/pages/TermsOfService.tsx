@@ -19,7 +19,7 @@ const TermsOfService = () => {
         <ul className="list-disc pl-6">
           <li>Billing: Autonomia offers a subscription-based service billed on a monthly cycle. We accept all payment methods supported by Stripe.</li>
           <li>Non-refundable: Please note that all subscription payments are non-refundable.</li>
-          <li>Subscription Cancellation: You can cancel your subscription at any time through your account settings page.</li>
+          <li>Subscription Cancellation: You can cancel your subscription at any time through your account settings page, the subscription will be <a target="_blank" className='text-purple-500' href={`${import.meta.env.VITE_FRONTEND_URL}/legal/refund-policy`}>prorated</a>.</li>
         </ul>
       </section>
 

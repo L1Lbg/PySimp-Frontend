@@ -49,7 +49,7 @@ export default function Footer() {
                 href="/legal/refund-policy"
                 className="hover:text-purple-200"
               >
-                Refund Policy
+                Refund and Cancellation Policy
               </a>
               <a
                 target="_blank"

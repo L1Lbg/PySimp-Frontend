@@ -18,33 +18,33 @@ export default function Subscription() {
       eur_price: 0,
       usd_price: 0,
       features: [
-        '20 scripts limit',
         'Community access',
+        '20 scripts limit',
         'Basic support'
       ]
     },
     {
       id: 3,
       name: 'Autonomer Tier',
-      eur_price: 30,
-      usd_price: 32,
+      eur_price: 14.99,
+      usd_price: 14.99,
       features: [
         'Everything in Free Trial',
-        'Priority support',
         '200 scripts limit',
+        'Priority support',
       ]
     },
     {
       id: 4,
       name: 'Premium Tier',
-      eur_price: 55,
-      usd_price: 60,
+      eur_price: 29.99,
+      usd_price: 29.99,
       features: [
         'Everything in Autonomer Tier',
+        '1000 scripts limit',
         'Premium support',
         'Custom automation support',
-        '1000 scripts limit',
-        // 'Script monetization program (soon)'
+        'Script monetization program (coming soon)'
       ]
     },
   ];
@@ -114,9 +114,10 @@ export default function Subscription() {
               </div>
 
               <p className="text-sm text-purple-200/60 mb-6">
-                By subscribing you agree to our{' '}
+                By subscribing you agree to our
+                <br />
                 <a className="text-purple-400 hover:underline" href="/legal/refund-policy" target="_blank">
-                  Refund Policy
+                  Refund and Cancellation Policy
                 </a>
               </p>
 
