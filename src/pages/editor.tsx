@@ -547,9 +547,12 @@ export default function Editor() {
         // Create a URL for the Blob
         const url = URL.createObjectURL(blob);
 
+        // get date for random file name generation
+        const date = new Date();
+
         // Set the download attribute with the desired file name
         a.href = url;
-        a.download = `${projectTitle}.${ext}`;
+        a.download = `${projectTitle}-${date.getMilliseconds()}.${ext}`;
 
         // Append the anchor to the document, trigger a click, and then remove the anchor
         document.body.appendChild(a);
