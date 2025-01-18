@@ -54,7 +54,7 @@ const PrivacyPolicy = () => {
 
       <section className="mb-6">
         <h2 className="text-2xl font-semibold">Contact Us</h2>
-        <p>If you have any questions or concerns about our privacy practices, please contact us at: <a href="mailto:autonomiasupport@proton.me" className="text-blue-600">autonomiasupport@proton.me</a>.</p>
+        <p>If you have any questions or concerns about our privacy practices, please contact us at: <a href="mailto:helpautonomia@proton.me" className="text-blue-600">helpautonomia@proton.me</a>.</p>
       </section>
     </div>
   );

@@ -8,10 +8,10 @@ export default function Footer() {
             <div className="flex items-center gap-2 text-purple-200/60">
               <Mail className="h-4 w-4" />
               <a
-                href="mailto:autonomiaoffical@proton.me"
+                href="mailto:helpautonomia@proton.me"
                 className="hover:text-purple-200"
               >
-                autonomiaoffical@proton.me
+                helpautonomia@proton.me
               </a>
             </div>
 
