@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/toast-provider';
+import { useNavigate } from 'react-router-dom';
 
 export default function Settings() {
   const { showError } = useToast();
@@ -11,6 +12,7 @@ export default function Settings() {
   const [changingUsername, setChangingUsername] = useState(false);
   const queryParameters = new URLSearchParams(window.location.search)
   const success = queryParameters.get("success")
+  const navigate = useNavigate()
 
 
 
@@ -44,7 +46,7 @@ export default function Settings() {
     },
   });
 
-    // load initial profile
+  // load initial profile
   useEffect(()=>{
     fetch(`${localStorage.getItem('api_url')}/authentication/manage/users/me`,
       {
@@ -55,8 +57,13 @@ export default function Settings() {
     )
     .then(
       res => {
-  
-          return res.json()
+          if(res.ok){
+            return res.json()
+          } else if(res.status==401){
+            navigate('/auth')
+          } else {
+            throw res.json()
+          }
       }
     )
     .then(
@@ -70,7 +77,7 @@ export default function Settings() {
     )
     .catch(
       error => {
-        showError(error)
+        showError(error.error)
       }
     )
   },[])
