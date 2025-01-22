@@ -1,17 +1,20 @@
 import { useState,useEffect } from 'react';
 import { ArrowRight, CheckCircle2, Sparkles } from 'lucide-react';
 import { features, benefits, useCases } from '@/data/landingPageData';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export default function Landing() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate()
 
   useEffect(() => {
     if(searchParams.get('debug') == 'true'){
       localStorage.setItem('debug', 'true');
+    } else if(searchParams.get('debug') == 'false'){
+      localStorage.setItem('debug', 'false')
     }
   },[])
 
@@ -61,33 +64,50 @@ export default function Landing() {
         Unlock the power of Python-level automation with our intuitive drag-and-drop interface, saving you hours every week. Create powerful workflows visually, achieving results once limited to expert programmers and experience the freedom to focus on what truly matters. Autonomy, freedom, and efficiency at your fingertips. 
         </p>
 
-        <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-16">
-          <div className="flex gap-2">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              className="flex-1 px-4 py-3 rounded-lg bg-purple-950/30 border border-purple-200/20 focus:outline-none focus:border-purple-400 text-purple-50 placeholder:text-purple-200/40"
-              required
-              disabled={loading}
-            />
-            <button
-              type="submit"
-              disabled={loading}
-            className="px-6 py-3 bg-purple-500 hover:bg-purple-600 rounded-lg font-semibold flex items-center gap-2 transition-colors disabled:opacity-50"
-            >
-              {loading ? 'Joining...' : 'Join Waitlist'}
-              <ArrowRight className="h-4 w-4" />
-            </button>
-          </div>
-          {submitted && (
-            <div className="mt-2 text-green-400 flex justify-center gap-2">
-              <CheckCircle2 className="h-5 w-10 flex " />
-              <p>Thanks for joining! Please check your inbox to receive your reward.</p>
-            </div> 
-          )}
-        </form>
+        {
+          localStorage.getItem('debug') == 'false' ? (
+            <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-16">
+              <div className="flex gap-2">
+                <input
+                  type="email"
+                  id='waitlist-input'
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  className="flex-1 px-4 py-3 rounded-lg bg-purple-950/30 border border-purple-200/20 focus:outline-none focus:border-purple-400 text-purple-50 placeholder:text-purple-200/40"
+                  required
+                  disabled={loading}
+                />
+                <button
+                  type="submit"
+                  disabled={loading}
+                className="px-6 py-3 bg-purple-500 hover:bg-purple-600 rounded-lg font-semibold flex items-center gap-2 transition-colors disabled:opacity-50"
+                >
+                  {loading ? 'Joining...' : 'Join Waitlist'}
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              </div>
+              {submitted && (
+                <div className="mt-2 text-green-400 flex justify-center gap-2">
+                  <CheckCircle2 className="h-5 w-10 flex " />
+                  <p>Thanks for joining! Please check your inbox to receive your reward.</p>
+                </div> 
+              )}
+            </form>
+          ) : (
+            <div className="flex gap-2 items-center justify-center m-10">
+                <button
+                    type="submit"
+                    disabled={loading}
+                    onClick={() => navigate('/auth')}
+                    className="px-6 py-3 bg-purple-500 hover:bg-purple-600 rounded-lg font-semibold flex items-center gap-2 transition-colors disabled:opacity-50"
+                  >
+                    Join the autonomy movement
+                    <ArrowRight className="h-4 w-4" />
+                </button>
+            </div>
+          )
+        }
 
         <div className="relative">
           <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10 h-20 bottom-0"></div>
@@ -174,13 +194,25 @@ export default function Landing() {
           <div className="bg-purple-500 rounded-2xl p-12 text-center">
             <h2 className="text-3xl font-bold mb-4">Join the digital autonomy movement!</h2>
             <p className="text-xl mb-8"> Be among the first to experience our Free Trial and enjoy Exclusive, Personalized Automations tailored to solve your unique challenges and optimize your workflow.</p>
-            <button
-              onClick={() => {document.querySelector("#root > div.min-h-screen.bg-gradient-to-b.from-black.to-purple-950 > div > div.text-center.max-w-4xl.mx-auto.px-4.pt-20 > form > div > input")?.scrollIntoView({behavior:'smooth', block:'center'})}}
-              className="inline-flex items-center gap-2 bg-white text-purple-500 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
-            >
-              Join Waitlist
-              <ArrowRight className="h-4 w-4" />
-            </button>
+            {
+              localStorage.getItem('debug') == 'false' ? (
+                <button
+                  onClick={() => {document.querySelector("#waitlist-input")?.scrollIntoView({behavior:'smooth', block:'center'})}}
+                  className="inline-flex items-center gap-2 bg-white text-purple-500 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+                >
+                  Join Waitlist
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              ) : (
+                <button
+                  onClick={() => {navigate('/auth')} }
+                  className="inline-flex items-center gap-2 bg-white text-purple-500 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+                >
+                  Join the autonomy movement
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              )
+            }
           </div>
         </div>
       </div>
