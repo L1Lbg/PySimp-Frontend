@@ -47,6 +47,15 @@ export default function Landing() {
     
   };
 
+  const handleJoin = () => {
+    // is logged in
+    if(localStorage.getItem('username') != undefined){
+      navigate('/subscribe')
+    } else {
+      navigate('/auth')
+    }
+  }
+
   return (
     <>
           <img
@@ -56,9 +65,9 @@ export default function Landing() {
             />
       <div className="text-center max-w-4xl mx-auto px-4 pt-20">
         <h1 className="text-5xl font-bold mb-6">
-          Automate your tasks and take control of your computer like a pro.
+          <span className="text-purple-400"> Personalized Digital Automation</span>
           <br />
-          <span className="text-purple-400"> No coding required.</span>
+          Automation that cares about YOU
         </h1>
         <p className="text-xl text-purple-200/60 mb-8">
         Unlock the power of Python-level automation with our intuitive drag-and-drop interface, saving you hours every week. Create powerful workflows visually, achieving results once limited to expert programmers and experience the freedom to focus on what truly matters. Autonomy, freedom, and efficiency at your fingertips. 
@@ -99,10 +108,10 @@ export default function Landing() {
                 <button
                     type="submit"
                     disabled={loading}
-                    onClick={() => navigate('/auth')}
+                    onClick={handleJoin}
                     className="px-6 py-3 bg-purple-500 hover:bg-purple-600 rounded-lg font-semibold flex items-center gap-2 transition-colors disabled:opacity-50"
                   >
-                    Join the autonomy movement
+                    Join the Digital Autonomy Movement
                     <ArrowRight className="h-4 w-4" />
                 </button>
             </div>
@@ -205,10 +214,10 @@ export default function Landing() {
                 </button>
               ) : (
                 <button
-                  onClick={() => {navigate('/auth')} }
+                  onClick={handleJoin }
                   className="inline-flex items-center gap-2 bg-white text-purple-500 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
                 >
-                  Join the autonomy movement
+                  Join the Digital Autonomy Movement
                   <ArrowRight className="h-4 w-4" />
                 </button>
               )

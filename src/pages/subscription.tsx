@@ -75,7 +75,7 @@ export default function Subscription() {
           className="p-8 hover:border-purple-400/30 transition-all hover:transform hover:-translate-y-1"
         >
           <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Autonomer Tier</h2>
+            <h2 className="text-2xl font-bold mb-4">Autonomy Essentials</h2>
             <div className="flex justify-center items-end gap-4 mb-6">
               <div>
                 <p className="text-4xl font-bold">€14.99</p>
@@ -98,7 +98,7 @@ export default function Subscription() {
               </div>
               <div className="flex items-center gap-2">
                 <Check className="h-5 w-5 text-green-400 flex-shrink-0" />
-                <span>Community access</span>
+                <span>Community Access: Discover scripts that fit your tasks</span>
               </div>
             </div>
 
@@ -116,7 +116,7 @@ export default function Subscription() {
                 size="lg"
                 onClick={() => handleSubscribe(3)}
               >
-                Subscribe Now
+                Unlock Digital Autonomy
               </Button>
               
               <div className="relative">
@@ -145,7 +145,7 @@ export default function Subscription() {
           className="p-8 hover:border-purple-400/30 transition-all hover:transform hover:-translate-y-1"
         >
           <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Premium Tier</h2>
+            <h2 className="text-2xl font-bold mb-4">Autonomous Master</h2>
             <div className="flex justify-center items-end gap-4 mb-6">
               <div>
                 <p className="text-4xl font-bold">€29.99</p>
@@ -160,7 +160,7 @@ export default function Subscription() {
             <div className="space-y-4 mb-8 text-left">
               <div className="flex items-center gap-2">
                 <Check className="h-5 w-5 text-green-400 flex-shrink-0" />
-                <span>Everything in Autonomer Tier</span>
+                <span>Everything in Autonomy Essentials</span>
               </div>
               <div className="flex items-center gap-2">
                 <Check className="h-5 w-5 text-green-400 flex-shrink-0" />
@@ -193,7 +193,7 @@ export default function Subscription() {
               size="lg"
               onClick={() => handleSubscribe(4)}
             >
-              Subscribe Now
+              Unlock Digital Autonomy
             </Button>
           </div>
         </Card>
