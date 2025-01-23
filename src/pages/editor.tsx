@@ -102,6 +102,13 @@ export default function Editor() {
                 navigate('/subscribe')
                 localStorage.removeItem('subscription')
                 throw new Error('You need to be subscribed to access this page.')
+              } else if(res.status == 401){
+                navigate('/auth')
+                localStorage.removeItem('access')
+                localStorage.removeItem('refresh')
+                localStorage.removeItem('expiry')
+                localStorage.removeItem('username')
+                throw new Error('You are not authenticated, please login first.')
               }
               throw new Error('Failed to fetch code blocks');
             }
