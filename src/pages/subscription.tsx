@@ -102,19 +102,19 @@ export default function Subscription() {
               </div>
             </div>
 
-            <p className="text-sm text-purple-200/60 mb-6">
+            {/* <p className="text-sm text-purple-200/60 mb-6">
               By subscribing you agree to our
               <br />
               <a className="text-purple-400 hover:underline" href="/legal/refund-policy" target="_blank">
                 Refund and Cancellation Policy
               </a>
-            </p>
+            </p> */}
 
             <div className="space-y-4">
               <Button 
                 className="w-full"
                 size="lg"
-                onClick={() => handleSubscribe(3)}
+                onClick={() => handleSubscribe(8)}
               >
                 Unlock Digital Autonomy
               </Button>
@@ -132,7 +132,7 @@ export default function Subscription() {
                 variant="outline"
                 className="w-full"
                 size="lg"
-                onClick={() => handleSubscribe(5)}
+                onClick={() => handleSubscribe(6)}
               >
                 Try 1 week free
               </Button>
@@ -180,18 +180,18 @@ export default function Subscription() {
               </div>
             </div>
 
-            <p className="text-sm text-purple-200/60 mb-6">
+            {/* <p className="text-sm text-purple-200/60 mb-6">
               By subscribing you agree to our
               <br />
               <a className="text-purple-400 hover:underline" href="/legal/refund-policy" target="_blank">
                 Refund and Cancellation Policy
               </a>
-            </p>
+            </p> */}
 
             <Button 
               className="w-full"
               size="lg"
-              onClick={() => handleSubscribe(4)}
+              onClick={() => handleSubscribe(7)}
             >
               Unlock Digital Autonomy
             </Button>
