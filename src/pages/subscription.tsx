@@ -14,7 +14,7 @@ export default function Subscription() {
 
   const handleSubscribe = (subId: number) => {
     fetch(
-      `${localStorage.getItem('api_url')}/payments/checkout/${subId}?referrer=${referrer}`,
+      `${localStorage.getItem('api_url')}/payments/checkout/${subId}?referrer=${localStorage.getItem('referrer')}`,
       {
         method: 'GET',
         headers: {
@@ -51,10 +51,16 @@ export default function Subscription() {
   };
 
   useEffect(() => {
-    if(success) {
+    if(success == 'false') {
       showError('Your subscription process was interrupted.');
     }
   }, [success]);
+
+  useEffect(()=> {
+    if(referrer){
+      localStorage.setItem('referrer', referrer);
+    }
+  }, [referrer])
 
   return (
     <div className="container mx-auto px-4 py-16">

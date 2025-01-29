@@ -19,6 +19,7 @@ export default function Settings() {
   useEffect(()=>{
     if(success){
       localStorage.setItem('subscription', true)
+      localStorage.removeItem('referral')
     }
   },[success])
 
