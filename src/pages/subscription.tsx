@@ -84,11 +84,17 @@ export default function Subscription() {
             <h2 className="text-2xl font-bold mb-4">Autonomy Essentials</h2>
             <div className="flex justify-center items-end gap-4 mb-6">
               <div>
-                <p className="text-4xl font-bold">€14.99</p>
+                <span className='flex gap-2'>
+                  <p className="text-red-700 text-3xl font-bold line-through">€24.99</p>
+                  <p className="text-3xl font-bold">€14.99</p>
+                </span>
                 <p className="text-sm text-purple-200/60">EUR/month</p>
               </div>
               <div>
-                <p className="text-4xl font-bold">$14.99</p>
+              <span className='flex gap-2'>
+                  <p className="text-red-700 text-3xl font-bold line-through">$24.99</p>
+                  <p className="text-3xl font-bold">$14.99</p>
+                </span>
                 <p className="text-sm text-purple-200/60">USD/month</p>
               </div>
             </div>
@@ -153,14 +159,28 @@ export default function Subscription() {
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-4">Autonomous Master</h2>
             <div className="flex justify-center items-end gap-4 mb-6">
+            <div>
+                <span className='flex gap-2'>
+                  <p className="text-red-700 text-3xl font-bold line-through">€44.99</p>
+                  <p className="text-3xl font-bold">€29.99</p>
+                </span>
+                <p className="text-sm text-purple-200/60">EUR/month</p>
+              </div>
               <div>
+              <span className='flex gap-2'>
+                  <p className="text-red-700 text-3xl font-bold line-through">$44.99</p>
+                  <p className="text-3xl font-bold">$29.99</p>
+                </span>
+                <p className="text-sm text-purple-200/60">USD/month</p>
+              </div>
+              {/* <div>
                 <p className="text-4xl font-bold">€29.99</p>
                 <p className="text-sm text-purple-200/60">EUR/month</p>
               </div>
               <div>
                 <p className="text-4xl font-bold">$29.99</p>
                 <p className="text-sm text-purple-200/60">USD/month</p>
-              </div>
+              </div> */}
             </div>
 
             <div className="space-y-4 mb-8 text-left">

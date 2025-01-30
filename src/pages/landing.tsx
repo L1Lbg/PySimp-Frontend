@@ -7,16 +7,16 @@ export default function Landing() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate()
 
-  useEffect(() => {
-    if(searchParams.get('debug') == 'true'){
-      localStorage.setItem('debug', 'true');
-    } else if(searchParams.get('debug') == 'false'){
-      localStorage.setItem('debug', 'false')
-    }
-  },[])
+  // useEffect(() => {
+  //   if(searchParams.get('debug') == 'true'){
+  //     localStorage.setItem('debug', 'true');
+  //   } else if(searchParams.get('debug') == 'false'){
+  //     localStorage.setItem('debug', 'false')
+  //   }
+  // },[])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,12 +65,12 @@ export default function Landing() {
             />
       <div className="text-center max-w-4xl mx-auto px-4 pt-20">
         <h1 className="text-5xl font-bold mb-6">
-          <span className="text-purple-400"> Personalized Digital Automation</span>
+          <span className="text-purple-400">Think Personalized Digital Automation.  Think YOU.</span>
           <br />
-          Automation that cares about YOU
+          {/* The automation that is not app-to-app integration-focused and it's definitely not built for enterprises. */}
         </h1>
         <p className="text-xl text-purple-200/60 mb-8">
-        Unlock the power of Python-level automation with our intuitive drag-and-drop interface, saving you hours every week. Create powerful workflows visually, achieving results once limited to expert programmers and experience the freedom to focus on what truly matters. Autonomy, freedom, and efficiency at your fingertips. 
+        The automation that is not app-to-app integration-focused and it's definitely not built for enterprises
         </p>
 
         {
@@ -118,14 +118,14 @@ export default function Landing() {
           )
         }
 
-        <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10 h-20 bottom-0"></div>
-          <img
-            src="/landingimage.jpg"
-            alt="Code editor interface"
-            className="rounded-lg shadow-2xl mb-16"
-          />
-        </div>
+      </div>
+      <div className="m-auto w-fit" >
+        {/* <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10 h-10 bottom-0"></div> */}
+        <img
+          src="/landingimage.png"
+          alt="Code editor interface"
+          className="rounded-lg shadow-2xl mb-16"
+        />
       </div>
 
       {/* Features Section */}
@@ -202,7 +202,7 @@ export default function Landing() {
         <div className="container mx-auto px-4">
           <div className="bg-purple-500 rounded-2xl p-12 text-center">
             <h2 className="text-3xl font-bold mb-4">Join the digital autonomy movement!</h2>
-            <p className="text-xl mb-8"> Be among the first to experience our Free Trial and enjoy Exclusive, Personalized Automations tailored to solve your unique challenges and optimize your workflow.</p>
+            <p className="text-xl mb-8"> Personalized Digital Automation is about putting YOU at the centre, giving you full autonomy to control your computer on your way and quickly create powerful automation for any digital task effortlessly. You spend a few minutes once, just dragging and dropping blocks, to gain many hours forever!</p>
             {
               localStorage.getItem('debug') == 'false' ? (
                 <button

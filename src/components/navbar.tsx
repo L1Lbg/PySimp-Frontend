@@ -56,7 +56,7 @@ export default function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
-          <img src="./Logo.png" alt="Autonomia Logo" className='h-12' />
+          <img src="/Logo.png" alt="Autonomia Logo" className='h-12' />
             {/* <Code2 className="h-8 w-8 text-purple-400" />
             <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
               Autonomia
