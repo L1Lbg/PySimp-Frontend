@@ -5,6 +5,7 @@ import { Button } from './ui/button';
 import { GripVertical, X } from 'lucide-react';
 import type { CodeBlock as CodeBlockType } from '@/types';
 import { useEffect, useState } from 'react';
+import { useToast } from './toast-provider';
 
 interface WorkspaceBlock extends CodeBlockType {
   instanceId: string;
@@ -40,6 +41,7 @@ export default function WorkspaceBlock({
     disabled: !canEdit
   });
 
+  const {showError} = useToast();
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -176,6 +178,27 @@ export default function WorkspaceBlock({
               {
                 input.type == 'float' && (
                   <input onChange={(e) => onInputChange(block.instanceId, e.target.value, index)} value={values[index] ?? ''} step="any" type='text' list={`variable-suggestions-${blocks.findIndex((n_block) => n_block.instanceId === block.instanceId)}-${index}`} className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
+                )
+              }
+
+              {
+                input.type == 'path' && (
+                    <input onChange={(e) => { 
+                      // sanitize
+
+                      let value = e.target.value.replaceAll('\\', '/');
+                      if(!value.includes('/')){
+                        e.target.style.border = '1px solid red';
+                      } else {
+                        e.target.style.border = '1px solid #D1D5DB';
+                      }
+
+                      // set
+                      onInputChange(block.instanceId, value, index);
+                                            
+                    }
+                    
+                    } value={values[index] ?? ''} step="any" type='text' list={`variable-suggestions-${blocks.findIndex((n_block) => n_block.instanceId === block.instanceId)}-${index}`} className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
                 )
               }
 
