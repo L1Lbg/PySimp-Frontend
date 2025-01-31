@@ -35,11 +35,11 @@ export default function Navbar() {
 
   const NavLinks = () => (
     <>
+        <Link to="/community" className="text-purple-200/60 hover:text-purple-50">
+          Community
+        </Link>
       {isLoggedIn && (
         <>
-          <Link to="/community" className="text-purple-200/60 hover:text-purple-50">
-            Community
-          </Link>
           <Link to="/create/0">
             <Button size="sm" className="space-x-2">
               <Plus className="h-4 w-4" />
@@ -66,7 +66,6 @@ export default function Navbar() {
             </span> */}
           </Link>
 
-          {isLoggedIn && (
             <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-lg mx-8">
               <div className="relative w-full">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-purple-200/40" />
@@ -78,7 +77,6 @@ export default function Navbar() {
                 />
               </div>
             </form>
-          )}
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4">

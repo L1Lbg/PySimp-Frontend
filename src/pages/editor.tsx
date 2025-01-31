@@ -46,7 +46,7 @@ export default function Editor() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const canEdit = searchParams.get('editor') !== '0';
+  const [canEdit, setCanEdit] = useState(false);
   const { showError } = useToast();
 
   // State management for the editor
@@ -98,6 +98,7 @@ export default function Editor() {
         //   return;
         // }
         // Attempt to fetch data from the API
+
         fetch(`${localStorage.getItem('api_url')}/api/categories/`, {headers:{'Authorization':`Bearer ${localStorage.getItem('access')}`}})
         .then(
           res => {
@@ -129,7 +130,7 @@ export default function Editor() {
             showError(`${error}`);
           }
         )
-  },[])
+  },[canEdit])
 
   const handleLike = (value:boolean) => {
     setLiking(true)
@@ -199,6 +200,7 @@ export default function Editor() {
           setIsVerified(data.approved == true);
           setApprovalRequested(data.approval_requested == true);
           setApproved(data.approved == true);
+          setCanEdit(data.is_users == true);
 
           if (data.json) {
             const workspaceBlocks = data.json.map((block: CodeBlockType, index:number) => {

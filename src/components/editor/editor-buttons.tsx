@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Lock, Unlock, Trash2, Download, Copy, MessageSquarePlus, Heart, HeartOff, Save, ScanEye, Eye } from 'lucide-react';
+import { Widget, PopupButton } from '@typeform/embed-react'
 
 interface EditorButtonsProps {
   canEdit: boolean;
@@ -146,7 +147,7 @@ export function EditorButtons({
           >
             <MessageSquarePlus className="h-4 w-4 mr-2" />
             <span className="hidden sm:inline">Send Feedback</span>
-          </Button>
+          </Button> 
         </>
       )}
       {!canEdit && id != '0' && (
