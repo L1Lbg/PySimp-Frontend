@@ -243,6 +243,7 @@ export default function Editor() {
         }
       } else {
         setProjectTitle('Untitled project')
+        setCanEdit(true)
       }
     };
 
