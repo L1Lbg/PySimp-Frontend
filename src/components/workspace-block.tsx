@@ -6,6 +6,8 @@ import { GripVertical, X } from 'lucide-react';
 import type { CodeBlock as CodeBlockType } from '@/types';
 import { useEffect, useState } from 'react';
 import { useToast } from './toast-provider';
+import Tutorials from './tutorials';
+import { Widget } from '@typeform/embed-react';
 
 interface WorkspaceBlock extends CodeBlockType {
   instanceId: string;
@@ -50,6 +52,30 @@ export default function WorkspaceBlock({
 
   // * array of variable suggestions for each input
   const [variableSuggestions, setVariableSuggestions] = useState([[]])
+
+  //* handle focus on input
+  const handleFocus = (e) => {
+    //* if tutorial has not been triggered
+    if(localStorage.getItem('tut-last-line') != 'true'){
+      //* if last line is in the variable suggestions
+      let last_line = false
+      let children = e.target.list.children
+      for (let index = 0; index < children.length; index++) {
+        const element = children[index];
+        if(element.value == '{last_line}'){
+          last_line = true
+          break
+        }
+      }
+      //* find tut and open it
+      if(last_line){
+        let element = document.getElementById('last-line-tut');
+        if(element){
+          element.style.display = 'block';
+        }
+      }
+    }
+  }
 
 
   
@@ -127,6 +153,16 @@ export default function WorkspaceBlock({
 
 
   return (
+    <>
+    <Tutorials 
+      tutorials={[{text:'Set this to the last block value!', img:'/lastline-tutorial.gif', description:'For example, if you read file contents, you can re-use them in the next block. Or if you multiply two numbers, you can re-use the result.'}]}
+      hidden={true}
+      id='last-line-tut'
+      style={{width: '75%'}}
+      onend={() => {
+        localStorage.setItem('tut-last-line', 'true');
+      }}
+    />
     <Card
       ref={setNodeRef}
       style={style}
@@ -165,25 +201,25 @@ export default function WorkspaceBlock({
               <label className="text-sm text-purple-200/80">{input.name.replaceAll('_',' ')}:</label>
               {
                 input.type == 'str' && (
-                  <input disabled={!canEdit} onChange={(e) => onInputChange(block.instanceId, e.target.value, index)} value={values[index] ?? ''} type='text' list={`variable-suggestions-${blocks.findIndex((n_block) => n_block.instanceId === block.instanceId)}-${index}`} className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
+                  <input onFocus={handleFocus} disabled={!canEdit} onChange={(e) => onInputChange(block.instanceId, e.target.value, index)} value={values[index] ?? ''} type='text' list={`variable-suggestions-${blocks.findIndex((n_block) => n_block.instanceId === block.instanceId)}-${index}`} className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
                 )
               }
 
               {
               input.type == 'int' && (
-                  <input disabled={!canEdit} onChange={(e) => onInputChange(block.instanceId, e.target.value, index)} value={values[index] ?? ''} step="1" type='text' pattern="[0-9]*" list={`variable-suggestions-${blocks.findIndex((n_block) => n_block.instanceId === block.instanceId)}-${index}`} className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
+                  <input onFocus={handleFocus} disabled={!canEdit} onChange={(e) => onInputChange(block.instanceId, e.target.value, index)} value={values[index] ?? ''} step="1" type='text' pattern="[0-9]*" list={`variable-suggestions-${blocks.findIndex((n_block) => n_block.instanceId === block.instanceId)}-${index}`} className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
                 )
               }
 
               {
                 input.type == 'float' && (
-                  <input disabled={!canEdit} onChange={(e) => onInputChange(block.instanceId, e.target.value, index)} value={values[index] ?? ''} step="any" type='text' list={`variable-suggestions-${blocks.findIndex((n_block) => n_block.instanceId === block.instanceId)}-${index}`} className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
+                  <input onFocus={handleFocus} disabled={!canEdit} onChange={(e) => onInputChange(block.instanceId, e.target.value, index)} value={values[index] ?? ''} step="any" type='text' list={`variable-suggestions-${blocks.findIndex((n_block) => n_block.instanceId === block.instanceId)}-${index}`} className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
                 )
               }
 
               {
                 input.type == 'path' && (
-                    <input disabled={!canEdit} onChange={(e) => { 
+                    <input onFocus={handleFocus} disabled={!canEdit} onChange={(e) => { 
                       // sanitize
 
                       let value = e.target.value.replaceAll('\\', '/');
@@ -256,5 +292,7 @@ export default function WorkspaceBlock({
         </div>
       )}
     </Card>
+    </>
+
   );
 }

@@ -106,11 +106,19 @@ export default function Subscription() {
               </div>
               <div className="flex items-center gap-2">
                 <Check className="h-5 w-5 text-green-400 flex-shrink-0" />
-                <span>Priority support</span>
+                <span>Basic support</span>
               </div>
               <div className="flex items-center gap-2">
                 <Check className="h-5 w-5 text-green-400 flex-shrink-0" />
-                <span>Community Access: Discover scripts that fit your tasks</span>
+                <span>Script Vault Access: Discover scripts that fit your tasks</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="h-5 w-5 text-green-400 flex-shrink-0" />
+                <span>Visual Editor</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="h-5 w-5 text-green-400 flex-shrink-0" />
+                <span>No code required</span>
               </div>
             </div>
 
