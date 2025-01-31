@@ -30,14 +30,14 @@ export default function Profile() {
           }
         );
         if (!response.ok) {
-          if(response.status === 401){
+          if(response.status == 401){
             showError('You are not authorized to view this profile')
             if(id == 'me'){
               localStorage.removeItem('access');
               localStorage.removeItem('refresh');
               localStorage.removeItem('username');
               localStorage.removeItem('expiry');
-              navigate('/login');
+              navigate('/auth');
             }
           }
           throw new Error('Failed to fetch profile');
