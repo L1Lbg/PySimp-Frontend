@@ -513,10 +513,11 @@ export default function Editor() {
 
   const handleDownload = async () => {
     try {
-      
-      
+      let element = document.getElementById('tut-download')
+      if(element){
+        element.style.display = 'block'
+      }
       const platform = window.navigator.userAgent;
-      console.log('Downloading project')
       let os = "Unknown OS";
       let ext;
 
@@ -625,6 +626,13 @@ export default function Editor() {
     }
   ]
 
+  const download_tutorial = [
+    {
+      'text':'What to do after downloading your project',
+      'description':'If this is your first time using Autonomia the script wil do the following: \n 1. Install Python on your machine \n  2. Install the required packages \n 3. Run the script. \n \n Once this process is done only for the first time, Autonomia scripts will run lightning fast!',
+    }
+  ]
+
 
   return (
     <>
@@ -634,6 +642,17 @@ export default function Editor() {
         <Tutorials 
           tutorials={tutorials}
           onend={()=>{localStorage.setItem('tut-editor', 'true')}}
+        />
+      )
+    }
+
+    {
+      localStorage.getItem('tut-download') != 'true' && canEdit && (
+        <Tutorials 
+          tutorials={download_tutorial}
+          id={'tut-download'}
+          onend={()=>{localStorage.setItem('tut-download', 'true')}}
+          style={{'display':'none'}}
         />
       )
     }

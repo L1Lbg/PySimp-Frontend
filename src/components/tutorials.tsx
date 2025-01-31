@@ -31,7 +31,14 @@ export default function Tutorials(props:any){
                 <p className="m-2 ml-5 text-gray-300">
                     {props.tutorials[index].description}
                 </p>
-                <img className='rounded-lg w-full' src={props.tutorials[index].img}/>
+                {
+                    props.tutorials[index].image && 
+                    <img 
+                        src={props.tutorials[index].image} 
+                        alt={props.tutorials[index].text} 
+                        className="w-full h-64 object-cover"
+                    />
+                }
             </div>
         )       
     } else {
