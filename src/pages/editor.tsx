@@ -31,6 +31,10 @@ import { useToast } from '@/components/toast-provider';
 import DownloadWarning from '@/components/download-warning';
 import { EditorButtons } from '@/components/editor/editor-buttons';
 import { FeedbackDialog } from '@/components/editor/feedback-dialog';
+import Tour from 'reactour'
+import { X } from 'lucide-react';
+import Tutorial from '@/components/tutorial';
+import Tutorials from '@/components/tutorials';
 
 // Define the structure for workspace blocks that includes instance-specific data
 interface WorkspaceBlock extends CodeBlockType {
@@ -601,7 +605,36 @@ export default function Editor() {
     setProjectNameConfirm('');
   };
 
+
+
+  const tutorials = [
+    {
+      'text':'Add blocks to your project!',
+      'img':'/addblocks-tutorial.gif',
+    },
+    {
+      'text':'Edit the content of the blocks!',
+      'img':'/editblocks-tutorial.gif',
+    },
+    {
+      'text':'Save your project and download it, after, execute it!',
+      'img':'/savedownload-tutorial.gif',
+    }
+  ]
+
+
   return (
+    <>
+
+    {
+      localStorage.getItem('tut-editor') != 'true' && canEdit && (
+        <Tutorials 
+          tutorials={tutorials}
+          onend={()=>{localStorage.setItem('tut-editor', 'true')}}
+        />
+      )
+    }
+
     <div className="container mx-auto px-4 py-8">
       {/* Project header */}
 
@@ -716,6 +749,7 @@ export default function Editor() {
             </DialogDescription>
           </DialogHeader>
           <Input
+            id='example'
             value={projectNameConfirm}
             onChange={(e) => setProjectNameConfirm(e.target.value)}
             placeholder="Enter project name"
@@ -750,5 +784,7 @@ export default function Editor() {
           onOpenChange={setFeedbackOpen}
         />
     </div>
+    </>
+
   );
 }
