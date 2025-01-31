@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Profile as ProfileType } from '@/types';
 import ProjectCard from '@/components/project-card';
 import { useToast } from '@/components/toast-provider';
@@ -8,6 +8,7 @@ export default function Profile() {
   const { id } = useParams();
   const [profile, setProfile] = useState<ProfileType | null>(null);
   const {showError} = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     let username;
@@ -28,6 +29,19 @@ export default function Profile() {
             }
           }
         );
+        if (!response.ok) {
+          if(response.status === 401){
+            showError('You are not authorized to view this profile')
+            if(id == 'me'){
+              localStorage.removeItem('access');
+              localStorage.removeItem('refresh');
+              localStorage.removeItem('username');
+              localStorage.removeItem('expiry');
+              navigate('/login');
+            }
+          }
+          throw new Error('Failed to fetch profile');
+        }
         const data = await response.json();
         setProfile(data);
       } catch (err) {
