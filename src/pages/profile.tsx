@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { mockProfile } from '@/data/mockData';
 import { Profile as ProfileType } from '@/types';
 import ProjectCard from '@/components/project-card';
-import { mockDataOnError } from '@/lib/utils';
+import { useToast } from '@/components/toast-provider';
 
 export default function Profile() {
   const { id } = useParams();
   const [profile, setProfile] = useState<ProfileType | null>(null);
+  const {showError} = useToast();
 
   useEffect(() => {
     let username;
@@ -30,8 +30,10 @@ export default function Profile() {
         );
         const data = await response.json();
         setProfile(data);
-      } catch (error) {
-        
+      } catch (err) {
+        err => {
+          showError(err)
+        }
       }
     };
 
