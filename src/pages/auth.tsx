@@ -28,6 +28,7 @@ export default function Auth() {
     password: '',
     re_password: '',
     tos:false,
+    communications:false,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -198,13 +199,22 @@ export default function Auth() {
             </div>
 
               <div className="space-y-2">
-              <input
-                type='checkbox'
-                className='mr-3'
-                onChange={(e) => setFormData({ ...formData, tos: e.target.checked })}
-              />
               <label className="text-sm font-medium">
+                <input
+                  type='checkbox'
+                  className='mr-3'
+                  onChange={(e) => setFormData({ ...formData, tos: e.target.checked })}
+                />
                 You agree to the  <a href='/legal/tos' className='text-purple-500' target='_blank'>Terms Of Service</a>, <a href='/legal/privacy-policy' className='text-purple-500' target='_blank'>Privacy Policy</a> and <a className='text-purple-500' href='/legal/disclaimers' target='_blank'>Disclaimers</a>.
+              </label>
+              <br />
+              <label className="text-sm font-medium">
+                <input
+                  type='checkbox'
+                  className='mr-3'
+                  onChange={(e) => setFormData({ ...formData, communications: e.target.checked })}
+                />
+                You agree to receive communications.
               </label>
               </div>
             </>
