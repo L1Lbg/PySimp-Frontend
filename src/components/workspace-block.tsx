@@ -207,7 +207,7 @@ export default function WorkspaceBlock({
           <p className="text-sm text-purple-200/60" dangerouslySetInnerHTML={{ __html: block.description }}></p>
           <span className='text-red-500 text-sm'>
             {
-              block.incompatible_platforms == '' ? '' : (
+              ['', null, undefined].includes(block.incompatible_platforms) ? '' : (
                 <>
                   Beware, this action is incompatible with the following platforms:
                   {
