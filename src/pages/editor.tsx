@@ -549,7 +549,6 @@ export default function Editor() {
           ext = 'sh'
       }
 
-      os='Linux'
 
       //* check if script is compatible with machine
       for (let index = 0; index < workspaceBlocks.length; index++) {
