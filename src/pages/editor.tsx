@@ -552,6 +552,9 @@ export default function Editor() {
       //* check if script is compatible with machine
       for (let index = 0; index < workspaceBlocks.length; index++) {
         const element = workspaceBlocks[index];
+        if([null, undefined].includes(element.incompatible_platforms)){
+          continue;
+        }
         if(element.incompatible_platforms.split(' ').includes(os.toLowerCase())){
           showError(`We are sorry! The block ${element.name} is not compatible with your machine.`)
           return;
