@@ -2,7 +2,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
-import { GripVertical, X } from 'lucide-react';
+import { File, GripVertical, X } from 'lucide-react';
 import type { CodeBlock as CodeBlockType } from '@/types';
 import { useEffect, useState } from 'react';
 import { useToast } from './toast-provider';
@@ -55,7 +55,11 @@ export default function WorkspaceBlock({
 
   //* handle focus on input
   const handleFocus = (e) => {
-    //* if tutorial has not been triggered
+    let block_index = e.target.list.id.split('-').reverse()[1]
+    let input_index = e.target.list.id.split('-').reverse()[0]
+
+    console.log(localStorage.getItem('tut-path-input') != 'true')
+    //* if last line tutorial has not been triggered
     if(localStorage.getItem('tut-last-line') != 'true'){
       //* if last line is in the variable suggestions
       let last_line = false
@@ -70,6 +74,15 @@ export default function WorkspaceBlock({
       //* find tut and open it
       if(last_line){
         let element = document.getElementById('last-line-tut');
+        if(element){
+          element.style.display = 'block';
+        }
+      }
+    }
+    //* if path input tutorial has not been triggered
+    else if(localStorage.getItem('tut-path-input') != 'true'){
+      if(blocks[block_index]['inputs'][input_index]['type'] == 'path'){
+        let element = document.getElementById('tut-path-input');
         if(element){
           element.style.display = 'block';
         }
@@ -163,6 +176,16 @@ export default function WorkspaceBlock({
         localStorage.setItem('tut-last-line', 'true');
       }}
     />
+    <Tutorials 
+      tutorials={[{text:'This input must contain a file path.', description:`For example, the location where you want to save a file, or the location of a file you want to use for a block.<br/> <strong> It must have this pattern: ${window.navigator.userAgent.includes('Win') ? 'C:/path/to/file (the first letter can be any)' : '/path/to/file'}. </strong> <br/>To find it, you can right-click on the file and find it on 'Properties'.`}]}
+      hidden={true}
+      id='tut-path-input'
+      style={{width: '75%'}}
+      onend={() => {
+        localStorage.setItem('tut-path-input', 'true');
+      }}
+    />
+
     <Card
       ref={setNodeRef}
       style={style}
@@ -238,14 +261,30 @@ export default function WorkspaceBlock({
 
               {
                 input.type == 'path' && (
+                  <span className='flex items-center justify-center'>
+                    <File className='mr-2 text-gray-400' />
                     <input onFocus={handleFocus} disabled={!canEdit} onChange={(e) => { 
-                      // sanitize
-
+                      //* sanitize
+                      let is_windows = navigator.userAgent.includes('Win'); 
                       let value = e.target.value.replaceAll('\\', '/');
                       if(!value.includes('/')){
                         e.target.style.border = '1px solid red';
                       } else {
                         e.target.style.border = '1px solid #D1D5DB';
+                      }
+                      
+                      if(is_windows){
+                        if(value[1] != ':'){
+                          e.target.style.border = '1px solid red';
+                        } else {
+                          e.target.style.border = '1px solid #D1D5DB';
+                        }
+                      } else {
+                        if(value[0] != '/'){
+                          e.target.style.border = '1px solid red';
+                        } else {
+                          e.target.style.border = '1px solid #D1D5DB';
+                        }
                       }
 
                       // set
@@ -253,8 +292,11 @@ export default function WorkspaceBlock({
                                             
                     }
                     
-                    } value={values[index] ?? ''} step="any" type='text' list={`variable-suggestions-${blocks.findIndex((n_block) => n_block.instanceId === block.instanceId)}-${index}`} className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
-                )
+                    } value={values[index] ?? ''} type='text' 
+                    list={`variable-suggestions-${blocks.findIndex((n_block) => n_block.instanceId === block.instanceId)}-${index}`} 
+                    className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
+                    </span>
+                  )
               }
 
               {

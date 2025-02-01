@@ -28,8 +28,7 @@ export default function Tutorials(props:any){
                     
                     <b className='text-xl'>{`${index+1}/${props.tutorials.length} ${props.tutorials[index].text}`}</b>
                 </span>
-                <p className="m-2 ml-5 text-gray-300">
-                    {props.tutorials[index].description}
+                <p className="m-2 ml-5 text-gray-300" dangerouslySetInnerHTML={{__html:props.tutorials[index].description}}>
                 </p>
                 {
                     props.tutorials[index].img && 
