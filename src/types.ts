@@ -13,6 +13,7 @@ export interface CodeBlock {
     extra?:string;
   }>;
   var_assigner:string;
+  incompatible_platforms:string;
 }
 
 export interface BlockCategory {

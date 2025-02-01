@@ -229,6 +229,7 @@ export default function Editor() {
                   values:block.params,
                   instanceId: `${index}-${cat_block.id}-${time.getTime()}`,
                   var_assigner:cat_block.var_assigner,
+                  incompatible_platforms:cat_block.incompatible_platforms,
                 }
                 return converted_block
               }               
@@ -508,6 +509,13 @@ export default function Editor() {
             project_id = data.id as string;
             updateProject(project_id, projectData, download)
           } else {
+            if(response.status == 401){
+              localStorage.removeItem('access')
+              localStorage.removeItem('refresh')
+              localStorage.removeItem('expiry')
+              localStorage.removeItem('username')
+              navigate('/auth')
+            }
             showError(data.error)
           }
           setSaving(false);
@@ -519,10 +527,12 @@ export default function Editor() {
 
   const handleDownload = async () => {
     try {
+      // show download tut
       let element = document.getElementById('tut-download')
       if(element){
         element.style.display = 'block'
       }
+      //* get platform
       const platform = window.navigator.userAgent;
       let os = "Unknown OS";
       let ext;
@@ -537,6 +547,17 @@ export default function Editor() {
       } else if (platform.includes("X11") || platform.includes("Linux")) { 
           os = "Linux";
           ext = 'sh'
+      }
+
+      os='Linux'
+
+      //* check if script is compatible with machine
+      for (let index = 0; index < workspaceBlocks.length; index++) {
+        const element = workspaceBlocks[index];
+        if(element.incompatible_platforms.split(' ').includes(os.toLowerCase())){
+          showError(`We are sorry! The block ${element.name} is not compatible with your machine.`)
+          return;
+        }
       }
 
 

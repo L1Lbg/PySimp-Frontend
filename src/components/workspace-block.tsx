@@ -180,7 +180,18 @@ export default function WorkspaceBlock({
         )}
         <div className="flex-1 mx-3">
           <h3 className="font-semibold">{block.name}</h3>
+
           <p className="text-sm text-purple-200/60" dangerouslySetInnerHTML={{ __html: block.description }}></p>
+          <span className='text-red-500 text-sm'>
+            Beware, this action is incompatible with the following platforms:
+            {
+              block.incompatible_platforms.split(' ').map((platform) => (
+                <span key={platform} className='text-white bg-gray-700 rounded-lg px-2 mx-1'>
+                  {platform}
+                </span>
+              ))
+            }
+          </span>
         </div>
         {canEdit && (
           <Button
