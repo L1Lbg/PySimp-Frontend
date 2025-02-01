@@ -84,7 +84,7 @@ export default function Editor() {
     )
     .then(
       data => {
-        window.location.href = `/create/${data.id}`
+        navigate(`/create/${data.id}`)
       }
     )
   }
