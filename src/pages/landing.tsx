@@ -119,13 +119,19 @@ export default function Landing() {
         }
 
       </div>
-      <div className="m-auto w-fit" >
+      <div className="w-full h-fit flex items-center justify-center mb-10" >
         {/* <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10 h-10 bottom-0"></div> */}
-        <img
+        {/* <img
           src="/landingimage.png"
           alt="Code editor interface"
           className="rounded-lg shadow-2xl mb-16"
-        />
+        /> */}
+        <iframe width='1000' height='500' 
+        src="https://www.youtube-nocookie.com/embed/HOZVhS-7k10?si=t7qyQ7O5WTXypnR2&amp;controls=2&color=white&fs=0&modestbranding=1&rel=0&showinfo=0&vq=hd1080p" 
+        title="YouTube video player" frameborder="0" 
+        allow="autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        referrerpolicy="strict-origin-when-cross-origin" 
+        allowfullscreen></iframe>
       </div>
 
       {/* Features Section */}

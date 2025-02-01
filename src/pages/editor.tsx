@@ -628,7 +628,7 @@ export default function Editor() {
 
   const download_tutorial = [
     {
-      'text':'What to do after downloading your project',
+      'text':'What to do after downloading a project',
       'description':'If this is your first time using Autonomia the script wil do the following: \n 1. Install Python on your machine \n  2. Install the required packages \n 3. Run the script. \n \n Once this process is done only for the first time, Autonomia scripts will run lightning fast!',
     }
   ]
