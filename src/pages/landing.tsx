@@ -116,14 +116,14 @@ export default function Landing() {
                 {
                   localStorage.getItem('username') == undefined && (
                     <>
-                      <b>Not sure?</b>
+                      {/* <b>Not sure?</b>
                       <button
                           onClick={()=> navigate('/create/0')}
                           className="px-6 m-auto mt-5 py-3 bg-purple-500 hover:bg-purple-600 rounded-lg font-semibold flex items-center gap-2 transition-colors disabled:opacity-50"
                           >
                           Try our editor
                           <TestTube2 className="h-4 w-4" />
-                      </button>
+                      </button> */}
                     </>
                   ) 
                 }
