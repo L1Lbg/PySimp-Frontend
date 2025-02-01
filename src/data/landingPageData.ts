@@ -48,8 +48,8 @@ export const benefits = [
 
 export const useCases = [
   {
-    title: 'File Management',
-    description: 'Automate file organization and batch processing',
+    title: 'Artificial Intelligence',
+    description: 'Add an AI Model to your projects',
     image: 'https://images.unsplash.com/photo-1618477388954-7852f32655ec?auto=format&fit=crop&q=80'
   },
   {

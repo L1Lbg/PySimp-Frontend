@@ -38,16 +38,20 @@ export default function Navbar() {
         <Link to="/community" className="text-purple-200/60 hover:text-purple-50">
           Community
         </Link>
-      {isLoggedIn && (
-        <>
           <Link to="/create/0">
             <Button size="sm" className="space-x-2">
               <Plus className="h-4 w-4" />
-              <span>New Project</span>
+              <span>
+                {
+                  isLoggedIn ? (
+                    <>New Project</>
+                  ) : (
+                    <>Try the editor!</>
+                  )
+                }
+              </span>
             </Button>
           </Link>
-        </>
-      )}
     </>
   );
 

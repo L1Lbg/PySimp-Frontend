@@ -244,6 +244,11 @@ export default function Editor() {
       } else {
         setProjectTitle('Untitled project')
         setCanEdit(true)
+        // if not logged in user, show as demo
+        if(localStorage.getItem('username') == undefined){
+          showError('This is just a demo, if you want to save or download your project, please login or create an account.')
+        }
+        
       }
     };
 
@@ -633,12 +638,20 @@ export default function Editor() {
     }
   ]
 
+  const copy_tutorial = [
+    {
+      'text':'Copying a project',
+      'description':"Like a project but still want to modify some of it's contents? Copy the project and make it your own to modify it as you want!",
+      'img':'/copy-tutorial.gif',
+    }
+  ]
+
 
   return (
     <>
 
     {
-      localStorage.getItem('tut-editor') != 'true' && canEdit && (
+      localStorage.getItem('tut-editor') != 'true' && canEdit && localStorage.getItem('username') != undefined && (
         <Tutorials 
           tutorials={tutorials}
           onend={()=>{localStorage.setItem('tut-editor', 'true')}}
@@ -647,7 +660,7 @@ export default function Editor() {
     }
 
     {
-      localStorage.getItem('tut-download') != 'true' && canEdit && (
+      localStorage.getItem('tut-download') != 'true' && canEdit && localStorage.getItem('username') != undefined &&(
         <Tutorials 
           tutorials={download_tutorial}
           id={'tut-download'}
@@ -657,33 +670,47 @@ export default function Editor() {
       )
     }
 
+    {
+      localStorage.getItem('tut-copy') != 'true' && !canEdit && localStorage.getItem('username') != undefined && (
+        <Tutorials 
+          tutorials={copy_tutorial}
+          id={'tut-download'}
+          onend={()=>{localStorage.setItem('tut-copy', 'true')}}
+        />
+      )
+    }
+
     <div className="container mx-auto px-4 py-8">
       {/* Project header */}
 
-      <EditorButtons
-                canEdit={canEdit}
-                id={id}
-                isPublic={isPublic}
-                setIsPublic={setIsPublic}
-                setDeleteDialogOpen={setDeleteDialogOpen}
-                isVerified={isVerified}
-                setShowDownloadWarning={setShowDownloadWarning}
-                unsavedChanges={unsavedChanges}
-                handleSave={handleSave}
-                handleDownload={handleDownload}
-                handleFork={handleFork}
-                forking={forking}
-                setFeedbackOpen={setFeedbackOpen}
-                liked={liked}
-                liking={liking}
-                handleLike={handleLike}
-                saving={saving}
-                projectTitle={projectTitle}
-                setProjectTitle={setProjectTitle}
-                approvalRequested={approvalRequested}
-                setApprovalRequested={setApprovalRequested}
-                approved={approved}
-        />
+      {
+        localStorage.getItem('username') != undefined && (
+            <EditorButtons
+                  canEdit={canEdit}
+                  id={id}
+                  isPublic={isPublic}
+                  setIsPublic={setIsPublic}
+                  setDeleteDialogOpen={setDeleteDialogOpen}
+                  isVerified={isVerified}
+                  setShowDownloadWarning={setShowDownloadWarning}
+                  unsavedChanges={unsavedChanges}
+                  handleSave={handleSave}
+                  handleDownload={handleDownload}
+                  handleFork={handleFork}
+                  forking={forking}
+                  setFeedbackOpen={setFeedbackOpen}
+                  liked={liked}
+                  liking={liking}
+                  handleLike={handleLike}
+                  saving={saving}
+                  projectTitle={projectTitle}
+                  setProjectTitle={setProjectTitle}
+                  approvalRequested={approvalRequested}
+                  setApprovalRequested={setApprovalRequested}
+                  approved={approved}
+            />
+        )
+      }
 
       {/* Main editor area */}
       <DndContext

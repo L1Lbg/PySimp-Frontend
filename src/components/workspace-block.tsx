@@ -155,7 +155,7 @@ export default function WorkspaceBlock({
   return (
     <>
     <Tutorials 
-      tutorials={[{text:'Set this to the last block value!', img:'/lastline-tutorial.gif', description:'For example, if you read file contents, you can re-use them in the next block. Or if you multiply two numbers, you can re-use the result.'}]}
+      tutorials={[{text:'Set this input to the last block value!', img:'/lastline-tutorial.gif', description:'For example, if you read file contents, you can re-use them in the next block. Or if you multiply two numbers, you can re-use the result.'}]}
       hidden={true}
       id='last-line-tut'
       style={{width: '75%'}}

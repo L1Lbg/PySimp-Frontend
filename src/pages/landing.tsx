@@ -61,7 +61,7 @@ export default function Landing() {
           <img
               src="/Logo.png"
               alt="Logo"
-              className="rounded-lg shadow-2xl mx-auto w-[70vw] max-w-[400px] mx-auto"
+              className="rounded-lg shadow-2xl mx-auto mt-10 w-[70vw] max-w-[400px] mx-auto"
             />
       <div className="text-center max-w-4xl mx-auto px-4 pt-20">
         <h1 className="text-5xl font-bold mb-6">

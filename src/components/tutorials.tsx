@@ -32,11 +32,11 @@ export default function Tutorials(props:any){
                     {props.tutorials[index].description}
                 </p>
                 {
-                    props.tutorials[index].image && 
+                    props.tutorials[index].img && 
                     <img 
-                        src={props.tutorials[index].image} 
+                        src={props.tutorials[index].img} 
                         alt={props.tutorials[index].text} 
-                        className="w-full h-64 object-cover"
+                        className="w-full object-cover"
                     />
                 }
             </div>
