@@ -58,6 +58,7 @@ export default function Auth() {
         localStorage.setItem('refresh', data.refresh);
         localStorage.setItem('username', formData.username);
         localStorage.setItem('expiry', `${now.getTime()+60*60*1000}`); //* time in milliseconds
+        localStorage.removeItem('tut-editor')
         navigate('/');
       } else {
         if(formData.tos == false){

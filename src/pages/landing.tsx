@@ -1,5 +1,5 @@
 import { useState,useEffect } from 'react';
-import { ArrowRight, CheckCircle2, Sparkles } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Sparkles, TestTube2 } from 'lucide-react';
 import { features, benefits, useCases } from '@/data/landingPageData';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -104,17 +104,31 @@ export default function Landing() {
               )}
             </form>
           ) : (
-            <div className="flex gap-2 items-center justify-center m-10">
+            <>
+            <div className="m-10">
                 <button
-                    type="submit"
-                    disabled={loading}
                     onClick={handleJoin}
-                    className="px-6 py-3 bg-purple-500 hover:bg-purple-600 rounded-lg font-semibold flex items-center gap-2 transition-colors disabled:opacity-50"
+                    className="px-6 py-3 mb-5 m-auto bg-purple-500 hover:bg-purple-600 rounded-lg font-semibold flex items-center gap-2 transition-colors disabled:opacity-50"
                   >
                     Join the Digital Autonomy Movement
                     <ArrowRight className="h-4 w-4" />
                 </button>
-            </div>
+                {
+                  localStorage.getItem('username') == undefined && (
+                    <>
+                      <b>Not sure?</b>
+                      <button
+                          onClick={()=> navigate('/create/0')}
+                          className="px-6 m-auto mt-5 py-3 bg-purple-500 hover:bg-purple-600 rounded-lg font-semibold flex items-center gap-2 transition-colors disabled:opacity-50"
+                          >
+                          Try our editor
+                          <TestTube2 className="h-4 w-4" />
+                      </button>
+                    </>
+                  ) 
+                }
+                </div>
+              </>
           )
         }
 

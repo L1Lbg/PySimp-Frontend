@@ -33,7 +33,6 @@ import { EditorButtons } from '@/components/editor/editor-buttons';
 import { FeedbackDialog } from '@/components/editor/feedback-dialog';
 import Tour from 'reactour'
 import { X } from 'lucide-react';
-import Tutorial from '@/components/tutorial';
 import Tutorials from '@/components/tutorials';
 
 // Define the structure for workspace blocks that includes instance-specific data
@@ -637,7 +636,7 @@ export default function Editor() {
 
 
 
-  const tutorials = [
+  const editor_tutorials = [
     {
       'text':'Add blocks to your project!',
       'img':'/addblocks-tutorial.gif',
@@ -652,10 +651,21 @@ export default function Editor() {
     }
   ]
 
+  const demo_editor_tutorials = [
+    {
+      'text':'Add blocks to your project!',
+      'img':'/addblocks-tutorial.gif',
+    },
+    {
+      'text':'Edit the content of the blocks!',
+      'img':'/editblocks-tutorial.gif',
+    },
+  ]
+
   const download_tutorial = [
     {
       'text':'What to do after downloading a project',
-      'description':'If this is your first time using Autonomia the script wil do the following: \n 1. Install Python on your machine \n  2. Install the required packages \n 3. Run the script. \n \n Once this process is done only for the first time, Autonomia scripts will run lightning fast!',
+      'description':'Open the file. If this is your first time using Autonomia, the file will do the following: \n 1. Install Python on your machine \n  2. Install the required packages \n 3. Run the script. \n \n Once this process is done only for the first time, Autonomia files will run lightning fast!',
     }
   ]
 
@@ -672,11 +682,22 @@ export default function Editor() {
     <>
 
     {
-      localStorage.getItem('tut-editor') != 'true' && canEdit && localStorage.getItem('username') != undefined && (
-        <Tutorials 
-          tutorials={tutorials}
-          onend={()=>{localStorage.setItem('tut-editor', 'true')}}
-        />
+      localStorage.getItem('tut-editor') != 'true' && canEdit && (
+        <>
+          {
+            localStorage.getItem('username') == undefined ? (
+              <Tutorials 
+                tutorials={demo_editor_tutorials}
+                onend={()=>{localStorage.setItem('tut-editor', 'true')}}
+              />
+            ) : (
+              <Tutorials 
+                  tutorials={editor_tutorials}
+                  onend={()=>{localStorage.setItem('tut-editor', 'true')}}
+                />
+            )
+          }
+        </>
       )
     }
 
