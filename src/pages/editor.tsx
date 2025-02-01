@@ -244,6 +244,7 @@ export default function Editor() {
       } else {
         setProjectTitle('Untitled project')
         setCanEdit(true)
+        setWorkspaceBlocks([])
         // if not logged in user, show as demo
         if(localStorage.getItem('username') == undefined){
           showError('This is just a demo, if you want to save or download your project, please login or create an account.')
@@ -253,7 +254,7 @@ export default function Editor() {
     };
 
     loadProject();
-  }, [blockCategories]);
+  }, [blockCategories, id]);
 
   // Filter block categories based on search query
   useEffect(() => {
