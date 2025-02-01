@@ -774,15 +774,23 @@ export default function Editor() {
                 </div>
                 <Tabs defaultValue={filteredCategories[0]?.id} className="flex-1 flex flex-col">
                   <TabsList className="overflow-x w-full justify-start border-b border-purple-200/20 rounded-none bg-purple-950/20">
-                    {filteredCategories.map((category) => (
-                      <TabsTrigger
-                        key={category.id}
-                        value={category.id}
-                        className="data-[state=active]:bg-purple-200/10"
-                      >
-                        {category.name}
-                      </TabsTrigger>
-                    ))}
+                        {
+                        filteredCategories.map((category) => (
+                          <>
+                            {
+                              category.blocks.length > 0 && (
+                                <TabsTrigger
+                                  key={category.id}
+                                  value={category.id}
+                                  className="data-[state=active]:bg-purple-200/10"
+                                >
+                                  {category.name}
+                                </TabsTrigger> 
+                              ) 
+                            }
+                          </>
+                        ))
+                        }
                   </TabsList>
                   <div className="flex-1 overflow-hidden">
                     {filteredCategories.map((category) => (
