@@ -2,9 +2,9 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
-import { File, GripVertical, X } from 'lucide-react';
+import { File, GripVertical, MinusCircle, PlusCircle, X } from 'lucide-react';
 import type { CodeBlock as CodeBlockType } from '@/types';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useToast } from './toast-provider';
 import Tutorials from './tutorials';
 import { Widget } from '@typeform/embed-react';
@@ -21,16 +21,19 @@ interface WorkspaceBlockProps {
   onInputChange: (inputName: string, value: string) => void;
   onDelete: () => void;
   canEdit?: boolean;
+  setWorkspaceBlocks:(blocks)=>void;
 }
 
-export default function WorkspaceBlock({ 
-  block, 
-  blocks,
-  values, 
-  onInputChange, 
-  onDelete,
-  canEdit = true 
-}: WorkspaceBlockProps) {
+function WorkspaceBlock  (
+  { 
+    block, 
+    blocks,
+    values, 
+    onInputChange, 
+    onDelete,
+    canEdit = true,
+    setWorkspaceBlocks,
+  }: WorkspaceBlockProps){
   const {
     attributes,
     listeners,
@@ -53,12 +56,11 @@ export default function WorkspaceBlock({
   // * array of variable suggestions for each input
   const [variableSuggestions, setVariableSuggestions] = useState([[]])
 
-  //* handle focus on input
+  //* handle focus on input for tutorials
   const handleFocus = (e) => {
     let block_index = e.target.list.id.split('-').reverse()[1]
     let input_index = e.target.list.id.split('-').reverse()[0]
 
-    console.log(localStorage.getItem('tut-path-input') != 'true')
     //* if last line tutorial has not been triggered
     if(localStorage.getItem('tut-last-line') != 'true'){
       //* if last line is in the variable suggestions
@@ -91,7 +93,60 @@ export default function WorkspaceBlock({
   }
 
 
+  //* handle list type inputs
+  const handleListItemAdd = (index) => {
+    setWorkspaceBlocks((prevBlocks) => {
+      // Copia profunda del array de bloques
+      const newBlocks = [...prevBlocks].map(block => ({ ...block, values: [...block.values] }));
+      
+      // Encuentra el índice del bloque actual
+      let blockIndex = newBlocks.findIndex((b) => b.instanceId === block.instanceId);
+      
+      if (blockIndex !== -1) {
+        // Asegurar que values[index] es un array antes de modificarlo
+        if (!Array.isArray(newBlocks[blockIndex].values[index])) {
+          newBlocks[blockIndex].values[index] = [];
+        }
+        // Agregar un nuevo item a la lista
+        newBlocks[blockIndex].values[index].push('');
+      }
   
+      return newBlocks; // Retorna el nuevo array para que React lo detecte
+    });
+  };
+
+  const handleListItemRemove = (inputIndex, itemIndex) => {
+    //*prevent user from deleting all items in list
+    if(block.values[inputIndex].length == 1){
+      showError('List items must be at least one.')
+      return;
+    }
+
+    //* update state
+    setWorkspaceBlocks((prevBlocks) => {
+      // Crear una copia profunda de prevBlocks
+      const newBlocks = prevBlocks.map(block => ({
+        ...block,
+      }));
+  
+      // Encuentra el bloque correcto
+      const blockIndex = newBlocks.findIndex((b) => b.instanceId === block.instanceId);
+  
+      if (blockIndex !== -1) {
+        const blockValues = newBlocks[blockIndex].values;
+  
+        if (Array.isArray(blockValues[inputIndex])) {
+          // Eliminar el ítem con filter
+          newBlocks[blockIndex].values[inputIndex] = blockValues[inputIndex].filter((_, i) => i !== itemIndex);
+        }
+      }
+  
+      return newBlocks;
+    });
+  };
+  
+  
+
 
   //* change variable suggestions when blocks are changed
   useEffect(() => {
@@ -101,6 +156,7 @@ export default function WorkspaceBlock({
       newVariableSuggestions[index] = getVariableSuggestions(index)
     }
     setVariableSuggestions(newVariableSuggestions);
+
   },[blocks, values, block])
 
 
@@ -145,7 +201,7 @@ export default function WorkspaceBlock({
       //* add all "Set a variable" blocks
       add = blocks.slice(0, block_index+1).map(
         (block) => {
-          if(block['name'].toLowerCase() == 'set a variable'){
+          if(['set a variable', 'create list'].includes(block['name'].toLowerCase())){
             //* get index of input which is the var assigner
             let input_index = block['inputs'].findIndex((input) => (input.type == "raw_str"))
             let var_name:string = block['values'][input_index] 
@@ -163,7 +219,6 @@ export default function WorkspaceBlock({
     results = results.filter(result => result != undefined);
     return results
   }
-
 
   return (
     <>
@@ -220,8 +275,6 @@ export default function WorkspaceBlock({
                 </>
               )
             }
-            {
-            }
           </span>
         </div>
         {canEdit && (
@@ -260,6 +313,31 @@ export default function WorkspaceBlock({
               }
 
               {
+                input.type == 'list' && (
+                  <>
+                    <span></span> {/* Create a space */}
+                    {
+                        block.values[index].map((listItem, itemIndex) => (
+                          <>
+                            <input key={listItem} disabled={!canEdit} onChange={(e) => onInputChange(block.instanceId, e.target.value, index, itemIndex)} value={values[index][itemIndex] ?? ''} type='text' className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
+                            <button className='hover:bg-red-600 rounded-lg p-2 flex justify-center transition' key={`${listItem}-removeButton`} onClick={()=>handleListItemRemove(index, itemIndex)}>
+                              <MinusCircle/>
+                            </button>
+                          </>
+                        ))
+                      
+                    }
+                    <button className='hover:bg-green-400 rounded-lg p-2 flex justify-center transition' onClick={() => {
+                        handleListItemAdd(index);
+                      }}>
+                      <PlusCircle/>
+                    </button>
+                  </>
+
+                )
+              }
+
+              {
                 input.type == 'path' && (
                   <span className='flex items-center justify-center'>
                     <File className='mr-2 text-gray-400' />
@@ -289,7 +367,6 @@ export default function WorkspaceBlock({
 
                       // set
                       onInputChange(block.instanceId, value, index);
-                                            
                     }
                     
                     } value={values[index] ?? ''} type='text' 
@@ -348,6 +425,7 @@ export default function WorkspaceBlock({
                 }
               </datalist>
 
+
             </div>
           ))}
         </div>
@@ -355,5 +433,8 @@ export default function WorkspaceBlock({
     </Card>
     </>
 
-  );
-}
+    );
+  
+};
+
+export default WorkspaceBlock;

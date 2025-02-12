@@ -23,6 +23,7 @@ export default function WorkspaceDropZone({
   onDeleteBlock,
   onReorder,
   canEdit, 
+  setWorkspaceBlocks,
 }: WorkspaceDropZoneProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: 'workspace',
@@ -52,6 +53,7 @@ export default function WorkspaceDropZone({
                 onInputChange={onInputChange}
                 onDelete={() => onDeleteBlock(block.instanceId)}
                 canEdit={canEdit}
+                setWorkspaceBlocks={setWorkspaceBlocks}
               />
             </div>
           ))}

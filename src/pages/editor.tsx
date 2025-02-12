@@ -218,6 +218,7 @@ export default function Editor() {
                 }))
 
 
+
                 const converted_block = {
                   id:cat_block.id,
                   name:cat_block.name,
@@ -311,6 +312,14 @@ export default function Editor() {
     if (sourceBlock) {
       const instanceId = `${sourceBlock.id}-${Date.now()}`;
       const initialValues = new Array(sourceBlock.inputs?.length || 0).fill('');
+
+      //* if its a list type block, set value to an empty list
+      let listTypeInputs = sourceBlock.inputs?.filter((input) => input.type == 'list')
+      for (let index = 0; index < listTypeInputs.length; index++) {
+        const element = listTypeInputs[index];
+        let input_index = sourceBlock.inputs?.findIndex((input_) => input_ == element)
+        initialValues[input_index] = ['',]
+      }
       
       const newBlocks: WorkspaceBlock[] = [];
       
@@ -341,38 +350,65 @@ export default function Editor() {
   };
 
   // Handle changes to block input values
-  const handleInputChange = (instanceId:string, value: string, index:number) => {
-    //* get type of input and sanitize values from here
-    let type = workspaceBlocks.find(block => block.instanceId === instanceId)['inputs'][index]['type']
-    let input_types_to_sanitize = ['int','float']
-    if(input_types_to_sanitize.includes(type)){
-      if(
-        (value[0] !== '{')
-        &&
-        (value.charAt(value.length-1) !== '}')
-        &&
-        value !== ''
-      ) {
-        if(type == 'int'){
-          if(isNaN(parseInt(value))){
-            return;
-          }
-        }
-        if(type == 'float'){
-          if(isNaN(parseFloat(value))){
-            return;
-          }
-        }
-      }
-    }
+  const handleInputChange = (instanceId:string, value: string, index:number, itemIndex?:number) => {
     setUnsavedChanges(true);
-    setWorkspaceBlocks((blocks) =>
-      blocks.map((block) =>
-        block.instanceId === instanceId
-          ? { ...block, values: { ...block.values, [index]: value } }
-          : block
-      )
-    );
+    if(itemIndex != undefined){
+      let newBlocks = workspaceBlocks.map(block => ({
+        ...block,
+        values: block.values // Copia profunda de 'values'
+      }));
+      
+      // Buscar el bloque y actualizar el valor en la copia
+      let blockToUpdate = newBlocks.find(block => block.instanceId === instanceId);
+      if (blockToUpdate) {
+        blockToUpdate.values[index][itemIndex] = value;
+      }
+      
+      console.log(blockToUpdate.values[index][itemIndex]);
+
+      console.log(newBlocks)
+
+      
+      // Actualizar el estado con el nuevo array
+      setWorkspaceBlocks(newBlocks);
+
+    } else {
+            //* get type of input and sanitize values from here
+          let type = workspaceBlocks.find(block => block.instanceId === instanceId)['inputs'][index]['type']
+          let input_types_to_sanitize = ['int','float']
+          if(input_types_to_sanitize.includes(type)){
+            if(
+              (value[0] !== '{')
+              &&
+              (value.charAt(value.length-1) !== '}')
+              &&
+              value !== ''
+            ) {
+              if(type == 'int'){
+                if(isNaN(parseInt(value))){
+                  return;
+                }
+              }
+              if(type == 'float'){
+                if(isNaN(parseFloat(value))){
+                  return;
+                }
+              }
+            }
+          }
+
+          //* set new blocks
+          setWorkspaceBlocks((blocks) =>
+            blocks.map((block) =>
+              block.instanceId === instanceId
+                ? { ...block, values: { ...block.values, [index]: value } }
+                : block
+            )
+          );
+    }
+
+
+    
   };
 
   // Handle block deletion
@@ -830,6 +866,7 @@ export default function Editor() {
               onDeleteBlock={handleDeleteBlock}
               onReorder={handleReorderBlocks}
               canEdit={canEdit}
+              setWorkspaceBlocks={setWorkspaceBlocks}
             />
           </motion.div>
         </div>
