@@ -4,7 +4,6 @@ export interface CodeBlock {
   name: string;
   description: string;
   assignable: string;
-  hasEndBlock?: boolean;
   isEndBlock?: boolean;
   parentBlockId?: string;
   inputs?: Array<{

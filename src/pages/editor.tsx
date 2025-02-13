@@ -218,7 +218,7 @@ export default function Editor() {
                 }))
 
 
-
+                let instanceId = `${index}-${cat_block.id}-${time.getTime()}`
                 const converted_block = {
                   id:cat_block.id,
                   name:cat_block.name,
@@ -227,7 +227,7 @@ export default function Editor() {
                   assignable:cat_block.assignable,
                   inputs:inputs,
                   values:block.params,
-                  instanceId: `${index}-${cat_block.id}-${time.getTime()}`,
+                  instanceId: instanceId,
                   var_assigner:cat_block.var_assigner,
                   incompatible_platforms:cat_block.incompatible_platforms,
                 }
@@ -329,22 +329,20 @@ export default function Editor() {
         values: initialValues,
       };
       newBlocks.push(newBlock);
-      
-      if (sourceBlock.hasEndBlock) {
+      if (sourceBlock.name.toLowerCase().includes('repeat ')) {
         const endBlock = blockCategories
           .flatMap((category) => category.blocks)
-          .find((block) => block.isEndBlock && block.parentBlockId === sourceBlock.id);
+          .find((block) => block.name.toLowerCase() == 'end repeat');
 
         if (endBlock) {
           const endBlockInstance: WorkspaceBlock = {
             ...endBlock,
-            instanceId: `${endBlock.id}-${Date.now()}`,
+            instanceId: `${sourceBlock.id}-${Date.now()+1}`, //* same as root block + -end
             values: {},
           };
           newBlocks.push(endBlockInstance);
         }
       } 
-      
       setWorkspaceBlocks((blocks) => [...blocks, ...newBlocks]);
     }
   };
@@ -413,38 +411,82 @@ export default function Editor() {
 
   // Handle block deletion
   const handleDeleteBlock = (instanceId: string) => {
-    setUnsavedChanges(true);
     const blockToDelete = workspaceBlocks.find(block => block.instanceId === instanceId);
     if (!blockToDelete) return;
 
-    if (blockToDelete.hasEndBlock) {
-      // Delete both the block and its end block
-      setWorkspaceBlocks(blocks => blocks.filter(block => 
-        block.instanceId !== instanceId && 
-        !(block.isEndBlock && block.parentBlockId === blockToDelete.id)
-      ));
-    } else if (blockToDelete.isEndBlock) {
-      // Delete both the end block and its parent
-      const parentBlock = workspaceBlocks.find(block => 
-        blockToDelete.parentBlockId === block.id
-      );
-      if (parentBlock) {
-        setWorkspaceBlocks(blocks => blocks.filter(block => 
-          block.instanceId !== instanceId && 
-          block.instanceId !== parentBlock.instanceId
-        ));
+    console.log(workspaceBlocks)
+    
+    //* check if sibling block
+    const blockName = blockToDelete.name.toLowerCase()
+    let hasSiblingBlock = false;
+    if(blockName.startsWith('end ') || blockName.startsWith('repeat ')) hasSiblingBlock = true;
+    console.log(hasSiblingBlock)
+    if (hasSiblingBlock) {
+      let siblingBlock;
+      if(blockName.startsWith('end ')){
+        // get a start block
+        siblingBlock = workspaceBlocks.find(b => b.name.toLowerCase().startsWith(blockName.replace('end ', '')))
+      } else {
+        // get an end block
+        siblingBlock = workspaceBlocks.find(b => b.name.toLowerCase().startsWith("end " + blockName.split(' ')[0]))
+      }
+      console.log(siblingBlock)
+      // delete sibling if found
+      if(siblingBlock){
+        setWorkspaceBlocks(blocks => blocks.filter(block => block.instanceId !== instanceId && block.instanceId !== siblingBlock.instanceId));
+      } else {
+        setWorkspaceBlocks(blocks => blocks.filter(block => block.instanceId !== instanceId));
       }
     } else {
       // Delete single block
       setWorkspaceBlocks(blocks => blocks.filter(block => block.instanceId !== instanceId));
     }
+    setUnsavedChanges(true);
   };
 
   // Handle block reordering
   const handleReorderBlocks = (activeId: string, overId: string) => {
     setWorkspaceBlocks((blocks) => {
+
       const oldIndex = blocks.findIndex((b) => b.instanceId === activeId);
       const newIndex = blocks.findIndex((b) => b.instanceId === overId);
+
+      //* check if block is allowed to be moved
+      // check if end block
+
+      const block = blocks.find((b) => b.instanceId === activeId);
+      if(block){
+        const isStartBlock = block.name.toLowerCase().startsWith('repeat ')
+        const isEndBlock = block.name.toLowerCase().startsWith('end ')
+        if(isEndBlock){
+          //* get first possible startblock
+          const startBlock = blocks.find((b) => b.name.toLowerCase().startsWith(block.name.toLowerCase().replace('end ', '')))
+
+          // as long as start block index is lower than the first one
+          // it shouldn't matter wether the start block was originally paired with the end block
+
+
+          if(startBlock){
+            let startBlockIndex = blocks.findIndex((b) => b.instanceId === startBlock.instanceId);
+            if(startBlockIndex + 1 > newIndex){
+              return blocks; // return original blocks and prevent re-render
+            } 
+          }
+        } else if(isStartBlock){
+          //* get first possible endblock
+          const endBlock = blocks.find((b) => b.name.toLowerCase().startsWith('end ' + block.name.toLowerCase().split(' ')[0]))
+          if(endBlock){
+            let endBlockIndex = blocks.findIndex((b) => b.instanceId === endBlock.instanceId);
+            if(endBlockIndex + 1 > newIndex){
+              return blocks;
+            }
+          }
+        }
+      }
+
+
+
+      //* normal reordering
 
       if (oldIndex === -1 || newIndex === -1) return blocks;
 

@@ -29,6 +29,31 @@ export default function WorkspaceDropZone({
     id: 'workspace',
   });
 
+  const getBlockIndentationLevel = (instanceId:string) => {
+    let indentLevel = 0
+    
+    for (let index = 0; index < blocks.length; index++) {
+      const block = blocks[index];
+      //* if current block reached, break out
+      if(block.instanceId == instanceId){
+        // and if its an end block, 
+        if(block.name.toLowerCase().startsWith('end ')){
+          indentLevel -= 1
+        }
+        break;
+      }
+
+      if(block.name.toLowerCase().startsWith('repeat ')){
+        indentLevel += 1
+      } else if(block.name.toLowerCase().startsWith('end ')){
+        indentLevel -= 1
+      }
+    }
+
+
+      return indentLevel;
+    }
+
   return (
     <Card 
       ref={setNodeRef}
@@ -43,8 +68,11 @@ export default function WorkspaceDropZone({
         <div className="space-y-3">
           {blocks.map((block) => (
             <div 
-              key={block.instanceId} 
-              className="transition-all duration-200"
+              key={`${block.instanceId}`} 
+              style={{
+                marginLeft:`${getBlockIndentationLevel(block.instanceId) * 20}px`
+              }}
+              className={`transition-all duration-200 `}
             >
               <WorkspaceBlock
                 block={block}
