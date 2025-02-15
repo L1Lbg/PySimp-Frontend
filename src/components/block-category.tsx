@@ -15,7 +15,7 @@ export default function BlockCategory({ category, activeId }: BlockCategoryProps
         {category.blocks.map((block) => (
           <>
             {
-              block.name != 'End Repeat' ? (
+              !block.name.toLowerCase().startsWith('end ') ? (
                 <CodeBlock
                   key={block.id}
                   block={block}

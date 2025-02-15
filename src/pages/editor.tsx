@@ -218,7 +218,6 @@ export default function Editor() {
                 }))
 
 
-                let instanceId = `${index}-${cat_block.id}-${time.getTime()}`
                 const converted_block = {
                   id:cat_block.id,
                   name:cat_block.name,
@@ -227,7 +226,7 @@ export default function Editor() {
                   assignable:cat_block.assignable,
                   inputs:inputs,
                   values:block.params,
-                  instanceId: instanceId,
+                  instanceId: `${index}-${cat_block.id}-${time.getTime()}`,
                   var_assigner:cat_block.var_assigner,
                   incompatible_platforms:cat_block.incompatible_platforms,
                 }
@@ -280,8 +279,10 @@ export default function Editor() {
 
   // Handle the start of a drag operation
   const handleDragStart = (event: DragStartEvent) => {
+
     if (!canEdit) return;
     setActiveId(event.active.id as string);
+    console.debug('dragging')
   };
 
   // Handle the end of a drag operation
@@ -289,6 +290,7 @@ export default function Editor() {
     if (!canEdit) return;
     const { active, over } = event;
     setActiveId(null);
+    console.debug('ended dragging')
 
     if (!over) return;
 
@@ -329,10 +331,11 @@ export default function Editor() {
         values: initialValues,
       };
       newBlocks.push(newBlock);
-      if (sourceBlock.name.toLowerCase().includes('repeat ')) {
+      if (sourceBlock.name.toLowerCase().startsWith('repeat ') || sourceBlock.name.toLowerCase().startsWith('conditional ')) {
+        let firstWord = sourceBlock.name.toLowerCase().split(' ')[0]
         const endBlock = blockCategories
           .flatMap((category) => category.blocks)
-          .find((block) => block.name.toLowerCase() == 'end repeat');
+          .find((block) => block.name.toLowerCase().startsWith(`end ${firstWord}`));
 
         if (endBlock) {
           const endBlockInstance: WorkspaceBlock = {
@@ -341,6 +344,8 @@ export default function Editor() {
             values: {},
           };
           newBlocks.push(endBlockInstance);
+        } else {
+          console.debug('No end block found.')
         }
       } 
       setWorkspaceBlocks((blocks) => [...blocks, ...newBlocks]);
@@ -419,7 +424,7 @@ export default function Editor() {
     //* check if sibling block
     const blockName = blockToDelete.name.toLowerCase()
     let hasSiblingBlock = false;
-    if(blockName.startsWith('end ') || blockName.startsWith('repeat ')) hasSiblingBlock = true;
+    if(blockName.startsWith('end ') || blockName.startsWith('repeat ') || blockName.startsWith('conditional ')) hasSiblingBlock = true;
     console.log(hasSiblingBlock)
     if (hasSiblingBlock) {
       let siblingBlock;
@@ -456,7 +461,7 @@ export default function Editor() {
 
       const block = blocks.find((b) => b.instanceId === activeId);
       if(block){
-        const isStartBlock = block.name.toLowerCase().startsWith('repeat ')
+        const isStartBlock = block.name.toLowerCase().startsWith('repeat ') || block.name.toLowerCase().startsWith('conditional ')
         const isEndBlock = block.name.toLowerCase().startsWith('end ')
         if(isEndBlock){
           //* get first possible startblock

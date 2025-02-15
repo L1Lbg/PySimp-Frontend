@@ -43,7 +43,7 @@ export default function WorkspaceDropZone({
         break;
       }
 
-      if(block.name.toLowerCase().startsWith('repeat ')){
+      if(block.name.toLowerCase().startsWith('repeat ') || block.name.toLowerCase().startsWith('conditional ')){
         indentLevel += 1
       } else if(block.name.toLowerCase().startsWith('end ')){
         indentLevel -= 1

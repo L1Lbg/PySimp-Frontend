@@ -165,6 +165,7 @@ function WorkspaceBlock  (
 
     //* get index of current block, to ignore further var declarations
     let block_index = blocks.findIndex((n_block) => n_block.instanceId === block.instanceId);
+    // early return for block at index 0
     if(block_index == 0){
       return []
     }
