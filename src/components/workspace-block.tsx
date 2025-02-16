@@ -323,6 +323,12 @@ function WorkspaceBlock  (
               }
 
               {
+                input.type == 'all' && (
+                  <input onFocus={handleFocus} disabled={!canEdit} onChange={(e) => onInputChange(block.instanceId, e.target.value, index)} value={values[index] ?? ''} type='text' list={`variable-suggestions-${blocks.findIndex((n_block) => n_block.instanceId === block.instanceId)}-${index}`} className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
+                )
+              }
+
+              {
               input.type == 'int' && (
                   <input onFocus={handleFocus} disabled={!canEdit} onChange={(e) => onInputChange(block.instanceId, e.target.value, index)} value={values[index] ?? ''} step="1" type='text' pattern="[0-9]*" list={`variable-suggestions-${blocks.findIndex((n_block) => n_block.instanceId === block.instanceId)}-${index}`} className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
                 )
@@ -337,24 +343,77 @@ function WorkspaceBlock  (
               {
                 input.type == 'list' && (
                   <>
-                    <span></span> {/* Create a space */}
                     {
-                        block.values[index].map((listItem, itemIndex) => (
-                          <>
-                            <input key={listItem} disabled={!canEdit} onChange={(e) => onInputChange(block.instanceId, e.target.value, index, itemIndex)} value={values[index][itemIndex] ?? ''} type='text' className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
-                            <button className='hover:bg-red-600 rounded-lg p-2 flex justify-center transition' key={`${listItem}-removeButton`} onClick={()=>handleListItemRemove(index, itemIndex)}>
-                              <MinusCircle/>
-                            </button>
-                          </>
-                        ))
+                      blocks[block.instanceId.split('-')[0] - 1]?.assignable == 'list' ? (
+                        <>
+                          {
+                            block.values[index] != '{last_line}' ? (
+                              <button onClick={
+                                ()=>{
+                                  const newBlocks = [...blocks];
+                                  const newBlock = newBlocks.find(
+                                    a => a.instanceId === block.instanceId
+                                  );
+                                  if(newBlocks){
+                                    newBlock.values[index] = '{last_line}'
+                                    setWorkspaceBlocks(newBlocks);
+                                  }
+                                }
+                              }>
+                                Assign to last line
+                              </button>
+                            ) : (
+                              <button onClick={()=>{
+                                    const newBlocks = [...blocks];
+                                    const newBlock = newBlocks.find(
+                                      a => a.instanceId === block.instanceId
+                                    );
+                                    if(newBlocks){
+                                      newBlock.values[index] = ['']
+                                      setWorkspaceBlocks(newBlocks);
+                                    }
+                                  }}>
+                                    Un-Assign to last line
+                              </button>
+                            )
+                          }
+                        </>
+                      ) : (
+                        <span></span>
+                      )
                       
-                    }
-                    <button className='hover:bg-green-400 rounded-lg p-2 flex justify-center transition' onClick={() => {
-                        handleListItemAdd(index);
-                      }}>
-                      <PlusCircle/>
-                    </button>
-                  </>
+                    }     
+                    {
+                      block.values[index] != '{last_line}' ? (
+                          <>
+                            {
+                            block.values[index].map((listItem, itemIndex) => (
+                                  <>
+                                    <input key={listItem} disabled={!canEdit} onChange={(e) => onInputChange(block.instanceId, e.target.value, index, itemIndex)} value={values[index][itemIndex] ?? ''} type='text' className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'/>
+                                    <button className='hover:bg-red-600 rounded-lg p-2 flex justify-center transition' key={`${listItem}-removeButton`} onClick={()=>handleListItemRemove(index, itemIndex)}>
+                                      <MinusCircle/>
+                                    </button>
+                                  </>
+                                ))
+                              
+                              }
+
+                            <button className='hover:bg-green-400 rounded-lg p-2 flex justify-center transition' onClick={() => {
+                                handleListItemAdd(index);
+                              }}>
+                              <PlusCircle/>
+                            </button>
+                          
+                          
+                          </>
+                        
+                          ) : (
+                            <>
+                              
+                            </>
+                          )
+                      }
+                </>
 
                 )
               }
@@ -365,26 +424,34 @@ function WorkspaceBlock  (
                     <File className='mr-2 text-gray-400' />
                     <input onFocus={handleFocus} disabled={!canEdit} onChange={(e) => { 
                       //* sanitize
-                      let is_windows = navigator.userAgent.includes('Win'); 
+                      // if its not set as a variable
                       let value = e.target.value.replaceAll('\\', '/');
-                      if(!value.includes('/')){
-                        e.target.style.border = '1px solid red';
+                      console.log(value[0])
+                      console.log(value[value.length])
+                      console.log(value.length)
+                      if((value[0] != '{' ) && (value[value.length - 1] != '}')){
+                        let is_windows = navigator.userAgent.includes('Win'); 
+                        if(!value.includes('/')){
+                          e.target.style.border = '1px solid red';
+                        } else {
+                          e.target.style.border = '1px solid #D1D5DB';
+                        }
+                        
+                        if(is_windows){
+                          if(value[1] != ':'){
+                            e.target.style.border = '1px solid red';
+                          } else {
+                            e.target.style.border = '1px solid #D1D5DB';
+                          }
+                        } else {
+                          if(value[0] != '/'){
+                            e.target.style.border = '1px solid red';
+                          } else {
+                            e.target.style.border = '1px solid #D1D5DB';
+                          }
+                        }
                       } else {
                         e.target.style.border = '1px solid #D1D5DB';
-                      }
-                      
-                      if(is_windows){
-                        if(value[1] != ':'){
-                          e.target.style.border = '1px solid red';
-                        } else {
-                          e.target.style.border = '1px solid #D1D5DB';
-                        }
-                      } else {
-                        if(value[0] != '/'){
-                          e.target.style.border = '1px solid red';
-                        } else {
-                          e.target.style.border = '1px solid #D1D5DB';
-                        }
                       }
 
                       // set
