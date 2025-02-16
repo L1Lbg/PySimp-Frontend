@@ -34,6 +34,7 @@ import { FeedbackDialog } from '@/components/editor/feedback-dialog';
 import Tour from 'reactour'
 import { X } from 'lucide-react';
 import Tutorials from '@/components/tutorials';
+import getIndentPairs from '@/functions/getIndentPairs';
 
 // Define the structure for workspace blocks that includes instance-specific data
 interface WorkspaceBlock extends CodeBlockType {
@@ -282,7 +283,6 @@ export default function Editor() {
 
     if (!canEdit) return;
     setActiveId(event.active.id as string);
-    console.debug('dragging')
   };
 
   // Handle the end of a drag operation
@@ -290,7 +290,6 @@ export default function Editor() {
     if (!canEdit) return;
     const { active, over } = event;
     setActiveId(null);
-    console.debug('ended dragging')
 
     if (!over) return;
 
@@ -419,7 +418,6 @@ export default function Editor() {
     const blockToDelete = workspaceBlocks.find(block => block.instanceId === instanceId);
     if (!blockToDelete) return;
 
-    console.log(workspaceBlocks)
     
     //* check if sibling block
     const blockName = blockToDelete.name.toLowerCase()
@@ -719,8 +717,6 @@ export default function Editor() {
     setDeleteDialogOpen(false);
     setProjectNameConfirm('');
   };
-
-
 
   const editor_tutorials = [
     {

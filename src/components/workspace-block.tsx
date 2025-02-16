@@ -8,6 +8,7 @@ import React, { useEffect, useState } from 'react';
 import { useToast } from './toast-provider';
 import Tutorials from './tutorials';
 import { Widget } from '@typeform/embed-react';
+import getIndentPairs from '@/functions/getIndentPairs';
 
 interface WorkspaceBlock extends CodeBlockType {
   instanceId: string;
@@ -181,6 +182,7 @@ function WorkspaceBlock  (
       results.push('last_line')
     }
 
+    //* block has a specific type of input
     if(block.inputs[index]['extra']){
       let query = block.inputs[index]['extra'].split('.')
 
@@ -198,17 +200,36 @@ function WorkspaceBlock  (
           }
         }
       )
-    } else {
-      //* add all "Set a variable" blocks
+    } 
+    //* add all "Set a variable" blocks
+    else {
       add = blocks.slice(0, block_index+1).map(
-        (block) => {
-          if(['set a variable', 'create list'].includes(block['name'].toLowerCase())){
+        (block, index) => {
+          if(['set a variable', 'create list', 'repeat through list'].includes(block['name'].toLowerCase())){
             //* get index of input which is the var assigner
             let input_index = block['inputs'].findIndex((input) => (input.type == "raw_str"))
             let var_name:string = block['values'][input_index] 
-            if(var_name != undefined && var_name != ''){
-              return var_name
+
+            //* if its a temporal variable, like from an iteration, check if block is inside to return it
+            if(block['name'].toLowerCase() == 'repeat through list' || block['id'] == 63){
+              
+              const [indentPairs, flatIndentPairs] = getIndentPairs(blocks);
+              console.log(flatIndentPairs)
+              console.log(indentPairs)
+              
+              let blocksPair = flatIndentPairs.find((pair) => pair.start == index)
+              if(blocksPair && blocksPair.end > block_index && blocksPair.start < block_index){
+                return var_name
+              } else {
+                console.log('outside')
+              }
+
+            } else {
+              if(var_name != undefined && var_name != ''){
+                return var_name
+              }
             }
+
           }
         }
       )
