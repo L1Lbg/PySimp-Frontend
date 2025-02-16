@@ -416,24 +416,24 @@ export default function Editor() {
   // Handle block deletion
   const handleDeleteBlock = (instanceId: string) => {
     const blockToDelete = workspaceBlocks.find(block => block.instanceId === instanceId);
+    const blockToDeleteIndex = workspaceBlocks.findIndex(block => block.instanceId === instanceId);
     if (!blockToDelete) return;
 
     
     //* check if sibling block
     const blockName = blockToDelete.name.toLowerCase()
-    let hasSiblingBlock = false;
-    if(blockName.startsWith('end ') || blockName.startsWith('repeat ') || blockName.startsWith('conditional ')) hasSiblingBlock = true;
-    console.log(hasSiblingBlock)
-    if (hasSiblingBlock) {
+    if (blockName.startsWith('end ') || blockName.startsWith('repeat ') || blockName.startsWith('conditional ')) {
       let siblingBlock;
+      const [indentPairs, flatIndentPairs] = getIndentPairs(workspaceBlocks)
+      console.log(flatIndentPairs)
       if(blockName.startsWith('end ')){
-        // get a start block
-        siblingBlock = workspaceBlocks.find(b => b.name.toLowerCase().startsWith(blockName.replace('end ', '')))
+        // get a sibling start block
+        siblingBlock = workspaceBlocks[flatIndentPairs.find((b)=>b.end == blockToDeleteIndex)['start']]
       } else {
-        // get an end block
-        siblingBlock = workspaceBlocks.find(b => b.name.toLowerCase().startsWith("end " + blockName.split(' ')[0]))
+        // get a sibling end block
+        siblingBlock = workspaceBlocks[flatIndentPairs.find((b)=>b.start == blockToDeleteIndex)['end']]
       }
-      console.log(siblingBlock)
+
       // delete sibling if found
       if(siblingBlock){
         setWorkspaceBlocks(blocks => blocks.filter(block => block.instanceId !== instanceId && block.instanceId !== siblingBlock.instanceId));
