@@ -46,7 +46,7 @@ const GettingStarted: React.FC = () => {
   return (
     <div className="min-h-screen bg-purple-950 text-white">
       <div className="container mx-auto px-4 py-12">
-        <h1 className="text-4xl font-bold mb-12 text-center">Welcome to Personalized Digital Automation</h1>
+        <h1 className="text-4xl font-bold mb-12 text-center">Welcome to Autonomia</h1>
 
         {/* Getting Started Steps */}
         <section className="mb-16">

@@ -8,7 +8,6 @@ import {
   MousePointer,
   Keyboard,
   FileSearch,
-  Repeat,
   Workflow,
   FileText,
   FormInput,
@@ -24,7 +23,7 @@ const HowItWorks: React.FC = () => {
   return (
     <div className="bg-purple-950 text-white min-h-screen">
       <div className="container mx-auto px-4 py-12">
-        <h1 className="text-4xl font-bold mb-8 text-center">Personalized Digital Automation</h1>
+        <h1 className="text-4xl font-bold mb-8 text-center">How It Works</h1>
 
         {/* Video Section
         <div className="mb-12">

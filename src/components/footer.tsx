@@ -58,6 +58,20 @@ export default function Footer() {
               >
                 Referral Program
               </a>
+              <a
+                target="_blank"
+                href="/how-it-works"
+                className="hover:text-purple-200"
+              >
+                How Autonomia Works
+              </a>
+              <a
+                target="_blank"
+                href="/pda"
+                className="hover:text-purple-200"
+              >
+                What is Personalized Digital Automation
+              </a>
             </div>
           </div>
         </div>
