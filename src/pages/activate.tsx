@@ -1,10 +1,11 @@
 import { useToast } from "@/components/toast-provider";
 import { useEffect } from "react"
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function Activate(){
     const { showError } = useToast();
     const { uid, token } = useParams();
+    const navigate = useNavigate();
     useEffect(() => {
         fetch(
             `${localStorage.getItem('api_url')}/authentication/manage/users/activation/`,
@@ -19,9 +20,9 @@ export default function Activate(){
         .then(
             res => {
                 if (res.ok) {
-                    window.location.href = '/auth'
+                    navigate('/auth')
                 } else {
-                    throw new Error("Failed to activate user")
+                    throw "Failed to activate user"
                 }
             }
         )
