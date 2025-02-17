@@ -63,22 +63,22 @@ export default function Landing() {
           height="500"
           src="https://www.youtube-nocookie.com/embed/HOZVhS-7k10?si=t7qyQ7O5WTXypnR2&amp;controls=2&color=white&fs=0&modestbranding=1&rel=0&showinfo=0&vq=hd1080p"
           title="YouTube video player"
-          frameborder="0"
+          frameBorder="0"
           allow="autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen
+          referrerPolicy="strict-origin-when-cross-origin"
+          allowFullScreen
         ></iframe>
       </div>
 
       {/* Features Section */}
       <div className="bg-purple-950/20 py-24">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
+          {/* <div className="text-center mb-16">
             <div className="flex items-center justify-center gap-2 mb-4">
               <Sparkles className="h-6 w-6 text-purple-400" />
               <h2 className="text-3xl font-bold">Key Features</h2>
             </div>
-          </div>
+          </div> */}
 
           <div className="grid md:grid-cols-1 gap-8">
             {features.map((feature, index) => (
@@ -89,13 +89,16 @@ export default function Landing() {
                   <p className="text-purple-200/60">
                     {feature.title === "Personalized Digital Automation" ? (
                       <>
-                        <Link href="/personalized-digital-automation" className="text-purple-400 hover:underline">
+                        <Link to="/pda" className="text-purple-400 hover:underline">
                           Personalized Digital Automation
                         </Link>
                         {" " + feature.description}
                       </>
                     ) : (
-                      feature.description
+                      
+                      <>
+                      {feature.description}
+                      </>
                     )}
                   </p>
                 </div>
@@ -132,7 +135,13 @@ export default function Landing() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4">Use Cases</h2>
-            <p className="text-purple-200/60">Check How it works?</p>
+            <p className="text-purple-200/60">
+              Discover how Autonomia can transform digital assistants workflow.
+                <br />
+              <Link to='how-it-works' className="text-purple-500 underline">
+                Check how it works.
+              </Link>
+            </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">

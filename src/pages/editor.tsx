@@ -331,6 +331,11 @@ export default function Editor() {
       };
       newBlocks.push(newBlock);
       if (sourceBlock.name.toLowerCase().startsWith('repeat ') || sourceBlock.name.toLowerCase().startsWith('conditional ')) {
+        //* trigger tutorial
+
+
+
+        //* add additional block
         let firstWord = sourceBlock.name.toLowerCase().split(' ')[0]
         const endBlock = blockCategories
           .flatMap((category) => category.blocks)
@@ -754,6 +759,28 @@ export default function Editor() {
     }
   ]
 
+  const repeat_n_times_tutorial = [
+    {
+      'text':'Repeating blocks',
+      'description':"When you add this block, fill in the amount of times you want the following actions to occur. This block adds a new block at the end called 'End Repeat', which marks the end of the actions that are going to be repeated."
+    }
+
+  ]
+  const repeat_tutorial = [
+    {
+      'text':'Repeating through lists',
+      'description':"When you repeat through a list, you will realize the same action for each item inside that list. First set an item name, which sets the name of the current item on the list. Secondly, use that item inside one of your actions."
+    }
+
+  ]
+
+  const conditionals_tutorial = [
+    {
+      'text':'Conditional blocks',
+      'description':"These blocks check if a condition is true, if it's true, it will run the blocks inside it."
+    }
+  ]
+
 
   return (
     <>
@@ -784,6 +811,37 @@ export default function Editor() {
           tutorials={download_tutorial}
           id={'tut-download'}
           onend={()=>{localStorage.setItem('tut-download', 'true')}}
+          style={{'display':'none'}}
+        />
+      )
+    }
+
+{
+      localStorage.getItem('tut-repeat-n') != 'true' && canEdit &&(
+        <Tutorials 
+          tutorials={repeat_n_times_tutorial}
+          id={'tut-repeat-n'}
+          onend={()=>{localStorage.setItem('tut-repeat-n', 'true')}}
+          style={{'display':'none'}}
+        />
+      )
+    }
+    {
+      localStorage.getItem('tut-repeat') != 'true' && canEdit && (
+        <Tutorials 
+          tutorials={repeat_tutorial}
+          id={'tut-repeat'}
+          onend={()=>{localStorage.setItem('tut-repeat', 'true')}}
+          style={{'display':'none'}}
+        />
+      )
+    }
+    {
+      localStorage.getItem('tut-conditionals') != 'true' && canEdit &&(
+        <Tutorials 
+          tutorials={conditionals_tutorial}
+          id={'tut-conditionals'}
+          onend={()=>{localStorage.setItem('tut-conditionals', 'true')}}
           style={{'display':'none'}}
         />
       )

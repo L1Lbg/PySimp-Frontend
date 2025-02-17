@@ -60,7 +60,7 @@ const PersonalizedDigitalAutomation: React.FC = () => {
         <section className="mb-16">
           <h1 className="text-4xl font-bold mb-6">What Is Personalized Digital Automation?</h1>
           <p className="text-lg text-purple-200 leading-relaxed">
-            Personalized Digital Automation is a new approach to automation that allows individuals to automate their
+            Personalized Digital Automation is an approach to automation that allows individuals to automate their
             daily tasks across multiple applications—without coding or complex integrations. Unlike traditional
             automation tools, which often require programming knowledge or API connections, Personalized Digital
             Automation works directly on your computer, interacting with software just like a human would.

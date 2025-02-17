@@ -15,9 +15,16 @@ import {
   Search,
   Key,
   Database,
+  BadgePlus,
 } from "lucide-react"
 
 export const features = [
+  {
+    title:"Integration Automation",
+    description:
+    "Integration Automation focuses on connecting different software applications to work together seamlessly. It enables data transfer between tools, automates routine workflows, and reduces manual input by using APIs.",
+    icon:BadgePlus
+  },
   {
     title: "Robotic Process Automation (RPA)",
     description:

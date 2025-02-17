@@ -160,7 +160,7 @@ function App() {
             <Route path="/subscribe" element={<Subscription />} />
             <Route path="/pda" element={<PersonalizedDigitalAutomation />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
-            {/* <Route path="/getting-started" element={<GettingStarted />} /> */}
+            <Route path="/getting-started" element={<GettingStarted />} />
             
           </Routes>
         </div>
