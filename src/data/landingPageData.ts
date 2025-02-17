@@ -1,65 +1,94 @@
-import { MousePointer2, Clock, Zap, Shield, Code2, Workflow } from 'lucide-react';
+import {
+  MousePointer2,
+  Clock,
+  Zap,
+  Shield,
+  Code2,
+  Workflow,
+  Puzzle,
+  BotIcon as Robot,
+  PersonStanding,
+  FileIcon as FileOrganizer,
+  FormInput,
+  FileSpreadsheet,
+  Calendar,
+  Search,
+  Key,
+  Database,
+} from "lucide-react"
 
 export const features = [
   {
-    icon: MousePointer2,
-    title: 'Visual Editor',
-    description: 'Drag and drop blocks to build your automation scripts with ease'
+    title: "Robotic Process Automation (RPA)",
+    description:
+      "Robotic Process Automation (RPA) is designed to automate repetitive tasks typically performed by humans within digital environments. RPA bots can interact with user interfaces, extract data, and perform rule-based tasks across multiple applications. RPA is powerful for large-scale or enterprise automation.",
+    icon: Robot,
   },
   {
-    icon: Clock,
-    title: 'Time Saver',
-    description: 'Automate repetitive tasks and save hours every week'
+    title: "Personalized Digital Automation",
+    description:
+      "Personalized Digital Automation automates actions directly on a computer, and can interact with any software. It replicates human actions in your computer, across any software environment, including apps without APIs, browser-based workflows, and desktop applications. From moving, organising and renaming files, Auto-Filling Online Forms and managing spreadsheets to handling customer support tasks. Personalized Digital Automation allows users to create tailored automation without coding, making it flexible, cost-effective, and suitable for professionals like Virtual Assistants looking to optimize their workflows without technical barriers.",
+    icon: PersonStanding,
   },
-  {
-    icon: Workflow,
-    title: 'Workflow Automation',
-    description: 'Create powerful automation flows without any coding knowledge'
-  },
-  {
-    icon: Shield,
-    title: 'Secure & Private',
-    description: 'Your automations run locally with full transparency'
-  }
-];
+]
 
 export const benefits = [
   {
-    icon: Zap,
-    title: 'Fast & Efficient',
-    description: 'Create scripts in minutes instead of hours'
-  },
-  {
-    icon: Shield,
-    title: 'Secure',
-    description: 'Your scripts run locally with full transparency'
-  },
-  {
-    icon: Code2,
-    title: 'No Coding Required',
-    description: 'Perfect for beginners and non-programmers'
-  },
-  {
+    title: "Save Time & Increase Productivity",
+    description: "Automate repetitive tasks and free up your time to focus on more important things.",
     icon: Clock,
-    title: 'Save Time',
-    description: 'Automate tasks and reclaim your valuable time'
-  }
-];
+  },
+  {
+    title: "Reduce Errors & Improve Accuracy",
+    description: "Eliminate human error and ensure consistent results.",
+    icon: Shield,
+  },
+  {
+    title: "Increase Efficiency & Streamline Workflows",
+    description: "Automate your workflows and improve your overall efficiency.",
+    icon: Workflow,
+  },
+  {
+    title: "Easy to Use & No Coding Required",
+    description: "Our intuitive interface makes it easy to create automations without any coding experience.",
+    icon: Code2,
+  },
+  {
+    title: "Powerful & Flexible",
+    description: "Our platform is powerful and flexible enough to handle any automation task.",
+    icon: Zap,
+  },
+  {
+    title: "Affordable & Accessible",
+    description: "Our platform is affordable and accessible to everyone.",
+    icon: MousePointer2,
+  },
+]
 
 export const useCases = [
   {
-    title: 'Artificial Intelligence',
-    description: 'Add an AI Model to your projects',
-    image: 'https://images.unsplash.com/photo-1618477388954-7852f32655ec?auto=format&fit=crop&q=80'
+    title: "Automating File Organization & Renaming",
+    icon: FileOrganizer,
   },
   {
-    title: 'Mouse & Keyboard Automation',
-    description: 'Automate repetitive mouse movements and keyboard inputs',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80'
+    title: "Auto-Filling Online Forms & Repetitive Applications",
+    icon: FormInput,
   },
   {
-    title: 'Web Automation',
-    description: 'Automate repetitive web tasks and data collection',
-    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80'
-  }
-];
+    title: "Automating Client Report Generation & Formatting With Spreadsheets",
+    icon: FileSpreadsheet,
+  },
+  {
+    title: "Automating Online Research & Data Scraping (Without Code)",
+    icon: Search,
+  },
+  {
+    title: "Auto-Logging Into Client Accounts & Managing Password-Protected Sites",
+    icon: Key,
+  },
+  {
+    title: "Automating Repetitive Data Entry in Web Portals & CRMs",
+    icon: Database,
+  },
+]
+

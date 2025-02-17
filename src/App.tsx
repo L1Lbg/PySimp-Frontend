@@ -21,6 +21,9 @@ import RefundPolicy from './pages/RefundPolicy';
 import TermsOfService from './pages/TermsOfService';
 import Footer from './components/footer';
 import { useToast } from './components/toast-provider';
+import HowItWorks from './pages/howitworks';
+import PersonalizedDigitalAutomation from './pages/pda';
+import GettingStarted from './pages/gettingstarted';
 
 function App() {
   const [debug, setDebug] = useState(false)
@@ -146,21 +149,18 @@ function App() {
             
             <Route path="/legal/cookie-policy" element={<CookiePolicy />} />
 
-                {
-              debug && (
-                <>
-                <Route path="/community" element={<Community />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/favorites" element={<Favorites />} />
-                <Route path="/profile/:id" element={<Profile />} />
-                <Route path="/search" element={<Search />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/create/:id" element={<Editor />} />
-                <Route path="/guide/:id" element={<Guide />} />
-                <Route path="/subscribe" element={<Subscription />} />
-                </>
-              )
-            }
+            <Route path="/community" element={<Community />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/favorites" element={<Favorites />} />
+            <Route path="/profile/:id" element={<Profile />} />
+            <Route path="/search" element={<Search />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/create/:id" element={<Editor />} />
+            <Route path="/guide/:id" element={<Guide />} />
+            <Route path="/subscribe" element={<Subscription />} />
+            <Route path="/pda" element={<PersonalizedDigitalAutomation />} />
+            <Route path="/how-it-works" element={<HowItWorks />} />
+            {/* <Route path="/getting-started" element={<GettingStarted />} /> */}
             
           </Routes>
         </div>

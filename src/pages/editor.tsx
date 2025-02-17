@@ -366,11 +366,6 @@ export default function Editor() {
         blockToUpdate.values[index][itemIndex] = value;
       }
       
-      console.log(blockToUpdate.values[index][itemIndex]);
-
-      console.log(newBlocks)
-
-      
       // Actualizar el estado con el nuevo array
       setWorkspaceBlocks(newBlocks);
 
