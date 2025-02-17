@@ -97,22 +97,25 @@ function WorkspaceBlock  (
   //* handle list type inputs
   const handleListItemAdd = (index) => {
     setWorkspaceBlocks((prevBlocks) => {
-      // Copia profunda del array de bloques
-      const newBlocks = [...prevBlocks].map(block => ({ ...block, values: [...block.values] }));
+      const newBlocks = prevBlocks.map(block =>{         
+        return {
+            ...block,
+            values: Array.isArray(block.values) ? [...block.values] : Object.values(block.values)
+          }
+        }
+      )
+    
       
-      // Encuentra el índice del bloque actual
       let blockIndex = newBlocks.findIndex((b) => b.instanceId === block.instanceId);
       
       if (blockIndex !== -1) {
-        // Asegurar que values[index] es un array antes de modificarlo
         if (!Array.isArray(newBlocks[blockIndex].values[index])) {
           newBlocks[blockIndex].values[index] = [];
         }
-        // Agregar un nuevo item a la lista
         newBlocks[blockIndex].values[index].push('');
       }
   
-      return newBlocks; // Retorna el nuevo array para que React lo detecte
+      return newBlocks; 
     });
   };
 
