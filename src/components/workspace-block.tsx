@@ -55,7 +55,13 @@ function WorkspaceBlock  (
   };
 
   // * array of variable suggestions for each input
-  const [variableSuggestions, setVariableSuggestions] = useState([new Set(['',])])
+  const [variableSuggestions, setVariableSuggestions] = useState(()=>{
+    let suggestions = new Array(block['inputs'].length);
+    for (let index = 0; index < suggestions.length; index++) {
+      suggestions[index] = new Set(['']);
+    }
+    return suggestions
+  })
 
   //* handle focus on input for tutorials
   const handleFocus = (e) => {
@@ -238,12 +244,11 @@ function WorkspaceBlock  (
     
 
     add.forEach(item => {
-      if(item != undefined){
+      if(item !== undefined){
         results.add(item)
       }
     })
-
-    // results = results.filter(result => result != undefined);
+    console.log(results)
     return results
   }
 
@@ -482,7 +487,7 @@ function WorkspaceBlock  (
                             Array.from(variableSuggestions[index])?.map(suggestion => (
                               <>
                                 {
-                                  suggestion !== undefined && suggestion !== '' && (
+                                  suggestion !== undefined && (
                                     <option value={`{${suggestion}}`} key={`{${suggestion}}`} className='text-black'>
                                       {suggestion}
                                     </option>
@@ -514,6 +519,7 @@ function WorkspaceBlock  (
 
               <datalist id={`variable-suggestions-${blocks.findIndex((n_block) => n_block.instanceId === block.instanceId)}-${index}`}>
                 {
+                  variableSuggestions[index] !== undefined &&
                   Array.from(variableSuggestions[index])?.length > 0 &&
                   Array.from(variableSuggestions[index]).map(suggestion => 
                     suggestion !== '' && suggestion !== undefined && (
