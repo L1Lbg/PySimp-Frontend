@@ -5,13 +5,11 @@ import {
   Shield,
   Code2,
   Workflow,
-  Puzzle,
   BotIcon as Robot,
   PersonStanding,
   FileIcon as FileOrganizer,
   FormInput,
   FileSpreadsheet,
-  Calendar,
   Search,
   Key,
   Database,
@@ -34,7 +32,7 @@ export const features = [
   {
     title: "Personalized Digital Automation",
     description:
-      "Personalized Digital Automation automates actions directly on a computer, and can interact with any software. It replicates human actions in your computer, across any software environment, including apps without APIs, browser-based workflows, and desktop applications. From moving, organising and renaming files, Auto-Filling Online Forms and managing spreadsheets to handling customer support tasks. Personalized Digital Automation allows users to create tailored automation without coding, making it flexible, cost-effective, and suitable for professionals like Virtual Assistants looking to optimize their workflows without technical barriers.",
+      "Personalized Digital Automation automates actions directly on a computer, and can interact with any software. It replicates human actions in your computer, across any software environment, including apps without APIs, browser-based workflows, and desktop applications. From moving, organising and renaming files, Auto-Filling Online Forms and managing spreadsheets to handling customer support tasks.",
     icon: PersonStanding,
   },
 ]

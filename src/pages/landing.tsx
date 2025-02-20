@@ -1,4 +1,4 @@
-import { ArrowRight, Sparkles } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { benefits, features, useCases } from "@/data/landingPageData"
 import { useNavigate, Link } from "react-router-dom"
 
@@ -136,7 +136,7 @@ export default function Landing() {
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4">Use Cases</h2>
             <p className="text-purple-200/60">
-              Discover how Autonomia can transform digital assistants workflow.
+              Discover how Autonomia can transform virtual assistants workflow.
                 <br />
               <Link to='how-it-works' className="text-purple-500 underline">
                 Check how it works.

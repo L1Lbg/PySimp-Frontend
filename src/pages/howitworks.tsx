@@ -132,7 +132,7 @@ const HowItWorks: React.FC = () => {
               <h3 className="text-xl font-semibold mb-2">Automate Your Clicks, Keystrokes, and Navigation</h3>
               <p>
                 Tired of clicking the same buttons every day? Personalized Digital Automation can move your mouse, type
-                text, and navigate menus automatically. No need to install complex software—just record your actions,
+                text, and navigate menus automatically. No need to install complex software—just use our editor, download your project,
                 and the tool will repeat them.
               </p>
               <p className="mt-2">
@@ -145,7 +145,7 @@ const HowItWorks: React.FC = () => {
               <h3 className="text-xl font-semibold mb-2">Copy, Paste, and Transfer Data Between Apps</h3>
               <p>
                 Most automation tools can't work outside of specific apps, but Personalized Digital Automation copies
-                and pastes across any software—Excel, Notion, web browsers, CRMs, email… anything.
+                and pastes across any software—Excel, web browsers, CRMs, email… anything.
               </p>
               <p className="mt-2">
                 <strong>Example:</strong> You receive customer inquiries via email and need to log them into a database.
