@@ -55,7 +55,7 @@ function WorkspaceBlock  (
   };
 
   // * array of variable suggestions for each input
-  const [variableSuggestions, setVariableSuggestions] = useState([[]])
+  const [variableSuggestions, setVariableSuggestions] = useState([new Set(['',])])
 
   //* handle focus on input for tutorials
   const handleFocus = (e) => {
@@ -165,13 +165,13 @@ function WorkspaceBlock  (
 
 
   const getVariableSuggestions = (index:number) => {
-    let results = ['']
+    let results = new Set([''])
 
     //* get index of current block, to ignore further var declarations
     let block_index = blocks.findIndex((n_block) => n_block.instanceId === block.instanceId);
     // early return for block at index 0
     if(block_index == 0){
-      return []
+      return new Set([])
     }
 
     //* determine if last line should be included in suggestions
@@ -182,7 +182,7 @@ function WorkspaceBlock  (
     let add = []
 
     if((block.inputs[index]['type'] != 'var') && (blocks[block_index-1]['assignable'] != '')){
-      results.push('last_line')
+      results.add('last_line')
     }
 
     //* block has a specific type of input
@@ -217,8 +217,6 @@ function WorkspaceBlock  (
             if(block['name'].toLowerCase() == 'repeat through list' || block['id'] == 63){
               
               const [indentPairs, flatIndentPairs] = getIndentPairs(blocks);
-              console.log(flatIndentPairs)
-              console.log(indentPairs)
               
               let blocksPair = flatIndentPairs.find((pair) => pair.start == index)
               if(blocksPair && blocksPair.end > block_index && blocksPair.start < block_index){
@@ -239,9 +237,13 @@ function WorkspaceBlock  (
     }
     
 
-    results = results.concat(add)
+    add.forEach(item => {
+      if(item != undefined){
+        results.add(item)
+      }
+    })
 
-    results = results.filter(result => result != undefined);
+    // results = results.filter(result => result != undefined);
     return results
   }
 
@@ -477,11 +479,17 @@ function WorkspaceBlock  (
                 input.type == 'var' && ( 
                   <select disabled={!canEdit} onChange={(e) => {onInputChange(block.instanceId, e.target.value, index)}}  value={values[index] ?? ''} className='flex h-9 w-full rounded-md border border-purple-200/20 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-purple-200/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:cursor-not-allowed disabled:opacity-50'>
                     {
-                      variableSuggestions[index]?.map(suggestion => (
-                        <option value={`{${suggestion}}`} key={`{${suggestion}}`} className='text-black'>
-                          {suggestion}
-                        </option>
-                      ))
+                            Array.from(variableSuggestions[index])?.map(suggestion => (
+                              <>
+                                {
+                                  suggestion !== undefined && suggestion !== '' && (
+                                    <option value={`{${suggestion}}`} key={`{${suggestion}}`} className='text-black'>
+                                      {suggestion}
+                                    </option>
+                                  )
+                                }
+                              </>
+                            ))
                     }
                   </select>
                 )
@@ -506,8 +514,8 @@ function WorkspaceBlock  (
 
               <datalist id={`variable-suggestions-${blocks.findIndex((n_block) => n_block.instanceId === block.instanceId)}-${index}`}>
                 {
-                  variableSuggestions[index]?.length > 0 &&
-                  variableSuggestions[index].map(suggestion => 
+                  Array.from(variableSuggestions[index])?.length > 0 &&
+                  Array.from(variableSuggestions[index]).map(suggestion => 
                     suggestion !== '' && suggestion !== undefined && (
                       <option value={`{${suggestion}}`} key={suggestion}>
                         {suggestion}
