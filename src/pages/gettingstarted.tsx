@@ -28,23 +28,26 @@ const GettingStarted: React.FC = () => {
 
   const videos = [
     {
+      title: "Simple Editor Tutorial",
+      description: "Learn about our editor, making a very simple game.",
+      id:'OC2JlTfUkWo',
+      duration:'2m16s',
+    },
+    {
       title: "In Depth Editor Tutorial",
       description: "Learn about our editor with a real life example.",
-      position: "left",
       id:'rBFq6Jc0Xss',
       duration:'8m10s',
     },
     {
       title: "No strings attached 35% Referral Program",
       description: "Learn the basics of our referral program, and how easy and un-compromising it is.",
-      position: "right",
       id:'FGkDstc897Q',
       duration:'1m35s',
     },
     {
       title: "Copying a community project",
       description: "Find out how to modify a community project you liked, to fit your specific needs.",
-      position: "left",
       id:'7ayDXFsFgYY',
       duration:'1m18s',
     },
@@ -80,7 +83,7 @@ const GettingStarted: React.FC = () => {
             {videos.map((video, index) => (
               <div
                 key={index}
-                className={`flex flex-col ${video.position === "right" ? "md:flex-row-reverse" : "md:flex-row"} gap-8`}
+                className={`flex flex-col ${index % 2 == 1 ? "md:flex-row-reverse" : "md:flex-row"} gap-8`}
               >
                 <div className="md:w-1/2">
                   <h3 className="text-2xl font-semibold mb-4">{video.title}</h3>

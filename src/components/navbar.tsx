@@ -29,8 +29,8 @@ export default function Navbar() {
     localStorage.removeItem('expiry')
     localStorage.removeItem('refresh')
     localStorage.removeItem('username')
-    navigate('/auth')
     setIsLoggedIn(false)
+    navigate('/auth')
   }
 
   const NavLinks = () => (
