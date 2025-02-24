@@ -176,7 +176,7 @@ export function EditorButtons({
         </>
       )}
       {canEdit && (
-        <Button size="sm" disabled={saving} onClick={() => handleSave(false)}>
+        <Button size='sm' disabled={saving} onClick={() => handleSave(false)}>
           <Save className="h-4 w-4 mr-2" />
           {saving ? 'Saving...' : 'Save'}
         </Button>

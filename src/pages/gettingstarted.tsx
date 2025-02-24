@@ -1,5 +1,6 @@
 import type React from "react"
 import { PlusCircle, Edit, Save, Play } from "lucide-react"
+import { Link, useSearchParams } from "react-router-dom"
 
 const GettingStarted: React.FC = () => {
   const steps = [
@@ -27,21 +28,31 @@ const GettingStarted: React.FC = () => {
 
   const videos = [
     {
-      title: "Getting Started with Personalized Digital Automation",
-      description: "Learn the basics of creating your first automation project in this comprehensive tutorial.",
+      title: "In Depth Editor Tutorial",
+      description: "Learn about our editor with a real life example.",
       position: "left",
+      id:'rBFq6Jc0Xss',
+      duration:'8m10s',
     },
     {
-      title: "Advanced Techniques for Efficient Workflows",
-      description: "Discover powerful strategies to optimize your automation projects and save even more time.",
+      title: "No strings attached 35% Referral Program",
+      description: "Learn the basics of our referral program, and how easy and un-compromising it is.",
       position: "right",
+      id:'FGkDstc897Q',
+      duration:'1m35s',
     },
     {
-      title: "Real-world Applications and Success Stories",
-      description: "See how others have transformed their daily tasks with Personalized Digital Automation.",
+      title: "Copying a community project",
+      description: "Find out how to modify a community project you liked, to fit your specific needs.",
       position: "left",
+      id:'7ayDXFsFgYY',
+      duration:'1m18s',
     },
   ]
+
+
+  const [searchParams] = useSearchParams()
+
 
   return (
     <div className="min-h-screen bg-purple-950 text-white">
@@ -75,8 +86,8 @@ const GettingStarted: React.FC = () => {
                   <h3 className="text-2xl font-semibold mb-4">{video.title}</h3>
                   <p className="text-purple-200 mb-4">{video.description}</p>
                   <div className="aspect-w-16 aspect-h-9 bg-purple-900 rounded-lg">
-                    {/* YouTube video embed would go here */}
-                    <div className="flex items-center justify-center text-purple-400">Video Placeholder</div>
+                    <iframe className="w-full h-[40vh]" src={`https://www.youtube-nocookie.com/embed/${video.id}?amp;controls=2&color=white&modestbranding=1&rel=0&showinfo=0&vq=hd1080p`} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+                    <div className="flex items-center justify-center text-purple-400">{video.duration}</div>
                   </div>
                 </div>
                 <div className="md:w-1/2" />
@@ -84,6 +95,17 @@ const GettingStarted: React.FC = () => {
             ))}
           </div>
         </section>
+
+
+        <div className="flex items-center align-middle justify-center">
+          <Link 
+            to={searchParams.get('signup') == 'true' ? '/subscribe' : '/auth'} 
+            className="m-auto mt-20 mb-10 w-md aspect-[9/3] inline-flex items-center justify-center whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400 disabled:pointer-events-none disabled:opacity-50 bg-purple-600 text-white shadow hover:bg-purple-700 rounded-md px-3 text-3xl space-x-2">
+            
+            <Play className="mr-3"/>
+            Get started!
+          </Link>
+        </div>
       </div>
     </div>
   )

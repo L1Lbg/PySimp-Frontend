@@ -41,7 +41,7 @@ export default function Navbar() {
           {
           isLoggedIn && (
             <Link to="/create/0">
-              <Button size="sm" className="space-x-2">
+              <Button className="space-x-2" size='sm'>
                 <Plus className="h-4 w-4" />
                 <span>
                   New Project
@@ -129,7 +129,7 @@ export default function Navbar() {
               </div>
             ) : (
               <Button onClick={() => navigate('/auth')} size="sm" className="space-x-2">
-                <LogIn className="h-4 w-4" />
+                <LogIn className="h-4 w-4" size='sm'/>
                 <span>Sign In</span>
               </Button>
             )}

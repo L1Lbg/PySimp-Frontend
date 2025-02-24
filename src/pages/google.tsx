@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import { useNavigate, useSearchParams } from "react-router-dom"
 
 export default function Google(){
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
     useEffect(()=>{
@@ -12,7 +12,7 @@ export default function Google(){
         localStorage.setItem('refresh', searchParams.get('refresh'))
         localStorage.setItem('username', searchParams.get('username'));
         localStorage.setItem('expiry', `${now.getTime()+60*60*1000}`); //* time in milliseconds
-        navigate('/')
+        navigate('/getting-started?signup=true');
     },[searchParams.get('access')])
 
     return (

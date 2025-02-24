@@ -20,7 +20,7 @@ export default function Activate(){
         .then(
             res => {
                 if (res.ok) {
-                    navigate('/auth')
+                    navigate('/getting-started?signup=true')
                 } else {
                     throw "Failed to activate user"
                 }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Mail, Lock, User, AlertCircle, File } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -82,7 +82,7 @@ export default function Auth() {
           throw new Error('Signup failed');
         }
 
-        navigate('/');
+        setMode('login');
       }
     } catch (error) {
       showError(error instanceof Error ? error.message : 'Authentication failed');
